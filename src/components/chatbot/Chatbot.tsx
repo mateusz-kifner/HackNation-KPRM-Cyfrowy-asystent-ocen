@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageScroller, MessageScrollerContent, MessageScrollerItem, MessageScrollerViewport, MessageScrollerButton } from "@/components/ui/message-scroller";
-import { Message, MessageAvatar, MessageContent, MessageHeader, MessageFooter, MessageGroup } from "@/components/ui/message";
+import { Message, MessageContent, MessageHeader, MessageFooter, MessageGroup } from "@/components/ui/message";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { IconMessageChatbot, IconSend, IconX, IconPin, IconPinned } from "@tabler/icons-react";
 import { AI_CONFIG } from "@/lib/ai-config";
@@ -208,11 +208,23 @@ export function Chatbot({
   const panel = (
     <Card className={`z-50 flex flex-col rounded-2xl border shadow-2xl bg-background/95 backdrop-blur ${pinned ? "relative w-[420px] max-w-[90vw]" : "fixed bottom-24 right-6 w-[420px] max-w-[90vw] h-[80vh] max-h-[800px]"}`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 px-4 bg-muted/40 rounded-t-2xl border-b">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-1 min-w-0">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
             <IconMessageChatbot className="h-4 w-4" />
           </div>
-          <CardTitle className="text-base font-semibold">{title}</CardTitle>
+          <div className="min-w-0 flex-1 flex items-center gap-2">
+            <CardTitle className="text-base font-semibold truncate">{title}</CardTitle>
+            <Select value={selectedModel} onValueChange={setSelectedModel}>
+              <SelectTrigger className="h-7 w-[140px] text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="gpt-4o-mini">gpt-4o-mini</SelectItem>
+                <SelectItem value="gpt-4o">gpt-4o</SelectItem>
+                <SelectItem value="claude-3-5-sonnet">claude-3-5-sonnet</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="icon" onClick={() => setPinned(p => !p)} className="h-8 w-8" title={pinned ? "Unpin" : "Pin"}>
@@ -235,28 +247,18 @@ export function Chatbot({
                   const isTool = role === "tool";
                   const lastIdx = gIdx === groupedMessages.length - 1 && group.length > 0 && visibleMessages.length > 0;
                   const scrollAnchor = lastIdx && group[group.length - 1] === visibleMessages[visibleMessages.length - 1];
+                  const senderLabel = isAssistant ? "Assistant" : isUser ? "You" : group[0].name ?? "Tool";
                   return (
                     <MessageScrollerItem key={gIdx} scrollAnchor={scrollAnchor}>
                       <MessageGroup>
                         {group.map((m, mIdx) => {
-                          const showHeader = mIdx === 0;
+                          const isFirst = mIdx === 0;
                           return (
                             <Message key={mIdx} align={isAssistant || isTool ? "start" : "end"}>
-                              {(isAssistant || isTool) ? (
-                                <MessageAvatar>
-                                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">
-                                    {isTool ? "T" : "AI"}
-                                  </div>
-                                </MessageAvatar>
-                              ) : (
-                                <MessageAvatar>
-                                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-secondary-foreground text-xs font-medium">U</div>
-                                </MessageAvatar>
-                              )}
                               <MessageContent className="max-w-[85%]">
-                                {showHeader && (
+                                {isFirst && (
                                   <MessageHeader className="text-xs font-medium text-muted-foreground">
-                                    {isAssistant ? "Assistant" : isUser ? "You" : m.name ?? "Tool"}
+                                    {senderLabel}
                                   </MessageHeader>
                                 )}
                                 <div className={`rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap leading-relaxed ${isAssistant || isTool ? "bg-muted" : "bg-primary text-primary-foreground"} max-w-full`}>
@@ -278,9 +280,6 @@ export function Chatbot({
                 {loading && (
                   <MessageScrollerItem>
                     <Message align="start">
-                      <MessageAvatar>
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">AI</div>
-                      </MessageAvatar>
                       <MessageContent className="max-w-[85%]">
                         <div className="rounded-2xl bg-muted px-4 py-3 text-sm">Thinking...</div>
                       </MessageContent>
@@ -293,7 +292,7 @@ export function Chatbot({
           </MessageScroller>
         </div>
         <div className="p-3 border-t bg-muted/30">
-          <div className="flex gap-2 items-end">
+          <div className="flex gap-2 items-end rounded-2xl border bg-background p-2 shadow-sm">
             <textarea
               value={input}
               onChange={e => setInput(e.target.value)}
@@ -306,12 +305,13 @@ export function Chatbot({
               placeholder="Type a message..."
               disabled={loading}
               rows={1}
-              className="flex-1 resize-none min-h-[44px] max-h-[120px] rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring overflow-y-auto"
+              className="flex-1 resize-none min-h-[44px] max-h-[120px] rounded-xl border-0 bg-transparent px-3 py-2 text-sm shadow-none focus-visible:outline-none focus-visible:ring-0 overflow-y-auto"
             />
-            <Button onClick={handleSend} disabled={loading || !input.trim()} size="icon" className="h-10 w-10 shrink-0">
+            <Button onClick={handleSend} disabled={loading || !input.trim()} size="icon" className="h-10 w-10 shrink-0 rounded-xl">
               <IconSend className="h-4 w-4" />
             </Button>
           </div>
+          <p className="text-[10px] text-muted-foreground mt-2 px-1">Press Enter to send, Shift+Enter for new line</p>
         </div>
       </CardContent>
     </Card>
