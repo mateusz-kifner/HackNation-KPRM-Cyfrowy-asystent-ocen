@@ -40,7 +40,7 @@ const data = {
     },
     {
       title: "Admin",
-      url: "/admin",
+      url: "/admin/",
       icon: (
         <IconChartBar
         />

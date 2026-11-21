@@ -22,7 +22,7 @@ export function SiteHeader() {
     },
     {
       title: 'Admin',
-      to: '/admin',
+      to: '/admin/',
       icon: IconDashboard,
     },
   ]
