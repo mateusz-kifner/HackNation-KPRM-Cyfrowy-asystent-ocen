@@ -1,0 +1,32 @@
+{
+  "bundler": "vite",
+  "projectName": "template-start",
+  "mode": "file-router",
+  "typescript": true,
+  "packageManager": "pnpm",
+  "includeExamples": false,
+  "tailwind": true,
+  "projectPreset": "default",
+  "routerOnly": false,
+  "addOnOptions": {
+    "drizzle": {
+      "database": "sqlite"
+    }
+  },
+  "git": true,
+  "install": true,
+  "intent": true,
+  "version": 1,
+  "framework": "react",
+  "chosenAddOns": [
+    "biome",
+    "nitro",
+    "compiler",
+    "drizzle",
+    "shadcn",
+    "t3env",
+    "tRPC",
+    "better-auth",
+    "tanstack-query"
+  ]
+}
