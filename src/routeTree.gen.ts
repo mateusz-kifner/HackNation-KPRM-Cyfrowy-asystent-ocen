@@ -16,6 +16,7 @@ import { Route as PanelPracowniczyRouteImport } from './routes/panel-pracowniczy
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminEmployeesRouteImport } from './routes/admin/employees'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as ApiChatRouteRouteImport } from './routes/api/chat/route'
 import { Route as TestIndexRouteImport } from './routes/test/index'
 import { Route as TestChatbotRouteImport } from './routes/test/chatbot'
 import { Route as TestChatbot2RouteImport } from './routes/test/chatbot2'
@@ -58,6 +59,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiChatRouteRoute = ApiChatRouteRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TestIndexRoute = TestIndexRouteImport.update({
   id: '/test/',
   path: '/test/',
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/panel-oceniajacego': typeof PanelOceniajacegoRoute
   '/panel-pracowniczy': typeof PanelPracowniczyRoute
+  '/api/chat': typeof ApiChatRouteRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/users': typeof AdminUsersRoute
   '/test/chatbot': typeof TestChatbotRoute
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/panel-oceniajacego': typeof PanelOceniajacegoRoute
   '/panel-pracowniczy': typeof PanelPracowniczyRoute
+  '/api/chat': typeof ApiChatRouteRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/users': typeof AdminUsersRoute
   '/test/chatbot': typeof TestChatbotRoute
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/panel-oceniajacego': typeof PanelOceniajacegoRoute
   '/panel-pracowniczy': typeof PanelPracowniczyRoute
+  '/api/chat': typeof ApiChatRouteRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/users': typeof AdminUsersRoute
   '/test/chatbot': typeof TestChatbotRoute
@@ -142,6 +151,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/panel-oceniajacego'
     | '/panel-pracowniczy'
+    | '/api/chat'
     | '/admin/employees'
     | '/admin/users'
     | '/test/chatbot'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/panel-oceniajacego'
     | '/panel-pracowniczy'
+    | '/api/chat'
     | '/admin/employees'
     | '/admin/users'
     | '/test/chatbot'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/panel-oceniajacego'
     | '/panel-pracowniczy'
+    | '/api/chat'
     | '/admin/employees'
     | '/admin/users'
     | '/test/chatbot'
@@ -188,6 +200,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PanelOceniajacegoRoute: typeof PanelOceniajacegoRoute
   PanelPracowniczyRoute: typeof PanelPracowniczyRoute
+  ApiChatRouteRoute: typeof ApiChatRouteRoute
   AdminEmployeesRoute: typeof AdminEmployeesRoute
   AdminUsersRoute: typeof AdminUsersRoute
   TestChatbotRoute: typeof TestChatbotRoute
@@ -250,6 +263,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/test/': {
       id: '/test/'
       path: '/test'
@@ -300,6 +320,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PanelOceniajacegoRoute: PanelOceniajacegoRoute,
   PanelPracowniczyRoute: PanelPracowniczyRoute,
+  ApiChatRouteRoute: ApiChatRouteRoute,
   AdminEmployeesRoute: AdminEmployeesRoute,
   AdminUsersRoute: AdminUsersRoute,
   TestChatbotRoute: TestChatbotRoute,

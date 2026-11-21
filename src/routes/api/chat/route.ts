@@ -4,6 +4,15 @@ import {
   toServerSentEventsResponse,
 } from "@tanstack/ai";
 import { openaiCompatible } from "@tanstack/ai-openai/compatible";
+import { createFileRoute } from "@tanstack/react-router";
+
+export const Route = createFileRoute('/api/chat')({
+  server: {
+    handlers: {
+      POST: ({ request }) => POST(request),
+    },
+  },
+})
 
 const defaultModel = openaiCompatible({
   name: "default",

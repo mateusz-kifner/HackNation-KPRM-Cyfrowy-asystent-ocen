@@ -9,7 +9,7 @@ export const Route = createFileRoute('/test/chatbot2')({
 
 export function Chat() {
   const [input, setInput] = useState("");
-  const { messages, sendMessage, isLoading, stop } = useChat({
+  const { messages, sendMessage, isLoading, stop,error } = useChat({
     connection: fetchServerSentEvents("/api/chat"),
     threadId: "support-chat",
   });
@@ -45,6 +45,7 @@ export function Chat() {
           <button type="submit">Send</button>
         )}
       </form>
+      <div>{error?.name}{ error?.message}</div>
     </>
   );
 }

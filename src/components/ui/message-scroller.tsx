@@ -10,19 +10,41 @@ import { cn } from "cn"
 import { Button } from "#/components/ui/button.tsx"
 import { IconArrowDown } from "@tabler/icons-react"
 
-function MessageScrollerProvider(
-  props: React.ComponentProps<typeof MessageScrollerPrimitive.Provider>
-) {
+type MessageScrollerProviderProps = React.ComponentProps<
+  typeof MessageScrollerPrimitive.Provider
+>
+
+type MessageScrollerProps = React.ComponentProps<
+  typeof MessageScrollerPrimitive.Root
+> &
+  MessageScrollerProviderProps
+
+function MessageScrollerProvider(props: MessageScrollerProviderProps) {
   return <MessageScrollerPrimitive.Provider {...props} />
 }
 
+/**
+ * The primitive reads its options from the nearest provider, so the scroller
+ * owns that provider and forwards its props instead of nesting a second one.
+ */
 function MessageScroller({
   className,
   children,
+  autoScroll,
+  defaultScrollPosition,
+  scrollEdgeThreshold,
+  scrollPreviousItemPeek,
+  scrollMargin,
   ...props
-}: React.ComponentProps<typeof MessageScrollerPrimitive.Root>) {
+}: MessageScrollerProps) {
   return (
-    <MessageScrollerPrimitive.Provider>
+    <MessageScrollerPrimitive.Provider
+      autoScroll={autoScroll}
+      defaultScrollPosition={defaultScrollPosition}
+      scrollEdgeThreshold={scrollEdgeThreshold}
+      scrollPreviousItemPeek={scrollPreviousItemPeek}
+      scrollMargin={scrollMargin}
+    >
       <MessageScrollerPrimitive.Root
         data-slot="message-scroller"
         className={cn(
