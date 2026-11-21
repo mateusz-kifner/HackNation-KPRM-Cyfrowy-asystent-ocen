@@ -13,6 +13,12 @@ import { authClient } from '#/lib/auth-client'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 
+const MOCK_USERS = [
+  { name: 'Jan_Kowalski_Manager', email: 'jan.kowalski.manager@example.com', password: 'password123' },
+  { name: 'Anna_Lewandowska_Emploee', email: 'anna.lewandowska.emploee@example.com', password: 'password123' },
+  { name: 'Mateusz_Kifner_Emploee', email: 'mateusz.kifner.emploee@example.com', password: 'password123' },
+]
+
 export function LoginForm({
   className,
   ...props
@@ -34,19 +40,43 @@ export function LoginForm({
     }
   }
 
+  const handleMockSignIn = async (email: string, password: string) => {
+    setLoading(true)
+    setError(null)
+    try {
+      await authClient.signIn.email({ email, password })
+      navigate({ to: '/' })
+    } catch (e: any) {
+      setError(e?.message ?? 'Failed to sign in')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome</CardTitle>
           <CardDescription>
-            Sign in without a password
+            Sign in as a mock user
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-3">
+          {MOCK_USERS.map((user) => (
+            <Button
+              key={user.name}
+              onClick={() => handleMockSignIn(user.email, user.password)}
+              disabled={loading}
+              className="w-full"
+            >
+              {loading ? 'Signing in...' : `Login as ${user.name}`}
+            </Button>
+          ))}
           <Button
             onClick={handleAnonymousSignIn}
             disabled={loading}
+            variant="secondary"
             className="w-full"
           >
             {loading ? 'Signing in...' : 'Continue as Guest'}

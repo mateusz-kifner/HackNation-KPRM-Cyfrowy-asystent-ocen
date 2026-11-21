@@ -19,6 +19,8 @@
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio",
     "auth:regen": "pnpm dlx auth@latest generate --output ./src/db/schema/auth.ts --adapter drizzle --dialect sqlite --yes",
+    "seed": "tsx src/db/seed.ts",
+    "db:reset": "rm -f dev.db prod.db && pnpm db:push && pnpm seed",
     "pkg-up": "ncu -u -i -c 1d -p pnpm",
     "typecheck": "tsc --noEmit"
   },

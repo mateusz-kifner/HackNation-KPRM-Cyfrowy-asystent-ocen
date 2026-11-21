@@ -11,6 +11,7 @@ import { TooltipProvider } from "#/components/ui/tooltip";
 import Header from "../components/Header";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
+import { Toaster } from "#/components/ui/sonner"
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -76,6 +77,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             {/*<Footer />*/}
           </TooltipProvider>
         </div>
+        <Toaster />
         <TanStackDevtools
           config={{
             position: "bottom-right",

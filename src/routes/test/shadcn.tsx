@@ -88,21 +88,21 @@ function ShadcnDemo() {
       {UIElements.map((val, index) => {
         const fileName = `src/components/ui-test/test-${val.title.toLowerCase().replace(/\s+/g, "-")}.tsx`;
         return (
-          <Card key={`${val.title}-${index}`}>
-            <Tabs defaultValue="preview" className="w-full">
-              <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                <div className="space-y-1">
-                  <CardTitle>{val.title}</CardTitle>
-                  {val.description && <CardDescription>{val.description}</CardDescription>}
+          <Card key={`${val.title}-${index}`} className="overflow-hidden">
+            <CardHeader>
+              <CardTitle>{val.title}</CardTitle>
+              {val.description && <CardDescription>{val.description}</CardDescription>}
+            </CardHeader>
+            <CardContent className="p-0">
+              <Tabs defaultValue="preview" className="w-full">
+                <div className="flex items-center justify-between px-6 pt-0 pb-4">
+                  <TabsList>
+                    <TabsTrigger value="preview">Preview</TabsTrigger>
+                    <TabsTrigger value="code">Code</TabsTrigger>
+                  </TabsList>
                 </div>
-                <TabsList>
-                  <TabsTrigger value="preview">Preview</TabsTrigger>
-                  <TabsTrigger value="code">Code</TabsTrigger>
-                </TabsList>
-              </CardHeader>
-              <CardContent className="p-0">
-                <TabsContent value="preview">
-                  <div className={cn("flex gap-2 p-2", val.className)}>
+                <TabsContent value="preview" className="mt-0">
+                  <div className={cn("flex gap-2 p-6", val.className)}>
                     <ErrorBoundary
                       fallbackRender={(props) => (
                         <div>Error: {JSON.stringify(props.error, null, 2) ?? ""}</div>
@@ -114,11 +114,11 @@ function ShadcnDemo() {
                     </ErrorBoundary>
                   </div>
                 </TabsContent>
-                <TabsContent value="code">
+                <TabsContent value="code" className="mt-0">
                   <CodePreview source={val.source} fileName={fileName} />
                 </TabsContent>
-              </CardContent>
-            </Tabs>
+              </Tabs>
+            </CardContent>
           </Card>
         );
       })}
