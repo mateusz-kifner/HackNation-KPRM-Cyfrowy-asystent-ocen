@@ -1,5 +1,5 @@
 import { db } from './index'
-import { employees, user, account } from './schema'
+import { employees, user, account, session, verification } from './schema'
 import { hashPassword } from 'better-auth/crypto'
 import { randomUUID } from 'crypto'
 
@@ -7,12 +7,20 @@ const MOCK_PASSWORD = 'password123'
 
 const mockUsers = [
   {
+    id: 'Admin_admin',
+    name: 'Admin_admin',
+    email: 'admin.admin@example.com',
+    position: 'Admin',
+    department: 'Administration',
+    hireDate: new Date('2019-01-01'),
+  },
+  {
     id: 'Jan_Kowalski_Manager',
     name: 'Jan_Kowalski_Manager',
     email: 'jan.kowalski.manager@example.com',
     position: 'Manager',
     department: 'Management',
-    hireDate: new Date('2020-01-15').getTime(),
+    hireDate: new Date('2020-01-15'),
   },
   {
     id: 'Anna_Lewandowska_Emploee',
@@ -20,7 +28,7 @@ const mockUsers = [
     email: 'anna.lewandowska.emploee@example.com',
     position: 'Employee',
     department: 'Operations',
-    hireDate: new Date('2021-03-20').getTime(),
+    hireDate: new Date('2021-03-20'),
   },
   {
     id: 'Mateusz_Kifner_Emploee',
@@ -28,7 +36,7 @@ const mockUsers = [
     email: 'mateusz.kifner.emploee@example.com',
     position: 'Employee',
     department: 'Operations',
-    hireDate: new Date('2022-07-10').getTime(),
+    hireDate: new Date('2022-07-10'),
   },
 ]
 
@@ -37,6 +45,8 @@ async function seed() {
 
   // Clear existing data
   await db.delete(account)
+  await db.delete(session)
+  await db.delete(verification)
   await db.delete(user)
   await db.delete(employees)
 
@@ -49,7 +59,7 @@ async function seed() {
       email: u.email,
       emailVerified: false,
       isAnonymous: false,
-      role: 'normal',
+      role: u.id === 'Admin_admin' ? 'admin' : 'normal',
     })
     await db.insert(account).values({
       id: randomUUID(),

@@ -14,6 +14,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 
 const MOCK_USERS = [
+  { name: 'Admin_admin', email: 'admin.admin@example.com', password: 'password123' },
   { name: 'Jan_Kowalski_Manager', email: 'jan.kowalski.manager@example.com', password: 'password123' },
   { name: 'Anna_Lewandowska_Emploee', email: 'anna.lewandowska.emploee@example.com', password: 'password123' },
   { name: 'Mateusz_Kifner_Emploee', email: 'mateusz.kifner.emploee@example.com', password: 'password123' },
@@ -26,19 +27,6 @@ export function LoginForm({
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  const handleAnonymousSignIn = async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      await authClient.signIn.anonymous()
-      navigate({ to: '/' })
-    } catch (e: any) {
-      setError(e?.message ?? 'Failed to sign in')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleMockSignIn = async (email: string, password: string) => {
     setLoading(true)
@@ -73,14 +61,6 @@ export function LoginForm({
               {loading ? 'Signing in...' : `Login as ${user.name}`}
             </Button>
           ))}
-          <Button
-            onClick={handleAnonymousSignIn}
-            disabled={loading}
-            variant="secondary"
-            className="w-full"
-          >
-            {loading ? 'Signing in...' : 'Continue as Guest'}
-          </Button>
           {error && (
             <p className="mt-4 text-sm text-red-600 text-center">{error}</p>
           )}
