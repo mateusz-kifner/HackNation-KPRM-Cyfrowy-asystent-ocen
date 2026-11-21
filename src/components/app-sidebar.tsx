@@ -23,42 +23,26 @@ const data = {
   },
   navMain: [
     {
-      title: "Dashboard",
-      url: "#",
+      title: "Panel Pracowniczy",
+      url: "/panel-pracowniczy",
       icon: (
         <IconDashboard
         />
       ),
     },
     {
-      title: "Lifecycle",
-      url: "#",
+      title: "Panel Oceniającego",
+      url: "/panel-oceniajacego",
       icon: (
         <IconListDetails
         />
       ),
     },
     {
-      title: "Analytics",
-      url: "#",
+      title: "Admin",
+      url: "/admin",
       icon: (
         <IconChartBar
-        />
-      ),
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: (
-        <IconFolder
-        />
-      ),
-    },
-    {
-      title: "Team",
-      url: "#",
-      icon: (
-        <IconUsers
         />
       ),
     },
