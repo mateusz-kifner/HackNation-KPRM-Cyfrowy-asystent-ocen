@@ -19,11 +19,6 @@ export const assessmentStatuses = [
   'completed',
   'cancelled',
 ] as const
-export const assessmentRatings = [
-  'below_expectations',
-  'meets_expectations',
-  'exceeds_expectations',
-] as const
 export const acknowledgementTypes = [
   'criteria_participation',
   'result_receipt',
@@ -67,9 +62,6 @@ export const assessments = sqliteTable(
     assessmentDate: integer('assessment_date', { mode: 'timestamp_ms' }),
     assessmentDiscussionAt: integer('assessment_discussion_at', { mode: 'timestamp_ms' }),
     dueAt: integer('due_at', { mode: 'timestamp_ms' }),
-    overallResult: text('overall_result', { enum: assessmentRatings }),
-    rationale: text('rationale'),
-    developmentRecommendations: text('development_recommendations'),
     submittedAt: integer('submitted_at', { mode: 'timestamp_ms' }),
     completedAt: integer('completed_at', { mode: 'timestamp_ms' }),
     createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().default(now),
@@ -90,57 +82,6 @@ export const assessments = sqliteTable(
     index('assessments_evaluated_user_idx').on(table.evaluatedUserId),
     index('assessments_evaluator_idx').on(table.evaluatorUserId),
     index('assessments_status_due_idx').on(table.status, table.dueAt),
-  ],
-)
-
-/** Catalog of criteria available on each assessment form. */
-export const assessmentCriterionCatalog = sqliteTable(
-  'assessment_criterion_catalog',
-  {
-    id: text('id').primaryKey(),
-    form: text('form', { enum: assessmentForms }).notNull(),
-    code: text('code').notNull(),
-    title: text('title').notNull(),
-    description: text('description'),
-    mandatory: integer('mandatory', { mode: 'boolean' }).notNull().default(false),
-    active: integer('active', { mode: 'boolean' }).notNull().default(true),
-    sortOrder: integer('sort_order').notNull().default(0),
-  },
-  (table) => [uniqueIndex('assessment_criterion_form_code_idx').on(table.form, table.code)],
-)
-
-/** A snapshot of chosen criteria and ratings for one assessment. */
-export const assessmentCriteria = sqliteTable(
-  'assessment_criteria',
-  {
-    id: text('id').primaryKey(),
-    assessmentId: text('assessment_id')
-      .notNull()
-      .references(() => assessments.id, { onDelete: 'cascade' }),
-    catalogCriterionId: text('catalog_criterion_id').references(
-      () => assessmentCriterionCatalog.id,
-      { onDelete: 'set null' },
-    ),
-    code: text('code').notNull(),
-    title: text('title').notNull(),
-    description: text('description'),
-    mandatory: integer('mandatory', { mode: 'boolean' }).notNull().default(false),
-    sortOrder: integer('sort_order').notNull().default(0),
-    duties: text('duties'),
-    expectations: text('expectations'),
-    goals: text('goals'),
-    measurementMethod: text('measurement_method'),
-    rating: text('rating', { enum: assessmentRatings }),
-    comment: text('comment'),
-    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().default(now),
-    updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
-      .notNull()
-      .default(now)
-      .$onUpdate(() => new Date()),
-  },
-  (table) => [
-    uniqueIndex('assessment_criteria_assessment_code_idx').on(table.assessmentId, table.code),
-    index('assessment_criteria_assessment_idx').on(table.assessmentId, table.sortOrder),
   ],
 )
 
@@ -218,19 +159,7 @@ export const assessmentsRelations = relations(assessments, ({ one, many }) => ({
     references: [user.id],
     relationName: 'assessmentEvaluator',
   }),
-  criteria: many(assessmentCriteria),
   acknowledgements: many(assessmentAcknowledgements),
   dateChangeRequests: many(assessmentDateChangeRequests),
   history: many(assessmentHistory),
-}))
-
-export const assessmentCriteriaRelations = relations(assessmentCriteria, ({ one }) => ({
-  assessment: one(assessments, {
-    fields: [assessmentCriteria.assessmentId],
-    references: [assessments.id],
-  }),
-  catalogCriterion: one(assessmentCriterionCatalog, {
-    fields: [assessmentCriteria.catalogCriterionId],
-    references: [assessmentCriterionCatalog.id],
-  }),
 }))

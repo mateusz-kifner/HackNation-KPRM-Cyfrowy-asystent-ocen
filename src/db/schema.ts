@@ -5,18 +5,30 @@ export {
   acknowledgementStatuses,
   acknowledgementTypes,
   assessmentAcknowledgements,
-  assessmentCriteria,
-  assessmentCriteriaRelations,
-  assessmentCriterionCatalog,
   assessmentDateChangeRequests,
   assessmentForms,
   assessmentHistory,
-  assessmentRatings,
   assessmentStatuses,
   assessments,
   assessmentsRelations,
   dateChangeStatuses,
 } from './schema/assessments'
+export {
+  additionalAssessmentCriteria,
+  assessmentCriterionPoints,
+  assessmentFileCriteria,
+  assessmentFileCriteriaRelations,
+  assessmentFileCriterionCatalog,
+  assessmentFileForms,
+  assessmentFiles,
+  assessmentFilesRelations,
+  assessmentFormLevels,
+  assessmentFormMandatoryCriteria,
+  evaluatedPersonTypes,
+  previousAssessmentLevels,
+  previousAssessmentOutcomes,
+  promotionApplicationChoices,
+} from './schema/assessment_files'
 
 export const todos = sqliteTable('todos', {
   id: integer({ mode: 'number' }).primaryKey({
