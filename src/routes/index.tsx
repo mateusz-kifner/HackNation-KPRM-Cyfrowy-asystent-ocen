@@ -1,16 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { HomeIntroduction } from '@/components/home-introduction'
 import { HomeLoginCallout } from '@/components/home-login-callout'
+import { RoleAccessOverview } from '@/components/role-access-overview'
 
 export const Route = createFileRoute('/')({ component: Home })
 
 function Home() {
   return (
-    <div className="p-8">
+    <div className="pb-12">
       <HomeLoginCallout />
-      <h1 className="text-4xl font-bold">Welcome to TanStack Start</h1>
-      <p className="mt-4 text-lg">
-        Edit <code>src/routes/index.tsx</code> to get started.
-      </p>
+      <HomeIntroduction />
+      <RoleAccessOverview />
     </div>
   )
 }

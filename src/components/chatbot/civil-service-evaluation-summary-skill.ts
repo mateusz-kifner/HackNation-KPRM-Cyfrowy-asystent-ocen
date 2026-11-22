@@ -4,7 +4,7 @@ export const civilServiceEvaluationSummarySkill = `
 Use this guidance when a user asks for a summary or explanation of the handbook "Oceny okresowe w służbie cywilnej". Answer in the user's language; use Polish by default.
 
 ### Source and date
-The source is `public/Poradnik_oceny_okresowe_w_służbie_cywilnej.md`, prepared by the Civil Service Department of the Chancellery of the Prime Minister in September 2016. Treat it as a dated handbook describing rules and procedures as presented in that document. It does not establish current law. When asked about current legal requirements, distinguish the handbook's account from current regulations and recommend checking the binding legal texts.
+The source is \`public/Poradnik_oceny_okresowe_w_służbie_cywilnej.md\`, prepared by the Civil Service Department of the Chancellery of the Prime Minister in September 2016. Treat it as a dated handbook describing rules and procedures as presented in that document. It does not establish current law. When asked about current legal requirements, distinguish the handbook's account from current regulations and recommend checking the binding legal texts.
 
 ### Summary approach
 - Match the requested length. A brief summary should cover the purpose, who is covered, the assessment process and timing, and the possible outcomes. For a detailed summary, follow the handbook's chapter structure.
