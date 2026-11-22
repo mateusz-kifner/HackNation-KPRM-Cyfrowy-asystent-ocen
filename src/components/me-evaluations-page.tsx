@@ -1,6 +1,7 @@
 import { IconClipboardList } from "@tabler/icons-react";
 import { EvaluationDocxDownload } from "#/components/evaluation-docx-download";
 import { EvaluationPreviewLink } from "#/components/evaluation-preview-link";
+import { PageBreadcrumb } from "@/components/page-breadcrumb";
 import { useEvaluationsForMe } from "#/hooks/api/evaluations/useEvaluationsForMe";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -38,12 +39,7 @@ export function MeEvaluationsPage() {
 	return (
 		<main className="mx-auto w-full max-w-7xl space-y-6 p-4 sm:p-6">
 			<header>
-				<h1 className="text-2xl font-semibold tracking-tight">
-					My evaluations
-				</h1>
-				<p className="mt-1 text-sm text-muted-foreground">
-					Assessments of your work, including current and completed evaluations.
-				</p>
+				<PageBreadcrumb items={[{ label: "My evaluations" }]} />
 			</header>
 			<Card>
 				<CardHeader>
