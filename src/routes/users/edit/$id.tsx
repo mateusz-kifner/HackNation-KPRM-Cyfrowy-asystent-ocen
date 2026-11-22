@@ -189,7 +189,7 @@ function FormField({
 	children,
 }: {
 	label: string;
-	children: React.ReactNode;
+	children: React.ReactElement<{ id?: string }>;
 }) {
 	const id = label.toLowerCase().replaceAll(" ", "-");
 	return (

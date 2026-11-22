@@ -52,8 +52,8 @@ export const employeesRouter = {
   update: managerProcedure
     .input(employeeSchema.omit({ id: true }).extend({ id: z.string() }))
     .mutation(async ({ input }) => {
-      const { id, ...data } = input
-      const [updated] = await db.update(employees).set(data).where(eq(employees.id, id)).returning()
+      const { id, hireDate, ...data } = input
+      const [updated] = await db.update(employees).set({ ...data, hireDate: new Date(hireDate) }).where(eq(employees.id, id)).returning()
       return updated
     }),
   delete: adminProcedure

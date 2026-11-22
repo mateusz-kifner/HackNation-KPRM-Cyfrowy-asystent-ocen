@@ -8,7 +8,7 @@ describe('users router', () => {
     id: 'test-user-id',
     name: 'Test User',
     email: 'test@example.com',
-    role: 'normal' as const,
+    role: 'Employee' as const,
   }
 
   beforeAll(async () => {
@@ -39,9 +39,9 @@ describe('users router', () => {
 
   it('should update a user', async () => {
     const updatedName = 'Updated Test User'
-    const [result] = await db.update(user).set({ name: updatedName, role: 'manager' }).where(eq(user.id, testUser.id)).returning()
+    const [result] = await db.update(user).set({ name: updatedName, role: 'Manager' }).where(eq(user.id, testUser.id)).returning()
     expect(result.name).toBe(updatedName)
-    expect(result.role).toBe('manager')
+    expect(result.role).toBe('Manager')
   })
 
   it('should delete a user', async () => {
