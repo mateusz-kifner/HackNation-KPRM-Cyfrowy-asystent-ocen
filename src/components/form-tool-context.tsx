@@ -5,6 +5,7 @@ type FormToolContextValue = {
 	getFormState: () => { form: string; fields: Record<string, string | string[]> } | { error: string };
 	selectField: (name: string) => { success: boolean; field?: string; error?: string };
 	editField: (name: string, value: string) => Promise<{ success: boolean; field?: string; value?: string; error?: string }>;
+	setHighlightColor: (color: string) => { success: boolean; color?: string; error?: string };
 	highlightedFields: string[];
 };
 
@@ -13,6 +14,7 @@ const FormToolContext = createContext<FormToolContextValue | null>(null);
 export function FormToolProvider({ children }: { children: ReactNode }) {
 	const forms = useRef(new Map<string, HTMLFormElement>());
 	const selectedFields = useRef(new Map<string, HTMLElement>());
+	const highlightColor = useRef("var(--primary)");
 	const [highlightedFields, setHighlightedFields] = useState<string[]>([]);
 	const registerForm = useCallback((name: string, form: HTMLFormElement | null) => {
 		if (form) {
@@ -52,6 +54,7 @@ export function FormToolProvider({ children }: { children: ReactNode }) {
 			if (field.id) selectedFields.current.set(field.id, field);
 			if (field.getAttribute("name")) selectedFields.current.set(field.getAttribute("name")!, field);
 			setHighlightedFields((current) => current.includes(name) ? current : [...current, name]);
+			field.style.setProperty("--ai-highlight-color", highlightColor.current);
 			field.setAttribute("data-ai-highlight", "true");
 			field.focus({ preventScroll: true });
 			field.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -109,7 +112,18 @@ export function FormToolProvider({ children }: { children: ReactNode }) {
 		}
 		return { success: false, error: `The selected field "${name}" cannot be edited.` };
 	}, []);
-	const value = useMemo(() => ({ registerForm, getFormState, selectField, editField, highlightedFields }), [registerForm, getFormState, selectField, editField, highlightedFields]);
+	const setHighlightColor = useCallback((color: string) => {
+		const normalizedColor = color.trim();
+		if (!normalizedColor || !CSS.supports("color", normalizedColor)) {
+			return { success: false, error: `"${color}" is not a valid CSS color.` };
+		}
+		highlightColor.current = normalizedColor;
+		for (const field of new Set(selectedFields.current.values())) {
+			if (field.isConnected) field.style.setProperty("--ai-highlight-color", normalizedColor);
+		}
+		return { success: true, color: normalizedColor };
+	}, []);
+	const value = useMemo(() => ({ registerForm, getFormState, selectField, editField, setHighlightColor, highlightedFields }), [registerForm, getFormState, selectField, editField, setHighlightColor, highlightedFields]);
 	return <FormToolContext.Provider value={value}>{children}</FormToolContext.Provider>;
 }
 

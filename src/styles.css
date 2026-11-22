@@ -5,9 +5,9 @@
 @import 'tw-animate-css';
 
 [data-ai-highlight="true"] {
-	outline: 3px solid var(--primary);
+	outline: 3px solid var(--ai-highlight-color, var(--primary));
 	outline-offset: 3px;
-	box-shadow: 0 0 0 6px color-mix(in oklch, var(--primary) 18%, transparent);
+	box-shadow: 0 0 0 6px color-mix(in oklch, var(--ai-highlight-color, var(--primary)) 18%, transparent);
 	transition: outline-color 150ms ease, box-shadow 150ms ease;
 }
 

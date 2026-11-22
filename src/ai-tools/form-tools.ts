@@ -37,3 +37,16 @@ export const editFormFieldTool: ToolDefinition = {
 		},
 	},
 };
+
+export const setFormHighlightColorTool: ToolDefinition = {
+	type: "function",
+	function: {
+		name: "set_form_highlight_color",
+		description: "Change the highlight color for all fields currently highlighted by AI and any fields highlighted later.",
+		parameters: {
+			type: "object",
+			properties: { color: { type: "string", description: "A CSS color such as #ff6600, red, or rgb(255, 102, 0)." } },
+			required: ["color"],
+		},
+	},
+};
