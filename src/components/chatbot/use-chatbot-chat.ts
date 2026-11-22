@@ -67,5 +67,6 @@ export function useChatbotChat({
 		error: chat.error?.message ?? null,
 		send: (content: string) => chat.sendMessage(content),
 		reset: chat.clear,
+		stop: chat.stop,
 	};
 }

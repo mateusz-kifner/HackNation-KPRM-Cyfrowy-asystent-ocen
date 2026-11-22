@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { IconSend } from "@tabler/icons-react";
+import { IconPlayerStop, IconSend } from "@tabler/icons-react";
 import {
   InputGroup,
   InputGroupAddon,
@@ -14,15 +14,19 @@ import {
 export function ChatbotComposer({
   value,
   disabled,
+  loading = false,
   placeholder = "Ask the agent...",
   onChange,
   onSubmit,
+  onStop,
 }: {
   value: string;
   disabled?: boolean;
+  loading?: boolean;
   placeholder?: string;
   onChange: (value: string) => void;
   onSubmit: (value: string) => void;
+  onStop?: () => void;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const canSend = !disabled && value.trim().length > 0;
@@ -55,16 +59,30 @@ export function ChatbotComposer({
           <span className="text-[10px] text-muted-foreground">
             Press Enter to send, Shift+Enter for new line
           </span>
-          <InputGroupButton
-            type="submit"
-            variant="default"
-            size="icon-sm"
-            className="ml-auto"
-            disabled={!canSend}
-            aria-label="Send message"
-          >
-            <IconSend />
-          </InputGroupButton>
+          {loading ? (
+            <InputGroupButton
+              type="button"
+              variant="destructive"
+              size="icon-sm"
+              className="ml-auto"
+              onClick={onStop}
+              aria-label="Stop generating response"
+              title="Stop generating response"
+            >
+              <IconPlayerStop />
+            </InputGroupButton>
+          ) : (
+            <InputGroupButton
+              type="submit"
+              variant="default"
+              size="icon-sm"
+              className="ml-auto"
+              disabled={!canSend}
+              aria-label="Send message"
+            >
+              <IconSend />
+            </InputGroupButton>
+          )}
         </InputGroupAddon>
       </InputGroup>
     </form>

@@ -25,6 +25,7 @@ type ChatBotPanelProps = {
 	draft?: string;
 	onDraftChange?: (value: string) => void;
 	onSubmit?: (content: string) => void;
+	onStop?: () => void;
 	headerButtons?: React.ReactNode;
 };
 
@@ -39,6 +40,7 @@ export function ChatBotPanel({
 	draft = "",
 	onDraftChange = () => {},
 	onSubmit = () => {},
+	onStop,
 	headerButtons,
 }: ChatBotPanelProps) {
 	const [windowState, setWindowState] = useChatbotWindowState();
@@ -108,8 +110,10 @@ export function ChatBotPanel({
 						<ChatbotComposer
 							value={draft}
 							disabled={loading}
+							loading={loading}
 							onChange={onDraftChange}
 							onSubmit={onSubmit}
+							onStop={onStop}
 						/>
 					</div>
 				</CardContent>

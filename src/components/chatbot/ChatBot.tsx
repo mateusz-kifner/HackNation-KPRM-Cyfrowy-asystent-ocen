@@ -47,7 +47,7 @@ export function ChatBot({
 		null,
 	);
 
-	const { visibleMessages, loading, error, send, reset } = useChatbotChat({
+	const { visibleMessages, loading, error, send, reset, stop } = useChatbotChat({
 		systemPrompt,
 		tools,
 		toolHandlers,
@@ -168,6 +168,7 @@ export function ChatBot({
 					draft={draft}
 					onDraftChange={setDraft}
 					onSubmit={handleSend}
+					onStop={stop}
 					headerButtons={headerButtons}
 				/>
 			</DrawerContent>
@@ -183,6 +184,7 @@ export function ChatBot({
 			draft={draft}
 			onDraftChange={setDraft}
 			onSubmit={handleSend}
+			onStop={stop}
 			headerButtons={headerButtons}
 		/>
 	);
