@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
-import { and, desc, eq, like, or } from "drizzle-orm";
+import { and, desc, eq, like, ne, or } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "#/db";
 import {
@@ -316,6 +316,40 @@ export const evaluationsRouter = {
 			.where(and(eq(assessments.evaluatorUserId, ctx.user.id), searchCondition))
 			.orderBy(desc(assessments.createdAt));
 		}),
+
+	evaluatedForMe: employeeProcedure.query(async ({ ctx }) => {
+		return db
+			.select({
+				id: assessments.id,
+				evaluatedUserId: assessments.evaluatedUserId,
+				evaluatorUserId: assessments.evaluatorUserId,
+				form: assessments.form,
+				status: assessments.status,
+				periodStart: assessments.periodStart,
+				periodEnd: assessments.periodEnd,
+				assessmentDate: assessments.assessmentDate,
+				dueAt: assessments.dueAt,
+				submittedAt: assessments.submittedAt,
+				createdAt: assessments.createdAt,
+				evaluatedFirstName: assessmentFiles.evaluatedFirstName,
+				evaluatedLastName: assessmentFiles.evaluatedLastName,
+				evaluatedPosition: assessmentFiles.evaluatedPosition,
+				evaluatedOrganizationalUnit:
+					assessmentFiles.evaluatedOrganizationalUnit,
+			})
+			.from(assessments)
+			.leftJoin(
+				assessmentFiles,
+				eq(assessmentFiles.assessmentId, assessments.id),
+			)
+			.where(
+				and(
+					eq(assessments.evaluatedUserId, ctx.user.id),
+					ne(assessments.evaluatorUserId, ctx.user.id),
+				),
+			)
+			.orderBy(desc(assessments.createdAt));
+	}),
 
 	get: employeeProcedure
 		.input(z.object({ id: z.string().min(1) }))
