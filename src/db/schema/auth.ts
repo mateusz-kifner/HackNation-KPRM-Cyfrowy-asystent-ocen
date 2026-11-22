@@ -28,6 +28,16 @@ export const user = sqliteTable("user", {
   employmentStatus: text("employment_status"),
   employmentType: text("employment_type"),
   hireDate: integer("hire_date", { mode: "timestamp_ms" }),
+  deactivatedAt: integer("deactivated_at", { mode: "timestamp_ms" }),
+});
+
+export const userAuditLog = sqliteTable("user_audit_log", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  actorId: text("actor_id").notNull(),
+  action: text("action").notNull(),
+  changes: text("changes").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`).notNull(),
 });
 
 export const session = sqliteTable(

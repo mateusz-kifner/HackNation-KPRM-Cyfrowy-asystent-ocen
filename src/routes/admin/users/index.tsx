@@ -10,6 +10,7 @@ import {
 } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { authClient } from "#/lib/auth-client";
+import { PageBreadcrumb } from "#/components/page-breadcrumb";
 import { useTRPC } from "#/integrations/trpc/react";
 import type { ManagedUser } from "@/components/admin/user-form-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -44,7 +45,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 
-export const Route = createFileRoute("/admin/users")({ component: UsersPage });
+export const Route = createFileRoute("/admin/users/")({ component: UsersPage });
 
 function UsersPage() {
 	const sessionQuery = authClient.useSession();
@@ -93,9 +94,7 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 			<main className="min-w-0 flex-1 space-y-6">
 					<header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
 						<div>
-							<h1 className="text-2xl font-semibold tracking-tight">
-								User accounts
-							</h1>
+							<PageBreadcrumb items={[{ label: "Admin", href: "/admin" }, { label: "User accounts" }]} />
 							<p className="mt-1 text-sm text-muted-foreground">
 								Create accounts, manage roles, and maintain employee profile
 								information.
@@ -204,7 +203,7 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 															asChild
 																aria-label={`Edit ${user.name}`}
 															>
-															<Link to="/admin/users/$id" params={{ id: user.id }}>
+															<Link to="/admin/users/edit/$id" params={{ id: user.id }}>
 																<IconPencil />
 															</Link>
 															</Button>

@@ -19,7 +19,6 @@ import { Route as EvaluationsChar91indexChar93RouteImport } from './routes/evalu
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminAiSettingsRouteImport } from './routes/admin/ai-settings'
 import { Route as AdminEmployeesRouteImport } from './routes/admin/employees'
-import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as ApiChatRouteRouteImport } from './routes/api/chat/route'
 import { Route as EvaluationAddRouteImport } from './routes/evaluation/add'
 import { Route as EvaluationCompletedRouteImport } from './routes/evaluation/completed'
@@ -27,10 +26,11 @@ import { Route as EvaluationRunningRouteImport } from './routes/evaluation/runni
 import { Route as EvaluationUpcomingRouteImport } from './routes/evaluation/upcoming'
 import { Route as TestIndexRouteImport } from './routes/test/index'
 import { Route as TestShadcnRouteImport } from './routes/test/shadcn'
-import { Route as AdminUsersIdRouteImport } from './routes/admin/users.$id'
-import { Route as AdminUsersNewRouteImport } from './routes/admin/users.new'
+import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
+import { Route as AdminUsersNewRouteImport } from './routes/admin/users/new'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api.trpc.$'
+import { Route as AdminUsersEditIdRouteImport } from './routes/admin/users/edit/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -83,11 +83,6 @@ const AdminEmployeesRoute = AdminEmployeesRouteImport.update({
   path: '/employees',
   getParentRoute: () => AdminRouteRoute,
 } as any)
-const AdminUsersRoute = AdminUsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => AdminRouteRoute,
-} as any)
 const ApiChatRouteRoute = ApiChatRouteRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -123,15 +118,15 @@ const TestShadcnRoute = TestShadcnRouteImport.update({
   path: '/test/shadcn',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminUsersIdRoute = AdminUsersIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AdminUsersRoute,
+const AdminUsersIndexRoute = AdminUsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminUsersNewRoute = AdminUsersNewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => AdminUsersRoute,
+  id: '/users/new',
+  path: '/users/new',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -142,6 +137,11 @@ const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
   id: '/api/trpc/$',
   path: '/api/trpc/$',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminUsersEditIdRoute = AdminUsersEditIdRouteImport.update({
+  id: '/users/edit/$id',
+  path: '/users/edit/$id',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -154,7 +154,6 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/employees': typeof AdminEmployeesRoute
-  '/admin/users': typeof AdminUsersRouteWithChildren
   '/evaluation/add': typeof EvaluationAddRoute
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
@@ -163,10 +162,11 @@ export interface FileRoutesByFullPath {
   '/test/shadcn': typeof TestShadcnRoute
   '/admin/': typeof AdminIndexRoute
   '/test/': typeof TestIndexRoute
-  '/admin/users/$id': typeof AdminUsersIdRoute
   '/admin/users/new': typeof AdminUsersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/admin/users/': typeof AdminUsersIndexRoute
+  '/admin/users/edit/$id': typeof AdminUsersEditIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -177,7 +177,6 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/employees': typeof AdminEmployeesRoute
-  '/admin/users': typeof AdminUsersRouteWithChildren
   '/evaluation/add': typeof EvaluationAddRoute
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
@@ -186,10 +185,11 @@ export interface FileRoutesByTo {
   '/test/shadcn': typeof TestShadcnRoute
   '/admin': typeof AdminIndexRoute
   '/test': typeof TestIndexRoute
-  '/admin/users/$id': typeof AdminUsersIdRoute
   '/admin/users/new': typeof AdminUsersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/admin/users': typeof AdminUsersIndexRoute
+  '/admin/users/edit/$id': typeof AdminUsersEditIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -202,7 +202,6 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/employees': typeof AdminEmployeesRoute
-  '/admin/users': typeof AdminUsersRouteWithChildren
   '/evaluation/add': typeof EvaluationAddRoute
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
@@ -211,10 +210,11 @@ export interface FileRoutesById {
   '/test/shadcn': typeof TestShadcnRoute
   '/admin/': typeof AdminIndexRoute
   '/test/': typeof TestIndexRoute
-  '/admin/users/$id': typeof AdminUsersIdRoute
   '/admin/users/new': typeof AdminUsersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/admin/users/': typeof AdminUsersIndexRoute
+  '/admin/users/edit/$id': typeof AdminUsersEditIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -228,7 +228,6 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/admin/ai-settings'
     | '/admin/employees'
-    | '/admin/users'
     | '/evaluation/add'
     | '/evaluation/completed'
     | '/evaluation/running'
@@ -237,10 +236,11 @@ export interface FileRouteTypes {
     | '/test/shadcn'
     | '/admin/'
     | '/test/'
-    | '/admin/users/$id'
     | '/admin/users/new'
     | '/api/auth/$'
     | '/api/trpc/$'
+    | '/admin/users/'
+    | '/admin/users/edit/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -251,7 +251,6 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/admin/ai-settings'
     | '/admin/employees'
-    | '/admin/users'
     | '/evaluation/add'
     | '/evaluation/completed'
     | '/evaluation/running'
@@ -260,10 +259,11 @@ export interface FileRouteTypes {
     | '/test/shadcn'
     | '/admin'
     | '/test'
-    | '/admin/users/$id'
     | '/admin/users/new'
     | '/api/auth/$'
     | '/api/trpc/$'
+    | '/admin/users'
+    | '/admin/users/edit/$id'
   id:
     | '__root__'
     | '/'
@@ -275,7 +275,6 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/admin/ai-settings'
     | '/admin/employees'
-    | '/admin/users'
     | '/evaluation/add'
     | '/evaluation/completed'
     | '/evaluation/running'
@@ -284,10 +283,11 @@ export interface FileRouteTypes {
     | '/test/shadcn'
     | '/admin/'
     | '/test/'
-    | '/admin/users/$id'
     | '/admin/users/new'
     | '/api/auth/$'
     | '/api/trpc/$'
+    | '/admin/users/'
+    | '/admin/users/edit/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -377,13 +377,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEmployeesRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/admin/users': {
-      id: '/admin/users'
-      path: '/users'
-      fullPath: '/admin/users'
-      preLoaderRoute: typeof AdminUsersRouteImport
-      parentRoute: typeof AdminRouteRoute
-    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -433,19 +426,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestShadcnRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/users/$id': {
-      id: '/admin/users/$id'
-      path: '/$id'
-      fullPath: '/admin/users/$id'
-      preLoaderRoute: typeof AdminUsersIdRouteImport
-      parentRoute: typeof AdminUsersRoute
+    '/admin/users/': {
+      id: '/admin/users/'
+      path: '/users'
+      fullPath: '/admin/users/'
+      preLoaderRoute: typeof AdminUsersIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/admin/users/new': {
       id: '/admin/users/new'
-      path: '/new'
+      path: '/users/new'
       fullPath: '/admin/users/new'
       preLoaderRoute: typeof AdminUsersNewRouteImport
-      parentRoute: typeof AdminUsersRoute
+      parentRoute: typeof AdminRouteRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -461,35 +454,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTrpcSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/users/edit/$id': {
+      id: '/admin/users/edit/$id'
+      path: '/users/edit/$id'
+      fullPath: '/admin/users/edit/$id'
+      preLoaderRoute: typeof AdminUsersEditIdRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
-
-interface AdminUsersRouteChildren {
-  AdminUsersIdRoute: typeof AdminUsersIdRoute
-  AdminUsersNewRoute: typeof AdminUsersNewRoute
-}
-
-const AdminUsersRouteChildren: AdminUsersRouteChildren = {
-  AdminUsersIdRoute: AdminUsersIdRoute,
-  AdminUsersNewRoute: AdminUsersNewRoute,
-}
-
-const AdminUsersRouteWithChildren = AdminUsersRoute._addFileChildren(
-  AdminUsersRouteChildren,
-)
 
 interface AdminRouteRouteChildren {
   AdminAiSettingsRoute: typeof AdminAiSettingsRoute
   AdminEmployeesRoute: typeof AdminEmployeesRoute
-  AdminUsersRoute: typeof AdminUsersRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminUsersNewRoute: typeof AdminUsersNewRoute
+  AdminUsersIndexRoute: typeof AdminUsersIndexRoute
+  AdminUsersEditIdRoute: typeof AdminUsersEditIdRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAiSettingsRoute: AdminAiSettingsRoute,
   AdminEmployeesRoute: AdminEmployeesRoute,
-  AdminUsersRoute: AdminUsersRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
+  AdminUsersNewRoute: AdminUsersNewRoute,
+  AdminUsersIndexRoute: AdminUsersIndexRoute,
+  AdminUsersEditIdRoute: AdminUsersEditIdRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(

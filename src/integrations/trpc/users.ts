@@ -2,7 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { adminProcedure, protectedProcedure, publicProcedure } from "./init";
 import { db } from "#/db";
-import { account, user } from "#/db/schema";
+import { account, session, user, userAuditLog } from "#/db/schema";
 import { eq, like, or } from "drizzle-orm";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { hashPassword } from "better-auth/crypto";
@@ -19,6 +19,10 @@ const profileSchema = z.object({
 	employmentType: z.string().nullable().optional(),
 	hireDate: z.coerce.date().nullable().optional(),
 });
+
+function changedProfile(data: Record<string, unknown>, before: Record<string, unknown>) {
+	return Object.fromEntries(Object.keys(data).map((key) => [key, { before: before[key] ?? null, after: data[key] ?? null }]));
+}
 
 export const usersRouter = {
 	loginOptions: publicProcedure.query(async () =>
@@ -54,8 +58,8 @@ export const usersRouter = {
 			const { password, ...profile } = input;
 			const id = randomUUID();
 			const hashedPassword = await hashPassword(password);
-			const newUser = await db.transaction(async (tx) => {
-				const [created] = await tx
+			const newUser = db.transaction((tx) => {
+				const [created] = tx
 					.insert(user)
 					.values({
 						id,
@@ -64,7 +68,7 @@ export const usersRouter = {
 						isAnonymous: false,
 					})
 					.returning();
-				await tx.insert(account).values({
+				tx.insert(account).values({
 					id: randomUUID(),
 					accountId: id,
 					providerId: "credential",
@@ -77,13 +81,15 @@ export const usersRouter = {
 		}),
 	update: adminProcedure
 		.input(profileSchema.partial().extend({ id: z.string() }))
-		.mutation(async ({ input }) => {
+		.mutation(async ({ input, ctx }) => {
 			const { id, ...data } = input;
-			const [updatedUser] = await db
-				.update(user)
-				.set(data)
-				.where(eq(user.id, id))
-				.returning();
+			const [before] = await db.select().from(user).where(eq(user.id, id));
+			if (!before) throw new TRPCError({ code: "NOT_FOUND" });
+			const [updatedUser] = db.transaction((tx) => {
+				const [updated] = tx.update(user).set(data).where(eq(user.id, id)).returning();
+				tx.insert(userAuditLog).values({ id: randomUUID(), userId: id, actorId: ctx.session.user.id, action: "updated", changes: JSON.stringify(changedProfile(data, before)) });
+				return [updated];
+			});
 			return updatedUser;
 		}),
 	delete: adminProcedure
@@ -95,7 +101,13 @@ export const usersRouter = {
 					message: "You cannot delete your own account.",
 				});
 			}
-			await db.delete(user).where(eq(user.id, input.id));
+			const [target] = await db.select().from(user).where(eq(user.id, input.id));
+			if (!target) throw new TRPCError({ code: "NOT_FOUND" });
+			db.transaction((tx) => {
+				tx.update(user).set({ deactivatedAt: new Date() }).where(eq(user.id, input.id));
+				tx.delete(session).where(eq(session.userId, input.id));
+				tx.insert(userAuditLog).values({ id: randomUUID(), userId: input.id, actorId: ctx.session.user.id, action: "deactivated", changes: JSON.stringify({ deactivatedAt: new Date().toISOString() }) });
+			});
 			return { success: true };
 		}),
 } satisfies TRPCRouterRecord;
