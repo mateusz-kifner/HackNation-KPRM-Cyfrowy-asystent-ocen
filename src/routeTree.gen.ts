@@ -22,6 +22,7 @@ import { Route as EvaluationAddRouteImport } from './routes/evaluation/add'
 import { Route as EvaluationCompletedRouteImport } from './routes/evaluation/completed'
 import { Route as EvaluationRunningRouteImport } from './routes/evaluation/running'
 import { Route as EvaluationUpcomingRouteImport } from './routes/evaluation/upcoming'
+import { Route as SettingsCronRouteImport } from './routes/settings/cron'
 import { Route as TestIndexRouteImport } from './routes/test/index'
 import { Route as TestShadcnRouteImport } from './routes/test/shadcn'
 import { Route as UsersIndexRouteImport } from './routes/users/index'
@@ -95,6 +96,11 @@ const EvaluationUpcomingRoute = EvaluationUpcomingRouteImport.update({
   path: '/upcoming',
   getParentRoute: () => EvaluationRoute,
 } as any)
+const SettingsCronRoute = SettingsCronRouteImport.update({
+  id: '/cron',
+  path: '/cron',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const TestIndexRoute = TestIndexRouteImport.update({
   id: '/test/',
   path: '/test/',
@@ -136,13 +142,14 @@ export interface FileRoutesByFullPath {
   '/evaluation': typeof EvaluationRouteWithChildren
   '/login': typeof LoginRoute
   '/me': typeof MeRoute
-  '/settings': typeof SettingsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/api/chat': typeof ApiChatRouteRoute
   '/evaluation/$id': typeof EvaluationIdRoute
   '/evaluation/add': typeof EvaluationAddRoute
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
   '/evaluation/upcoming': typeof EvaluationUpcomingRoute
+  '/settings/cron': typeof SettingsCronRoute
   '/test/shadcn': typeof TestShadcnRoute
   '/users/new': typeof UsersNewRoute
   '/employees/': typeof EmployeesIndexRoute
@@ -157,13 +164,14 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/me': typeof MeRoute
-  '/settings': typeof SettingsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/api/chat': typeof ApiChatRouteRoute
   '/evaluation/$id': typeof EvaluationIdRoute
   '/evaluation/add': typeof EvaluationAddRoute
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
   '/evaluation/upcoming': typeof EvaluationUpcomingRoute
+  '/settings/cron': typeof SettingsCronRoute
   '/test/shadcn': typeof TestShadcnRoute
   '/users/new': typeof UsersNewRoute
   '/employees': typeof EmployeesIndexRoute
@@ -180,13 +188,14 @@ export interface FileRoutesById {
   '/evaluation': typeof EvaluationRouteWithChildren
   '/login': typeof LoginRoute
   '/me': typeof MeRoute
-  '/settings': typeof SettingsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/api/chat': typeof ApiChatRouteRoute
   '/evaluation/$id': typeof EvaluationIdRoute
   '/evaluation/add': typeof EvaluationAddRoute
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
   '/evaluation/upcoming': typeof EvaluationUpcomingRoute
+  '/settings/cron': typeof SettingsCronRoute
   '/test/shadcn': typeof TestShadcnRoute
   '/users/new': typeof UsersNewRoute
   '/employees/': typeof EmployeesIndexRoute
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
     | '/evaluation/completed'
     | '/evaluation/running'
     | '/evaluation/upcoming'
+    | '/settings/cron'
     | '/test/shadcn'
     | '/users/new'
     | '/employees/'
@@ -232,6 +242,7 @@ export interface FileRouteTypes {
     | '/evaluation/completed'
     | '/evaluation/running'
     | '/evaluation/upcoming'
+    | '/settings/cron'
     | '/test/shadcn'
     | '/users/new'
     | '/employees'
@@ -254,6 +265,7 @@ export interface FileRouteTypes {
     | '/evaluation/completed'
     | '/evaluation/running'
     | '/evaluation/upcoming'
+    | '/settings/cron'
     | '/test/shadcn'
     | '/users/new'
     | '/employees/'
@@ -270,7 +282,7 @@ export interface RootRouteChildren {
   EvaluationRoute: typeof EvaluationRouteWithChildren
   LoginRoute: typeof LoginRoute
   MeRoute: typeof MeRoute
-  SettingsRoute: typeof SettingsRoute
+  SettingsRoute: typeof SettingsRouteWithChildren
   ApiChatRouteRoute: typeof ApiChatRouteRoute
   TestShadcnRoute: typeof TestShadcnRoute
   UsersNewRoute: typeof UsersNewRoute
@@ -375,6 +387,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EvaluationUpcomingRouteImport
       parentRoute: typeof EvaluationRoute
     }
+    '/settings/cron': {
+      id: '/settings/cron'
+      path: '/cron'
+      fullPath: '/settings/cron'
+      preLoaderRoute: typeof SettingsCronRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/test/': {
       id: '/test/'
       path: '/test'
@@ -449,12 +468,24 @@ const EvaluationRouteWithChildren = EvaluationRoute._addFileChildren(
   EvaluationRouteChildren,
 )
 
+interface SettingsRouteChildren {
+  SettingsCronRoute: typeof SettingsCronRoute
+}
+
+const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsCronRoute: SettingsCronRoute,
+}
+
+const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
+  SettingsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EvaluationRoute: EvaluationRouteWithChildren,
   LoginRoute: LoginRoute,
   MeRoute: MeRoute,
-  SettingsRoute: SettingsRoute,
+  SettingsRoute: SettingsRouteWithChildren,
   ApiChatRouteRoute: ApiChatRouteRoute,
   TestShadcnRoute: TestShadcnRoute,
   UsersNewRoute: UsersNewRoute,

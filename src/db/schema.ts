@@ -79,6 +79,14 @@ export const notifications = sqliteTable('notifications', {
   createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`),
 })
 
+export const schedulerSettings = sqliteTable('scheduler_settings', {
+  id: text('id').primaryKey().default('global'),
+  cronExpression: text('cron_expression').notNull().default('0 2 * * *'),
+  enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
+  lastRunAt: integer('last_run_at', { mode: 'timestamp_ms' }),
+  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`),
+})
+
 export const reportingLines = sqliteTable('reporting_lines', {
   id: text('id').primaryKey(),
   employeeUserId: text('employee_user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),

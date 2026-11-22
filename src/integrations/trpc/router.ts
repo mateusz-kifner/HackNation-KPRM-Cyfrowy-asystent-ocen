@@ -10,6 +10,7 @@ import { evaluationsRouter } from './evaluations'
 import { meRouter } from './me'
 import { notificationsRouter } from './notifications'
 import { hrOperationsRouter } from './hr-operations'
+import { schedulerRouter } from './scheduler'
 
 const todos = [
   { id: 1, name: 'Get groceries' },
@@ -41,5 +42,6 @@ export const trpcRouter = createTRPCRouter({
   me: meRouter,
   notifications: notificationsRouter,
   hr: hrOperationsRouter,
+  scheduler: schedulerRouter,
 })
 export type TRPCRouter = typeof trpcRouter
