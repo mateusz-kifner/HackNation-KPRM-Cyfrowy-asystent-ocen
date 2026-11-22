@@ -28,6 +28,7 @@ import { Route as EvaluationUpcomingRouteImport } from './routes/evaluation/upco
 import { Route as TestIndexRouteImport } from './routes/test/index'
 import { Route as TestShadcnRouteImport } from './routes/test/shadcn'
 import { Route as AdminUsersIdRouteImport } from './routes/admin/users.$id'
+import { Route as AdminUsersNewRouteImport } from './routes/admin/users.new'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api.trpc.$'
 
@@ -127,6 +128,11 @@ const AdminUsersIdRoute = AdminUsersIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AdminUsersRoute,
 } as any)
+const AdminUsersNewRoute = AdminUsersNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AdminUsersRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -158,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/test/': typeof TestIndexRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
+  '/admin/users/new': typeof AdminUsersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
@@ -180,6 +187,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/test': typeof TestIndexRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
+  '/admin/users/new': typeof AdminUsersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
@@ -204,6 +212,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/test/': typeof TestIndexRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
+  '/admin/users/new': typeof AdminUsersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/test/'
     | '/admin/users/$id'
+    | '/admin/users/new'
     | '/api/auth/$'
     | '/api/trpc/$'
   fileRoutesByTo: FileRoutesByTo
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/test'
     | '/admin/users/$id'
+    | '/admin/users/new'
     | '/api/auth/$'
     | '/api/trpc/$'
   id:
@@ -274,6 +285,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/test/'
     | '/admin/users/$id'
+    | '/admin/users/new'
     | '/api/auth/$'
     | '/api/trpc/$'
   fileRoutesById: FileRoutesById
@@ -428,6 +440,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersIdRouteImport
       parentRoute: typeof AdminUsersRoute
     }
+    '/admin/users/new': {
+      id: '/admin/users/new'
+      path: '/new'
+      fullPath: '/admin/users/new'
+      preLoaderRoute: typeof AdminUsersNewRouteImport
+      parentRoute: typeof AdminUsersRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -447,10 +466,12 @@ declare module '@tanstack/react-router' {
 
 interface AdminUsersRouteChildren {
   AdminUsersIdRoute: typeof AdminUsersIdRoute
+  AdminUsersNewRoute: typeof AdminUsersNewRoute
 }
 
 const AdminUsersRouteChildren: AdminUsersRouteChildren = {
   AdminUsersIdRoute: AdminUsersIdRoute,
+  AdminUsersNewRoute: AdminUsersNewRoute,
 }
 
 const AdminUsersRouteWithChildren = AdminUsersRoute._addFileChildren(

@@ -11,7 +11,6 @@ import {
 import { toast } from "sonner";
 import { authClient } from "#/lib/auth-client";
 import { useTRPC } from "#/integrations/trpc/react";
-import { UserFormDialog } from "@/components/admin/user-form-dialog";
 import type { ManagedUser } from "@/components/admin/user-form-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
@@ -66,23 +65,11 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
 	const [roleFilter, setRoleFilter] = useState("all");
-	const [formOpen, setFormOpen] = useState(false);
-	
 	const [deletingUser, setDeletingUser] = useState<ManagedUser | null>(null);
 	const usersQuery = useQuery(trpc.users.list.queryOptions());
 	const refreshUsers = () =>
 		queryClient.invalidateQueries({ queryKey: [["users", "list"]] });
 
-	const createUser = useMutation(
-		trpc.users.create.mutationOptions({
-			onSuccess: () => {
-				toast.success("Account created");
-				setFormOpen(false);
-				refreshUsers();
-			},
-			onError: (error) => toast.error(error.message),
-		}),
-	);
 	const deleteUser = useMutation(
 		trpc.users.delete.mutationOptions({
 			onSuccess: () => {
@@ -101,12 +88,6 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 				.includes(search.trim().toLocaleLowerCase());
 		return matchesSearch && (roleFilter === "all" || user.role === roleFilter);
 	});
-
-	function openCreate() {
-		setFormOpen(true);
-	}
-
-
 	return (
 		<>
 			<main className="min-w-0 flex-1 space-y-6">
@@ -120,9 +101,9 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 								information.
 							</p>
 						</div>
-						<Button onClick={openCreate}>
+						<Button asChild><Link to="/admin/users/new">
 							<IconPlus data-icon="inline-start" /> Add user
-						</Button>
+						</Link></Button>
 					</header>
 
 					<Card>
@@ -254,15 +235,6 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 					</Card>
 				</main>
 
-			<UserFormDialog
-				open={formOpen}
-				onOpenChange={(open) => {
-					setFormOpen(open);
-				}}
-				user={null}
-				isPending={createUser.isPending}
-				onSubmit={(values) => createUser.mutate({ ...values, password: values.password ?? "" })}
-			/>
 
 			<AlertDialog
 				open={Boolean(deletingUser)}
