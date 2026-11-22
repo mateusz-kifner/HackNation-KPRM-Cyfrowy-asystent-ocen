@@ -194,9 +194,15 @@ function EvaluationTable({
 					{evaluations.map((evaluation) => (
 						<TableRow key={evaluation.id}>
 							<TableCell className="font-medium">
-								{[evaluation.evaluatedFirstName, evaluation.evaluatedLastName]
+								<Link
+									to="/evaluation/$id"
+									params={{ id: evaluation.id }}
+									className="underline-offset-4 hover:underline"
+								>
+									{[evaluation.evaluatedFirstName, evaluation.evaluatedLastName]
 									.filter(Boolean)
 									.join(" ") || "Unnamed employee"}
+								</Link>
 								{evaluation.evaluatedOrganizationalUnit && (
 									<div className="text-xs text-muted-foreground">
 										{evaluation.evaluatedOrganizationalUnit}

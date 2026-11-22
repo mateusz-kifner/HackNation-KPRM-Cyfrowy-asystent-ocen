@@ -20,6 +20,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminAiSettingsRouteImport } from './routes/admin/ai-settings'
 import { Route as AdminEmployeesRouteImport } from './routes/admin/employees'
 import { Route as ApiChatRouteRouteImport } from './routes/api/chat/route'
+import { Route as EvaluationIdRouteImport } from './routes/evaluation/$id'
 import { Route as EvaluationAddRouteImport } from './routes/evaluation/add'
 import { Route as EvaluationCompletedRouteImport } from './routes/evaluation/completed'
 import { Route as EvaluationRunningRouteImport } from './routes/evaluation/running'
@@ -88,6 +89,11 @@ const ApiChatRouteRoute = ApiChatRouteRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EvaluationIdRoute = EvaluationIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => EvaluationRoute,
+} as any)
 const EvaluationAddRoute = EvaluationAddRouteImport.update({
   id: '/add',
   path: '/add',
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/employees': typeof AdminEmployeesRoute
+  '/evaluation/$id': typeof EvaluationIdRoute
   '/evaluation/add': typeof EvaluationAddRoute
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
@@ -177,6 +184,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/employees': typeof AdminEmployeesRoute
+  '/evaluation/$id': typeof EvaluationIdRoute
   '/evaluation/add': typeof EvaluationAddRoute
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
@@ -202,6 +210,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/employees': typeof AdminEmployeesRoute
+  '/evaluation/$id': typeof EvaluationIdRoute
   '/evaluation/add': typeof EvaluationAddRoute
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
@@ -228,6 +237,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/admin/ai-settings'
     | '/admin/employees'
+    | '/evaluation/$id'
     | '/evaluation/add'
     | '/evaluation/completed'
     | '/evaluation/running'
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/admin/ai-settings'
     | '/admin/employees'
+    | '/evaluation/$id'
     | '/evaluation/add'
     | '/evaluation/completed'
     | '/evaluation/running'
@@ -275,6 +286,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/admin/ai-settings'
     | '/admin/employees'
+    | '/evaluation/$id'
     | '/evaluation/add'
     | '/evaluation/completed'
     | '/evaluation/running'
@@ -384,6 +396,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/evaluation/$id': {
+      id: '/evaluation/$id'
+      path: '/$id'
+      fullPath: '/evaluation/$id'
+      preLoaderRoute: typeof EvaluationIdRouteImport
+      parentRoute: typeof EvaluationRoute
+    }
     '/evaluation/add': {
       id: '/evaluation/add'
       path: '/add'
@@ -487,6 +506,7 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 )
 
 interface EvaluationRouteChildren {
+  EvaluationIdRoute: typeof EvaluationIdRoute
   EvaluationAddRoute: typeof EvaluationAddRoute
   EvaluationCompletedRoute: typeof EvaluationCompletedRoute
   EvaluationRunningRoute: typeof EvaluationRunningRoute
@@ -494,6 +514,7 @@ interface EvaluationRouteChildren {
 }
 
 const EvaluationRouteChildren: EvaluationRouteChildren = {
+  EvaluationIdRoute: EvaluationIdRoute,
   EvaluationAddRoute: EvaluationAddRoute,
   EvaluationCompletedRoute: EvaluationCompletedRoute,
   EvaluationRunningRoute: EvaluationRunningRoute,
