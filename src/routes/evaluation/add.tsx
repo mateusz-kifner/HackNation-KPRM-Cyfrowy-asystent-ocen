@@ -10,6 +10,8 @@ import { useFormTool } from "#/components/form-tool-context";
 import { PageBreadcrumb } from "#/components/page-breadcrumb";
 import { useEvaluationCandidates } from "#/hooks/api/evaluations/useEvaluationCandidates";
 import { useEvaluationCreate } from "#/hooks/api/evaluations/useEvaluationCreate";
+import { useTRPC } from "@/integrations/trpc/react";
+import { useQuery } from "@tanstack/react-query";
 import { authClient } from "#/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import {
@@ -86,6 +88,8 @@ function EvaluationCreationForm() {
 	const [error, setError] = useState<string | null>(null);
 	const navigate = useNavigate();
 	const candidatesQuery = useEvaluationCandidates();
+	const trpc = useTRPC();
+	const optionsQuery = useQuery(trpc.evaluations.options.queryOptions());
 	const createEvaluation = useEvaluationCreate({
 		onSuccess: async () => {
 			await navigate({ to: "/evaluation" });
@@ -93,6 +97,7 @@ function EvaluationCreationForm() {
 		onError: (mutationError) => setError(mutationError.message),
 	});
 	const candidates = candidatesQuery.data ?? [];
+	const requiredCriteria = optionsQuery.data?.forms[values.form] ?? [];
 
 	function update<K extends keyof FormValues>(key: K, value: FormValues[K]) {
 		setValues((current) => ({ ...current, [key]: value }));
@@ -257,6 +262,32 @@ function EvaluationCreationForm() {
 									<SelectItem value="C">Form C</SelectItem>
 								</SelectContent>
 							</Select>
+						</div>
+						<div className="grid gap-2 sm:col-span-2 rounded-md border bg-muted/30 p-4">
+							<div>
+								<p className="text-sm font-medium">
+									Required criteria for Form {values.form}
+								</p>
+								<p className="text-sm text-muted-foreground">
+									These criteria will be added to the evaluation automatically.
+									You can add up to three optional criteria after creating it.
+								</p>
+							</div>
+							{optionsQuery.isLoading ? (
+								<p className="text-sm text-muted-foreground">
+									Loading form criteria…
+								</p>
+							) : optionsQuery.isError ? (
+								<p role="alert" className="text-sm text-destructive">
+									Could not load form criteria.
+								</p>
+							) : (
+								<ol className="list-decimal space-y-1 pl-5 text-sm">
+									{requiredCriteria.map((criterion) => (
+										<li key={criterion}>{criterion}</li>
+									))}
+								</ol>
+							)}
 						</div>
 						<TextField
 							label="Assessment period starts"
