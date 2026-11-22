@@ -20,7 +20,15 @@ export function FormToolProvider({ children }: { children: ReactNode }) {
 			forms.current.delete(name);
 			forms.current.set(name, form);
 		}
-		else forms.current.delete(name);
+		else {
+			const registeredForm = forms.current.get(name);
+			if (registeredForm) {
+				for (const [fieldName, field] of selectedFields.current) {
+					if (registeredForm.contains(field)) selectedFields.current.delete(fieldName);
+				}
+			}
+			forms.current.delete(name);
+		}
 	}, []);
 	const getFormState = useCallback(() => {
 		const entry = [...forms.current.entries()].reverse().find(([, form]) => form.isConnected);
@@ -44,7 +52,9 @@ export function FormToolProvider({ children }: { children: ReactNode }) {
 		if (color !== undefined && !resolvedColor) {
 			return { success: false, error: `"${color}" is not a valid CSS color.` };
 		}
-		for (const form of forms.current.values()) {
+		// Forms are kept in activation order; resolve duplicates against the most
+		// recently mounted form (for example, an open dialog over a page form).
+		for (const form of [...forms.current.values()].reverse()) {
 			if (!form.isConnected) continue;
 			const field = Array.from(form.elements).find(
 				(element) =>
@@ -68,7 +78,8 @@ export function FormToolProvider({ children }: { children: ReactNode }) {
 	}, []);
 	const editField = useCallback(async (name: string, nextValue: string) => {
 		const field = selectedFields.current.get(name);
-		if (!field?.isConnected || ![...forms.current.values()].some((form) => form.contains(field))) {
+		const activeForm = [...forms.current.values()].reverse().find((form) => form.isConnected);
+		if (!field?.isConnected || !activeForm?.contains(field)) {
 			return { success: false, error: `Select the form field "${name}" before editing it.` };
 		}
 		if (("disabled" in field && field.disabled) || ("readOnly" in field && field.readOnly)) {
