@@ -26,7 +26,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
 	Select,
@@ -45,7 +51,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 
-export const Route = createFileRoute("/admin/users/")({ component: UsersPage });
+export const Route = createFileRoute("/users/")({ component: UsersPage });
 
 function UsersPage() {
 	const sessionQuery = authClient.useSession();
@@ -80,33 +86,37 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 	);
 	return (
 		<>
-			<main className="min-w-0 flex-1 space-y-6">
-				<header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-					<div>
-						<PageBreadcrumb
-							items={[
-								{ label: "Admin", href: "/admin" },
-								{ label: "User accounts" },
-							]}
-						/>
+			<main className="mx-auto min-w-0 w-full max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
+				<header className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+					<div className="space-y-2">
+						<PageBreadcrumb items={[{ label: "Users" }]} />
+						<div>
+							<h1 className="text-3xl font-semibold tracking-tight">Users</h1>
+							<p className="mt-1 text-sm text-muted-foreground">
+								Manage account access, roles, and employee details.
+							</p>
+						</div>
 					</div>
 					<Button asChild>
-						<Link to="/admin/users/new">
+						<Link to="/users/new">
 							<IconPlus data-icon="inline-start" /> Add user
 						</Link>
 					</Button>
 				</header>
 
-				<Card>
-					<CardHeader className="pb-3">
-						<CardTitle className="text-base">Directory</CardTitle>
+				<Card className="overflow-hidden">
+					<CardHeader className="border-b bg-muted/20 pb-4">
+						<CardTitle className="text-base">User directory</CardTitle>
+						<CardDescription>
+							Search accounts or filter the list by role.
+						</CardDescription>
 					</CardHeader>
-					<CardContent className="space-y-4">
-						<div className="flex flex-col gap-3 sm:flex-row">
+					<CardContent className="space-y-5 pt-5">
+						<div className="flex flex-col gap-3 sm:flex-row sm:items-center">
 							<div className="relative flex-1">
 								<IconSearch className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 								<Input
-									className="pl-9"
+									className="h-10 pl-9"
 									value={search}
 									onChange={(event) => setSearch(event.target.value)}
 									placeholder="Search name, email, department…"
@@ -115,7 +125,7 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 							</div>
 							<Select value={roleFilter} onValueChange={setRoleFilter}>
 								<SelectTrigger
-									className="w-full sm:w-44"
+									className="h-10 w-full sm:w-48"
 									aria-label="Filter by account role"
 								>
 									<SelectValue placeholder="All roles" />
@@ -137,8 +147,10 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 								<AlertDescription>{usersQuery.error.message}</AlertDescription>
 							</Alert>
 						) : users.length === 0 ? (
-							<div className="rounded-lg border border-dashed py-12 text-center">
-								<IconUsers className="mx-auto mb-3 size-8 text-muted-foreground" />
+							<div className="rounded-lg border border-dashed bg-muted/10 px-6 py-14 text-center">
+								<div className="mx-auto mb-3 flex size-11 items-center justify-center rounded-full bg-muted text-muted-foreground">
+									<IconUsers className="size-5" />
+								</div>
 								<p className="font-medium">
 									{search || roleFilter !== "all"
 										? "No matching accounts"
@@ -151,10 +163,10 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 								</p>
 							</div>
 						) : (
-							<div className="overflow-x-auto rounded-md border">
+							<div className="overflow-x-auto rounded-lg border">
 								<Table>
 									<TableHeader>
-										<TableRow>
+										<TableRow className="bg-muted/40 hover:bg-muted/40">
 											<TableHead>Name</TableHead>
 											<TableHead>Email</TableHead>
 											<TableHead>Role</TableHead>
@@ -166,16 +178,21 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 									</TableHeader>
 									<TableBody>
 										{users.map((user) => (
-											<TableRow key={user.id}>
+											<TableRow
+												key={user.id}
+												className="transition-colors hover:bg-muted/30"
+											>
 												<TableCell className="font-medium">
-													{user.name}
+													<span className="block min-w-32">{user.name}</span>
 												</TableCell>
-												<TableCell>{user.email}</TableCell>
 												<TableCell>
+													{user.email}
+												</TableCell>
+												<TableCell className="text-muted-foreground">
 													<RoleBadge role={user.role} />
 												</TableCell>
 												<TableCell>{user.position || "—"}</TableCell>
-												<TableCell>
+												<TableCell className="whitespace-nowrap text-muted-foreground">
 													{user.department || user.organizationalUnit || "—"}
 												</TableCell>
 												<TableCell>
@@ -192,7 +209,7 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 															aria-label={`Edit ${user.name}`}
 														>
 															<Link
-																to="/admin/users/edit/$id"
+																to="/users/edit/$id"
 																params={{ id: user.id }}
 															>
 																<IconPencil />
@@ -218,7 +235,7 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 							</div>
 						)}
 						{!usersQuery.isPending && !usersQuery.isError && (
-							<p className="text-xs text-muted-foreground">
+							<p className="border-t pt-4 text-xs text-muted-foreground">
 								Showing {users.length} of {usersQuery.data?.length ?? 0}{" "}
 								accounts
 							</p>

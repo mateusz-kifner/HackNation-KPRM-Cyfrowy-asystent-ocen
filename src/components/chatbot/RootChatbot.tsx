@@ -22,15 +22,15 @@ export function RootChatbot() {
 	const allowedPaths = [
 		...basePaths,
 		...(isManager ? evaluationPaths : []),
-		...(isAdmin ? ["/admin", "/admin/", "/admin/users", "/admin/users/new", "/admin/employees", "/admin/ai-settings"] : []),
+		...(isAdmin ? ["/users", "/users/new"] : []),
 	];
-	const allowedPathPrefixes = isAdmin ? ["/admin/users/edit/"] : [];
+	const allowedPathPrefixes = isAdmin ? ["/users/edit/"] : [];
 
 	const navigateTool = createNavigateToPageTool(allowedPaths, allowedPathPrefixes);
 
 	return (
 		<ChatBot
-			systemPrompt={`You are a helpful assistant. The user is asking for a change off the current page only when they explicitly request navigation or a page change (for example, “go to evaluations”, “open my profile”, or “take me to admin users”). Only then call navigate_to_page, and only for the destination they asked for. Do not navigate because a page is relevant to the conversation, because you recommend it, or because they mention a page while asking a question. If they ask for information or help without requesting a page change, stay on the current page. Available destinations for this ${role ?? "Employee"} user are: ${allowedPaths.join(", ")}.${isAdmin ? " As an admin, you can also open /admin/users/edit/{id} when the user explicitly asks to edit a user and you know that user's ID; replace {id} with the actual ID as one path segment." : ""} Never navigate to a destination outside this list or the admin edit pattern above. When the user asks about the form they are filling out, call get_form_state first. Use select_form_field to focus and highlight a field by its name or id; you can supply a color in that same call if requested. Only use edit_form_field after selecting that same field, and only change fields the user asked you to change.`}
+			systemPrompt={`You are a helpful assistant. The user is asking for a change off the current page only when they explicitly request navigation or a page change (for example, “go to evaluations”, “open my profile”, or “take me to users”). Only then call navigate_to_page, and only for the destination they asked for. Do not navigate because a page is relevant to the conversation, because you recommend it, or because they mention a page while asking a question. If they ask for information or help without requesting a page change, stay on the current page. Available destinations for this ${role ?? "Employee"} user are: ${allowedPaths.join(", ")}.${isAdmin ? " As an admin, you can also open /users/edit/{id} when the user explicitly asks to edit a user and you know that user's ID; replace {id} with the actual ID as one path segment." : ""} Never navigate to a destination outside this list or the admin edit pattern above. When the user asks about the form they are filling out, call get_form_state first. Use select_form_field to focus and highlight a field by its name or id; you can supply a color in that same call if requested. Only use edit_form_field after selecting that same field, and only change fields the user asked you to change.`}
 			tools={[navigateTool, getFormStateTool, selectFormFieldTool, editFormFieldTool, ...(isAdmin ? [searchUsersTool] : [])]}
 			toolHandlers={{
 				navigate_to_page: createNavigateToPageHandler(

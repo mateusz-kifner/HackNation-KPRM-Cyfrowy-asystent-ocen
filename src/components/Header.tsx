@@ -37,7 +37,7 @@ export default function Header() {
               {isAdmin && (
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <Link to="/admin">Admin</Link>
+                    <Link to="/users">Users</Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               )}

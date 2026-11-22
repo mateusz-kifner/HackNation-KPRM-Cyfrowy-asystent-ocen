@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const Route = createFileRoute("/admin/users/edit/$id")({
+export const Route = createFileRoute("/users/edit/$id")({
 	component: EditUserPage,
 });
 
@@ -38,7 +38,7 @@ function EditUserPage() {
 	const update = useUserEdit({
 		onSuccess: async () => {
 			toast.success("Account updated");
-			await navigate({ to: "/admin/users" });
+			await navigate({ to: "/users" });
 		},
 		onError: (error) => toast.error(error.message),
 	});
@@ -72,8 +72,7 @@ function EditUserPage() {
 		<div className="space-y-4">
 			<PageBreadcrumb
 				items={[
-					{ label: "Admin", href: "/admin" },
-					{ label: "User accounts", href: "/admin/users" },
+					{ label: "User accounts", href: "/users" },
 					{ label: "Edit account" },
 				]}
 			/>
@@ -172,7 +171,7 @@ function EditUserPage() {
 								{update.isPending ? "Saving…" : "Save changes"}
 							</Button>
 							<Button asChild variant="outline">
-								<Link to="/admin/users">Cancel</Link>
+								<Link to="/users">Cancel</Link>
 							</Button>
 						</div>
 					</form>

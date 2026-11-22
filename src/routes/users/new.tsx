@@ -17,7 +17,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 
-export const Route = createFileRoute("/admin/users/new")({
+export const Route = createFileRoute("/users/new")({
 	component: AddUserPage,
 });
 
@@ -28,7 +28,7 @@ function AddUserPage() {
 	const create = useUserCreate({
 		onSuccess: async () => {
 			toast.success("Account created");
-			await navigate({ to: "/admin/users" });
+			await navigate({ to: "/users" });
 		},
 		onError: (error) => toast.error(error.message),
 	});
@@ -64,8 +64,7 @@ function AddUserPage() {
 		<div className="space-y-4">
 			<PageBreadcrumb
 				items={[
-					{ label: "Admin", href: "/admin" },
-					{ label: "User accounts", href: "/admin/users" },
+					{ label: "User accounts", href: "/users" },
 					{ label: "Add user" },
 				]}
 			/>
@@ -126,7 +125,7 @@ function AddUserPage() {
 								{create.isPending ? "Creating…" : "Create account"}
 							</Button>
 							<Button asChild variant="outline">
-								<Link to="/admin/users">Cancel</Link>
+								<Link to="/users">Cancel</Link>
 							</Button>
 						</div>
 					</form>
