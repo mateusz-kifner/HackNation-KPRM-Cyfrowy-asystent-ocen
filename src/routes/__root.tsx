@@ -88,7 +88,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 </main>
                   </ResizablePanel>
                   <ResizableHandle withHandle />
-              <ResizablePanel id="CHATBOT" className="min-h-0 overflow-hidden" />
+                    <ResizablePanel id="CHATBOT" className="min-h-0 overflow-hidden" />
                 </ResizablePanelGroup>
                 :
             <div className="flex min-h-0 w-full flex-1 flex-col overflow-y-auto">
