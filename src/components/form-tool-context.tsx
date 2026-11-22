@@ -4,14 +4,14 @@ type FormToolContextValue = {
 	registerForm: (name: string, form: HTMLFormElement | null) => void;
 	getFormState: () => { form: string; fields: Record<string, string | string[]> } | { error: string };
 	selectField: (name: string) => { success: boolean; field?: string; error?: string };
-	highlightedField: string | null;
+	highlightedFields: string[];
 };
 
 const FormToolContext = createContext<FormToolContextValue | null>(null);
 
 export function FormToolProvider({ children }: { children: ReactNode }) {
 	const forms = useRef(new Map<string, HTMLFormElement>());
-	const [highlightedField, setHighlightedField] = useState<string | null>(null);
+	const [highlightedFields, setHighlightedFields] = useState<string[]>([]);
 	const registerForm = useCallback((name: string, form: HTMLFormElement | null) => {
 		if (form) {
 			forms.current.delete(name);
@@ -46,7 +46,7 @@ export function FormToolProvider({ children }: { children: ReactNode }) {
 					(element.getAttribute("name") === name || element.id === name),
 			) ?? form.querySelector<HTMLElement>(`[role="combobox"][id="${CSS.escape(name)}"]`);
 			if (!(field instanceof HTMLElement)) continue;
-			setHighlightedField(name);
+			setHighlightedFields((current) => current.includes(name) ? current : [...current, name]);
 			field.setAttribute("data-ai-highlight", "true");
 			field.focus({ preventScroll: true });
 			field.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -54,7 +54,7 @@ export function FormToolProvider({ children }: { children: ReactNode }) {
 		}
 		return { success: false, error: `No active form field named "${name}" was found.` };
 	}, []);
-	const value = useMemo(() => ({ registerForm, getFormState, selectField, highlightedField }), [registerForm, getFormState, selectField, highlightedField]);
+	const value = useMemo(() => ({ registerForm, getFormState, selectField, highlightedFields }), [registerForm, getFormState, selectField, highlightedFields]);
 	return <FormToolContext.Provider value={value}>{children}</FormToolContext.Provider>;
 }
 
