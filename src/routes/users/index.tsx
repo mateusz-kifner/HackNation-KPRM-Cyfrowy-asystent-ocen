@@ -13,6 +13,7 @@ import { PageBreadcrumb } from "#/components/page-breadcrumb";
 import { useUserDelete } from "#/hooks/api/users/useUserDelete";
 import { useUserList } from "#/hooks/api/users/useUserList";
 import type { ManagedUser } from "@/components/admin/user-form-dialog";
+import { EmployeeDirectoryPage } from "#/routes/employees/index";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
 	AlertDialog,
@@ -62,6 +63,7 @@ function UsersPage() {
 
 	if (sessionQuery.isPending) return <PageLoading />;
 	if (!sessionUser) return <AccessDenied signedOut />;
+	if (role === "Manager") return <EmployeeDirectoryPage />;
 	if (role !== "Admin") return <AccessDenied />;
 
 	return <AdminUsersPage currentUserId={sessionUser.id} />;
@@ -88,15 +90,7 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 		<>
 			<main className="mx-auto min-w-0 w-full max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
 				<header className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-					<div className="space-y-2">
-						<PageBreadcrumb items={[{ label: "Users" }]} />
-						<div>
-							<h1 className="text-3xl font-semibold tracking-tight">Users</h1>
-							<p className="mt-1 text-sm text-muted-foreground">
-								Manage account access, roles, and employee details.
-							</p>
-						</div>
-					</div>
+					<PageBreadcrumb items={[{ label: "Users" }]} />
 					<Button asChild>
 						<Link to="/users/new">
 							<IconPlus data-icon="inline-start" /> Add user
@@ -185,9 +179,7 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 												<TableCell className="font-medium">
 													<span className="block min-w-32">{user.name}</span>
 												</TableCell>
-												<TableCell>
-													{user.email}
-												</TableCell>
+												<TableCell>{user.email}</TableCell>
 												<TableCell className="text-muted-foreground">
 													<RoleBadge role={user.role} />
 												</TableCell>

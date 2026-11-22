@@ -14,6 +14,7 @@ import { useEmployeeAccountCreate } from "#/hooks/api/users/useEmployeeAccountCr
 import { CreateEmployeeDialog } from "#/components/employees/create-employee-dialog";
 import { PageBreadcrumb } from "#/components/page-breadcrumb";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -50,13 +51,13 @@ import {
 } from "@/components/ui/table";
 
 export const Route = createFileRoute("/employees/")({
-	component: EmployeeDirectoryPage,
+	component: () => <Navigate to="/users" />,
 });
 type Employee = NonNullable<
 	ReturnType<typeof useEmployeeAccounts>["data"]
 >[number];
 
-function EmployeeDirectoryPage() {
+export function EmployeeDirectoryPage() {
 	const session = authClient.useSession();
 	const role = (session.data?.user as { role?: string } | undefined)?.role;
 	if (session.isPending)
@@ -101,12 +102,10 @@ function EmployeeDirectory() {
 		<main className="mx-auto w-full max-w-7xl space-y-6 p-4 sm:p-6">
 			<header className="flex flex-wrap items-end justify-between gap-4">
 				<div>
-					<PageBreadcrumb items={[{ label: "Employees" }]} />
-					<h1 className="mt-2 text-3xl font-semibold tracking-tight">
-						Employee directory
-					</h1>
+					<PageBreadcrumb items={[{ label: "Users" }]} />
+					<h1 className="mt-2 text-3xl font-semibold tracking-tight">Users</h1>
 					<p className="mt-1 text-sm text-muted-foreground">
-						Search and maintain Employee profile and HR information.
+						Search and maintain employee accounts and HR information.
 					</p>
 				</div>
 				<Button onClick={() => setCreating(true)}>
@@ -175,6 +174,7 @@ function EmployeeDirectory() {
 									<TableRow>
 										<TableHead>Name</TableHead>
 										<TableHead>Email</TableHead>
+										<TableHead>Role</TableHead>
 										<TableHead>Position</TableHead>
 										<TableHead>Organizational unit</TableHead>
 										<TableHead>Employment</TableHead>
@@ -188,6 +188,9 @@ function EmployeeDirectory() {
 												{employee.name}
 											</TableCell>
 											<TableCell>{employee.email}</TableCell>
+											<TableCell>
+												<Badge variant="outline">Employee</Badge>
+											</TableCell>
 											<TableCell>{employee.position ?? "—"}</TableCell>
 											<TableCell>
 												{employee.organizationalUnit ??
@@ -325,6 +328,12 @@ function EmployeeProfileDialog({
 							required
 						/>
 						<ProfileField
+							label="Account role"
+							value="Employee"
+							onChange={() => undefined}
+							disabled
+						/>
+						<ProfileField
 							label="Position"
 							value={position}
 							onChange={setPosition}
@@ -376,12 +385,14 @@ function ProfileField({
 	onChange,
 	type = "text",
 	required = false,
+	disabled = false,
 }: {
 	label: string;
 	value: string;
 	onChange: (value: string) => void;
 	type?: string;
 	required?: boolean;
+	disabled?: boolean;
 }) {
 	const id = `employee-${label.toLowerCase().replaceAll(" ", "-")}`;
 	return (
@@ -391,6 +402,7 @@ function ProfileField({
 				id={id}
 				type={type}
 				value={value}
+				disabled={disabled}
 				onChange={(event) => onChange(event.target.value)}
 				required={required}
 			/>

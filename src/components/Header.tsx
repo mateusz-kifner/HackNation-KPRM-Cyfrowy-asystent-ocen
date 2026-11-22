@@ -12,8 +12,7 @@ import UserProfileMenu from "./UserProfileMenu";
 export default function Header() {
 	const { data: session } = authClient.useSession();
 	const role = (session?.user as { role?: string } | undefined)?.role;
-	const isAdmin = role === "Admin";
-	const canManageEmployees = role === "Admin" || role === "Manager";
+	const canManageUsers = role === "Admin" || role === "Manager";
 
 	return (
 		<header className="sticky top-0 z-50 header-complementary border-b border-border px-4">
@@ -36,17 +35,10 @@ export default function Header() {
 									<Link to="/me">My carrier</Link>
 								</NavigationMenuLink>
 							</NavigationMenuItem>
-							{isAdmin && (
+							{canManageUsers && (
 								<NavigationMenuItem>
 									<NavigationMenuLink asChild>
 										<Link to="/users">Users</Link>
-									</NavigationMenuLink>
-								</NavigationMenuItem>
-							)}
-							{canManageEmployees && (
-								<NavigationMenuItem>
-									<NavigationMenuLink asChild>
-										<Link to="/employees">Employees</Link>
 									</NavigationMenuLink>
 								</NavigationMenuItem>
 							)}

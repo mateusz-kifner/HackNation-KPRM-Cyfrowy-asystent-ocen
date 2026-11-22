@@ -67,6 +67,10 @@ export function CreateEmployeeDialog({
 				>
 					<Field name="name" label="Name" required />
 					<Field name="email" label="Email" type="email" required />
+					<div className="grid gap-2">
+						<Label htmlFor="new-role">Account role</Label>
+						<Input id="new-role" value="Employee" disabled />
+					</div>
 					<Field
 						name="password"
 						label="Initial password"
