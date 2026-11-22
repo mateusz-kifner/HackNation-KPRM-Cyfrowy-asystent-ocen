@@ -16,6 +16,7 @@ import { Route as MeRouteImport } from './routes/me'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ApiChatRouteRouteImport } from './routes/api/chat/route'
 import { Route as EmployeesIndexRouteImport } from './routes/employees/index'
+import { Route as EvaluationIndexRouteImport } from './routes/evaluation/index'
 import { Route as EvaluationIdRouteImport } from './routes/evaluation/$id'
 import { Route as EvaluationAddRouteImport } from './routes/evaluation/add'
 import { Route as EvaluationCompletedRouteImport } from './routes/evaluation/completed'
@@ -63,6 +64,11 @@ const EmployeesIndexRoute = EmployeesIndexRouteImport.update({
   id: '/employees/',
   path: '/employees/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const EvaluationIndexRoute = EvaluationIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EvaluationRoute,
 } as any)
 const EvaluationIdRoute = EvaluationIdRouteImport.update({
   id: '/$id',
@@ -140,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/test/shadcn': typeof TestShadcnRoute
   '/users/new': typeof UsersNewRoute
   '/employees/': typeof EmployeesIndexRoute
+  '/evaluation/': typeof EvaluationIndexRoute
   '/test/': typeof TestIndexRoute
   '/users/': typeof UsersIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -148,7 +155,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/evaluation': typeof EvaluationRouteWithChildren
   '/login': typeof LoginRoute
   '/me': typeof MeRoute
   '/settings': typeof SettingsRoute
@@ -161,6 +167,7 @@ export interface FileRoutesByTo {
   '/test/shadcn': typeof TestShadcnRoute
   '/users/new': typeof UsersNewRoute
   '/employees': typeof EmployeesIndexRoute
+  '/evaluation': typeof EvaluationIndexRoute
   '/test': typeof TestIndexRoute
   '/users': typeof UsersIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -183,6 +190,7 @@ export interface FileRoutesById {
   '/test/shadcn': typeof TestShadcnRoute
   '/users/new': typeof UsersNewRoute
   '/employees/': typeof EmployeesIndexRoute
+  '/evaluation/': typeof EvaluationIndexRoute
   '/test/': typeof TestIndexRoute
   '/users/': typeof UsersIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -206,6 +214,7 @@ export interface FileRouteTypes {
     | '/test/shadcn'
     | '/users/new'
     | '/employees/'
+    | '/evaluation/'
     | '/test/'
     | '/users/'
     | '/api/auth/$'
@@ -214,7 +223,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/evaluation'
     | '/login'
     | '/me'
     | '/settings'
@@ -227,6 +235,7 @@ export interface FileRouteTypes {
     | '/test/shadcn'
     | '/users/new'
     | '/employees'
+    | '/evaluation'
     | '/test'
     | '/users'
     | '/api/auth/$'
@@ -248,6 +257,7 @@ export interface FileRouteTypes {
     | '/test/shadcn'
     | '/users/new'
     | '/employees/'
+    | '/evaluation/'
     | '/test/'
     | '/users/'
     | '/api/auth/$'
@@ -322,6 +332,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/employees/'
       preLoaderRoute: typeof EmployeesIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/evaluation/': {
+      id: '/evaluation/'
+      path: '/'
+      fullPath: '/evaluation/'
+      preLoaderRoute: typeof EvaluationIndexRouteImport
+      parentRoute: typeof EvaluationRoute
     }
     '/evaluation/$id': {
       id: '/evaluation/$id'
@@ -416,6 +433,7 @@ interface EvaluationRouteChildren {
   EvaluationCompletedRoute: typeof EvaluationCompletedRoute
   EvaluationRunningRoute: typeof EvaluationRunningRoute
   EvaluationUpcomingRoute: typeof EvaluationUpcomingRoute
+  EvaluationIndexRoute: typeof EvaluationIndexRoute
 }
 
 const EvaluationRouteChildren: EvaluationRouteChildren = {
@@ -424,6 +442,7 @@ const EvaluationRouteChildren: EvaluationRouteChildren = {
   EvaluationCompletedRoute: EvaluationCompletedRoute,
   EvaluationRunningRoute: EvaluationRunningRoute,
   EvaluationUpcomingRoute: EvaluationUpcomingRoute,
+  EvaluationIndexRoute: EvaluationIndexRoute,
 }
 
 const EvaluationRouteWithChildren = EvaluationRoute._addFileChildren(

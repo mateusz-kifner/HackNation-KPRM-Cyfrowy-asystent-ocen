@@ -102,7 +102,13 @@ function criteriaTable(criteria: Criterion[]) {
 					cantSplit: true,
 					children: [
 						criterion.title,
-						[criterion.description, criterion.expectations, criterion.goals]
+						[
+							criterion.description,
+							criterion.duties,
+							criterion.expectations,
+							criterion.goals,
+							criterion.measurementMethod,
+						]
 							.filter(Boolean)
 							.join("\n"),
 						criterion.points == null ? "—" : `${criterion.points} / 9`,
@@ -238,7 +244,11 @@ export async function generateAssessmentDocx(
 		section("PODPISY I POTWIERDZENIA"),
 		fieldTable([
 			["Miejscowość podpisu oceniającego", file?.evaluatorSignatureLocation],
+			["Data podpisu oceniającego", file?.evaluatorSignedAt],
 			["Data oceny", assessment.assessmentDate],
+			["Miejscowość potwierdzenia odbioru", file?.employeeReceiptLocation],
+			["Data potwierdzenia odbioru", file?.employeeAcknowledgedAt],
+			["Imię i nazwisko odbiorcy", file?.employeeReceiptName],
 			["Odbiorca sprzeciwu", file?.objectionRecipient],
 		]),
 		new Paragraph({

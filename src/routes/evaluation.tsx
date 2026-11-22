@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { EvaluationCategoryPage } from "#/components/evaluation-category-page";
+import { Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/evaluation")({
-	component: () => <EvaluationCategoryPage />,
+	component: () => <Outlet />,
 });
