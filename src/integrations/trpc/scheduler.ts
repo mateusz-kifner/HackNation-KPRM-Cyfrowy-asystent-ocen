@@ -171,6 +171,4 @@ export const schedulerRouter = {
 	}),
 } satisfies TRPCRouterRecord;
 
-void refreshScheduler().catch((error) =>
-	console.error("Could not start evaluation scheduler", error),
-);
+// Scheduler startup is disabled while diagnosing the server-side preview crash.

@@ -10,6 +10,11 @@ import path from "node:path"
 
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
+  ssr: {
+    // Keep Better Auth's error classes in their package modules. Bundling them
+    // into the router SSR chunk creates a circular chunk dependency.
+    external: ['better-auth', '@better-auth/core', '@better-auth/drizzle-adapter'],
+  },
   plugins: [
     devtools(),
     nitro({ rollupConfig: { external: [/^@sentry\//] } }),
