@@ -16,6 +16,7 @@ import { Route as ManagerRouteImport } from './routes/manager'
 import { Route as MeRouteImport } from './routes/me'
 import { Route as PanelOceniajacegoRouteImport } from './routes/panel-oceniajacego'
 import { Route as PanelPracowniczyRouteImport } from './routes/panel-pracowniczy'
+import { Route as EvaluationsChar91indexChar93RouteImport } from './routes/evaluations/[index]'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminEmployeesRouteImport } from './routes/admin/employees'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
@@ -61,6 +62,12 @@ const PanelPracowniczyRoute = PanelPracowniczyRouteImport.update({
   path: '/panel-pracowniczy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EvaluationsChar91indexChar93Route =
+  EvaluationsChar91indexChar93RouteImport.update({
+    id: '/evaluations/index',
+    path: '/evaluations/index',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
@@ -118,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/users': typeof AdminUsersRoute
+  '/evaluations/index': typeof EvaluationsChar91indexChar93Route
   '/test/chatbot': typeof TestChatbotRoute
   '/test/shadcn': typeof TestShadcnRoute
   '/admin/': typeof AdminIndexRoute
@@ -136,6 +144,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/users': typeof AdminUsersRoute
+  '/evaluations/index': typeof EvaluationsChar91indexChar93Route
   '/test/chatbot': typeof TestChatbotRoute
   '/test/shadcn': typeof TestShadcnRoute
   '/admin': typeof AdminIndexRoute
@@ -155,6 +164,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/users': typeof AdminUsersRoute
+  '/evaluations/index': typeof EvaluationsChar91indexChar93Route
   '/test/chatbot': typeof TestChatbotRoute
   '/test/shadcn': typeof TestShadcnRoute
   '/admin/': typeof AdminIndexRoute
@@ -175,6 +185,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/admin/employees'
     | '/admin/users'
+    | '/evaluations/index'
     | '/test/chatbot'
     | '/test/shadcn'
     | '/admin/'
@@ -193,6 +204,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/admin/employees'
     | '/admin/users'
+    | '/evaluations/index'
     | '/test/chatbot'
     | '/test/shadcn'
     | '/admin'
@@ -211,6 +223,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/admin/employees'
     | '/admin/users'
+    | '/evaluations/index'
     | '/test/chatbot'
     | '/test/shadcn'
     | '/admin/'
@@ -230,6 +243,7 @@ export interface RootRouteChildren {
   ApiChatRouteRoute: typeof ApiChatRouteRoute
   AdminEmployeesRoute: typeof AdminEmployeesRoute
   AdminUsersRoute: typeof AdminUsersRoute
+  EvaluationsChar91indexChar93Route: typeof EvaluationsChar91indexChar93Route
   TestChatbotRoute: typeof TestChatbotRoute
   TestShadcnRoute: typeof TestShadcnRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -287,6 +301,13 @@ declare module '@tanstack/react-router' {
       path: '/panel-pracowniczy'
       fullPath: '/panel-pracowniczy'
       preLoaderRoute: typeof PanelPracowniczyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/evaluations/index': {
+      id: '/evaluations/index'
+      path: '/evaluations/index'
+      fullPath: '/evaluations/index'
+      preLoaderRoute: typeof EvaluationsChar91indexChar93RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -366,6 +387,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRouteRoute: ApiChatRouteRoute,
   AdminEmployeesRoute: AdminEmployeesRoute,
   AdminUsersRoute: AdminUsersRoute,
+  EvaluationsChar91indexChar93Route: EvaluationsChar91indexChar93Route,
   TestChatbotRoute: TestChatbotRoute,
   TestShadcnRoute: TestShadcnRoute,
   AdminIndexRoute: AdminIndexRoute,

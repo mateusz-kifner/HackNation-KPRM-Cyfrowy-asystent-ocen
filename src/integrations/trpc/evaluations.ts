@@ -202,6 +202,35 @@ export const evaluationsRouter = {
 			.orderBy(desc(assessments.createdAt));
 	}),
 
+	assignedToMe: employeeProcedure.query(async ({ ctx }) =>
+		db
+			.select({
+				id: assessments.id,
+				evaluatedUserId: assessments.evaluatedUserId,
+				evaluatorUserId: assessments.evaluatorUserId,
+				form: assessments.form,
+				status: assessments.status,
+				periodStart: assessments.periodStart,
+				periodEnd: assessments.periodEnd,
+				assessmentDate: assessments.assessmentDate,
+				dueAt: assessments.dueAt,
+				submittedAt: assessments.submittedAt,
+				createdAt: assessments.createdAt,
+				evaluatedFirstName: assessmentFiles.evaluatedFirstName,
+				evaluatedLastName: assessmentFiles.evaluatedLastName,
+				evaluatedPosition: assessmentFiles.evaluatedPosition,
+				evaluatedOrganizationalUnit:
+					assessmentFiles.evaluatedOrganizationalUnit,
+			})
+			.from(assessments)
+			.leftJoin(
+				assessmentFiles,
+				eq(assessmentFiles.assessmentId, assessments.id),
+			)
+			.where(eq(assessments.evaluatorUserId, ctx.user.id))
+			.orderBy(desc(assessments.createdAt)),
+	),
+
 	get: employeeProcedure
 		.input(z.object({ id: z.string().min(1) }))
 		.query(async ({ input, ctx }) => {
