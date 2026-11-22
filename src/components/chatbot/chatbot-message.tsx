@@ -24,7 +24,7 @@ export function ChatbotMessage({ message }: { message: ChatMessage }) {
 			className={`group/message flex flex-col gap-1 ${message.role === "user" ? "items-end" : "items-start"}`}
 		>
 			{content}
-			<ChatbotCopyButton text={message.content} />
+			{message.role !== "tool" && <ChatbotCopyButton text={message.content} />}
 		</div>
 	);
 }
