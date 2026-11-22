@@ -61,19 +61,31 @@ function AddUserPage() {
 		});
 	}
 	return (
-		<div className="space-y-4">
+		<main className="mx-auto min-w-0 w-full max-w-4xl space-y-6 p-4 sm:p-6">
 			<PageBreadcrumb
 				items={[
 					{ label: "User accounts", href: "/users" },
 					{ label: "Add user" },
 				]}
 			/>
-			<Card>
+			<header className="space-y-2">
+				<h1 className="text-3xl font-semibold tracking-tight">Add user</h1>
+				<p className="text-sm text-muted-foreground">
+					Create an account and set its access and employee details.
+				</p>
+			</header>
+			<Card className="overflow-hidden">
+				<div className="border-b bg-muted/20 px-6 py-4">
+					<p className="text-sm font-medium">Account details</p>
+					<p className="mt-1 text-sm text-muted-foreground">
+						Set the sign-in information and profile fields for this user.
+					</p>
+				</div>
 				<CardContent className="pt-6">
 					<form
 						ref={formRef}
 						onSubmit={submit}
-						className="grid gap-4 sm:grid-cols-2"
+						className="grid min-w-0 gap-x-6 gap-y-5 sm:grid-cols-2"
 					>
 						<Field label="Name">
 							<Input name="name" required autoComplete="name" />
@@ -120,7 +132,7 @@ function AddUserPage() {
 						<Field label="Hire date">
 							<Input name="hireDate" type="date" />
 						</Field>
-						<div className="flex gap-2 sm:col-span-2">
+						<div className="flex flex-col-reverse gap-2 border-t pt-5 sm:col-span-2 sm:flex-row sm:justify-end">
 							<Button type="submit" disabled={create.isPending}>
 								{create.isPending ? "Creating…" : "Create account"}
 							</Button>
@@ -131,7 +143,7 @@ function AddUserPage() {
 					</form>
 				</CardContent>
 			</Card>
-		</div>
+		</main>
 	);
 }
 function Field({

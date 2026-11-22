@@ -69,21 +69,30 @@ function EditUserPage() {
 	}
 
 	return (
-		<div className="space-y-4">
+		<main className="mx-auto min-w-0 w-full max-w-4xl space-y-6 p-4 sm:p-6">
 			<PageBreadcrumb
 				items={[
 					{ label: "User accounts", href: "/users" },
 					{ label: "Edit account" },
 				]}
 			/>
-			<Card>
-				<CardContent className="space-y-4 pt-6">
-					<p className="text-sm text-muted-foreground">
-						Account ID: <code>{id}</code> (read only)
+			<header className="space-y-2">
+				<h1 className="text-3xl font-semibold tracking-tight">Edit account</h1>
+				<p className="text-sm text-muted-foreground">
+					Update account access and employee details.
+				</p>
+			</header>
+			<Card className="overflow-hidden">
+				<div className="border-b bg-muted/20 px-6 py-4">
+					<p className="text-sm font-medium">Account details</p>
+					<p className="mt-1 text-sm text-muted-foreground">
+						Account ID: <code className="break-all">{id}</code> · Read only
 					</p>
+				</div>
+				<CardContent className="pt-6">
 					<form
 						ref={formRef}
-						className="grid gap-4 sm:grid-cols-2"
+						className="grid min-w-0 gap-x-6 gap-y-5 sm:grid-cols-2"
 						onSubmit={(event) => {
 							event.preventDefault();
 							const form = new FormData(event.currentTarget);
@@ -166,7 +175,7 @@ function EditUserPage() {
 								}
 							/>
 						</FormField>
-						<div className="flex gap-2 sm:col-span-2">
+						<div className="flex flex-col-reverse gap-2 border-t pt-5 sm:col-span-2 sm:flex-row sm:justify-end">
 							<Button type="submit" disabled={update.isPending}>
 								{update.isPending ? "Saving…" : "Save changes"}
 							</Button>
@@ -177,7 +186,7 @@ function EditUserPage() {
 					</form>
 				</CardContent>
 			</Card>
-		</div>
+		</main>
 	);
 }
 
