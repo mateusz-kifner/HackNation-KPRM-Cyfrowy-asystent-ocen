@@ -22,6 +22,7 @@ import { authClient } from '#/lib/auth-client';
 
 export default function Header() {
   const { data: session, isPending } = authClient.useSession();
+  const isAdmin = (session?.user as { role?: string } | undefined)?.role === "Admin";
 
   return (
     <header className="sticky top-0 z-50 header-complementary border-b border-border px-4">
@@ -49,6 +50,11 @@ export default function Header() {
         </div>
 
         <div className="ml-auto flex items-center gap-3 sm:gap-4">
+          {isAdmin && (
+            <Button variant="outline" asChild>
+              <Link to="/admin">Admin</Link>
+            </Button>
+          )}
           {isPending ? (
             <div className="size-9 animate-pulse rounded-full bg-muted" />
           ) : session?.user ? (
