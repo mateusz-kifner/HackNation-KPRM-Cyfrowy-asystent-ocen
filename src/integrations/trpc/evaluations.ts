@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import type { TRPCRouterRecord } from "@trpc/server";
-import { and, desc, eq, or } from "drizzle-orm";
+import { and, desc, eq, like, or } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { db } from "#/db";
@@ -201,6 +201,59 @@ export const evaluationsRouter = {
 			)
 			.orderBy(desc(assessments.createdAt));
 	}),
+
+	search: employeeProcedure
+		.input(z.object({ query: z.string().trim().min(1).max(100) }))
+		.query(async ({ input, ctx }) => {
+			const pattern = `%${input.query}%`;
+			const matchesQuery = or(
+				like(assessments.id, pattern),
+				like(assessmentFiles.evaluatedFirstName, pattern),
+				like(assessmentFiles.evaluatedLastName, pattern),
+				like(assessmentFiles.evaluatorFirstName, pattern),
+				like(assessmentFiles.evaluatorLastName, pattern),
+				like(assessmentFiles.evaluatedPosition, pattern),
+				like(assessmentFiles.evaluatedOrganizationalUnit, pattern),
+			);
+			const conditions = [matchesQuery];
+
+			if (ctx.role === "Employee") {
+				conditions.push(
+					or(
+						eq(assessments.evaluatedUserId, ctx.user.id),
+						eq(assessments.evaluatorUserId, ctx.user.id),
+					),
+				);
+			}
+
+			return db
+				.select({
+					id: assessments.id,
+					evaluatedUserId: assessments.evaluatedUserId,
+					evaluatorUserId: assessments.evaluatorUserId,
+					form: assessments.form,
+					status: assessments.status,
+					periodStart: assessments.periodStart,
+					periodEnd: assessments.periodEnd,
+					assessmentDate: assessments.assessmentDate,
+					dueAt: assessments.dueAt,
+					submittedAt: assessments.submittedAt,
+					createdAt: assessments.createdAt,
+					evaluatedFirstName: assessmentFiles.evaluatedFirstName,
+					evaluatedLastName: assessmentFiles.evaluatedLastName,
+					evaluatedPosition: assessmentFiles.evaluatedPosition,
+					evaluatedOrganizationalUnit:
+						assessmentFiles.evaluatedOrganizationalUnit,
+				})
+				.from(assessments)
+				.leftJoin(
+					assessmentFiles,
+					eq(assessmentFiles.assessmentId, assessments.id),
+				)
+				.where(and(...conditions))
+				.orderBy(desc(assessments.createdAt))
+				.limit(50);
+		}),
 
 	assignedToMe: employeeProcedure.query(async ({ ctx }) =>
 		db
