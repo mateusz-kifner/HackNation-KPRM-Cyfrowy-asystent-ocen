@@ -1,6 +1,20 @@
 import { Link } from "@tanstack/react-router";
-import ThemeToggle from "./ThemeToggle";
+import { IconLogout, IconSettings } from "@tabler/icons-react";
+import ThemeSelector from "./ThemeSelector";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -38,20 +52,60 @@ export default function Header() {
         </div>
 
         <div className="ml-auto flex items-center gap-3 sm:gap-4">
-          <ThemeToggle />
           {isPending ? (
-            <div className="h-8 w-20 animate-pulse bg-muted rounded-md" />
+            <div className="size-9 animate-pulse rounded-full bg-muted" />
           ) : session?.user ? (
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-medium">{session.user.name || session.user.email}</span>
-              <Button
-                onClick={() => {
-                  void authClient.signOut();
-                }}
-              >
-                Logout
-              </Button>
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="size-10 rounded-full p-0"
+                  aria-label="Open account menu"
+                >
+                  <Avatar className="size-9">
+                    <AvatarImage src={session.user.image ?? undefined} alt={session.user.name ?? ""} />
+                    <AvatarFallback>
+                      {(session.user.name || session.user.email || "U").charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col gap-1">
+                    <span className="truncate text-sm font-medium text-foreground">
+                      {session.user.name || "Your account"}
+                    </span>
+                    <span className="truncate text-xs text-muted-foreground">{session.user.email}</span>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem asChild>
+                    <Link to="/me">
+                      <IconSettings />
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      Theme
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                      <ThemeSelector />
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  variant="destructive"
+                  onSelect={() => void authClient.signOut()}
+                >
+                  <IconLogout />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <Button asChild>
               <Link to="/login">Login</Link>
