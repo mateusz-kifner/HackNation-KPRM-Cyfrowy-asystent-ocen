@@ -66,7 +66,7 @@ export const usersRouter = {
 			const id = randomUUID();
 			const hashedPassword = await hashPassword(password);
 			const newUser = db.transaction((tx) => {
-				const [created] = tx
+				const created = tx
 					.insert(user)
 					.values({
 						id,
@@ -74,14 +74,15 @@ export const usersRouter = {
 						emailVerified: false,
 						isAnonymous: false,
 					})
-					.returning();
+					.returning()
+					.get();
 				tx.insert(account).values({
 					id: randomUUID(),
 					accountId: id,
 					providerId: "credential",
 					userId: id,
 					password: hashedPassword,
-				});
+				}).run();
 				return created;
 			});
 			return newUser;
@@ -92,10 +93,10 @@ export const usersRouter = {
 			const { id, ...data } = input;
 			const [before] = await db.select().from(user).where(eq(user.id, id));
 			if (!before) throw new TRPCError({ code: "NOT_FOUND" });
-			const [updatedUser] = db.transaction((tx) => {
-				const [updated] = tx.update(user).set(data).where(eq(user.id, id)).returning();
-				tx.insert(userAuditLog).values({ id: randomUUID(), userId: id, actorId: ctx.session.user.id, action: "updated", changes: JSON.stringify(changedProfile(data, before)) });
-				return [updated];
+			const updatedUser = db.transaction((tx) => {
+				const updated = tx.update(user).set(data).where(eq(user.id, id)).returning().get();
+				tx.insert(userAuditLog).values({ id: randomUUID(), userId: id, actorId: ctx.session.user.id, action: "updated", changes: JSON.stringify(changedProfile(data, before)) }).run();
+				return updated;
 			});
 			return updatedUser;
 		}),
