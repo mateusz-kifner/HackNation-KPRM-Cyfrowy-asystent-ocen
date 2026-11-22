@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { IconPlus } from "@tabler/icons-react";
 import { authClient } from "#/lib/auth-client";
 import { EvaluationDocxDownload } from "#/components/evaluation-docx-download";
-import { useMeEvaluations } from "#/hooks/api/me/useMeEvaluations";
+import { useEvaluationAssignedToMe } from "#/hooks/api/evaluations/useEvaluationAssignedToMe";
 import { Badge } from "@/components/ui/badge";
 import {
 	Card,
@@ -107,7 +107,7 @@ export { categories };
 export type { Category };
 
 function useEvaluations() {
-	return useMeEvaluations();
+	return useEvaluationAssignedToMe();
 }
 
 function belongsToCategory(evaluation: Evaluation, category: Category) {

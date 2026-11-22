@@ -1,7 +1,6 @@
 import { IconDownload } from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
 import { Button } from "#/components/ui/button";
-import { useTRPC } from "#/integrations/trpc/react";
+import { useEvaluationExportDocx } from "#/hooks/api/evaluations/useEvaluationExportDocx";
 
 function saveBase64File(filename: string, contentBase64: string) {
 	const binary = window.atob(contentBase64);
@@ -23,13 +22,10 @@ export function EvaluationDocxDownload({
 }: {
 	assessmentId: string;
 }) {
-	const trpc = useTRPC();
-	const exportDocx = useMutation(
-		trpc.evaluations.exportDocx.mutationOptions({
-			onSuccess: ({ filename, contentBase64 }) =>
-				saveBase64File(filename, contentBase64),
-		}),
-	);
+	const exportDocx = useEvaluationExportDocx({
+		onSuccess: ({ filename, contentBase64 }) =>
+			saveBase64File(filename, contentBase64),
+	});
 
 	return (
 		<Button

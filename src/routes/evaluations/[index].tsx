@@ -2,7 +2,7 @@ import { IconClipboardList } from "@tabler/icons-react";
 import { Navigate, createFileRoute } from "@tanstack/react-router";
 import { EvaluationDocxDownload } from "#/components/evaluation-docx-download";
 import { PageBreadcrumb } from "#/components/page-breadcrumb";
-import { useMeEvaluations } from "#/hooks/api/me/useMeEvaluations";
+import { useEvaluationAssignedToMe } from "#/hooks/api/evaluations/useEvaluationAssignedToMe";
 import { authClient } from "#/lib/auth-client";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Badge } from "@/components/ui/badge";
@@ -99,7 +99,7 @@ type EvaluatorAssessment = NonNullable<
 >[number];
 
 function useEvaluatorAssessments() {
-	return useMeEvaluations();
+	return useEvaluationAssignedToMe();
 }
 
 function EvaluationsTable({

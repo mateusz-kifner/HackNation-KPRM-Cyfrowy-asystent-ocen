@@ -1,4 +1,3 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
 	createFileRoute,
 	Link,
@@ -9,7 +8,8 @@ import { IconArrowLeft, IconPlus } from "@tabler/icons-react";
 import { useState, type FormEvent } from "react";
 import { useFormTool } from "#/components/form-tool-context";
 import { PageBreadcrumb } from "#/components/page-breadcrumb";
-import { useTRPC } from "#/integrations/trpc/react";
+import { useEvaluationCandidates } from "#/hooks/api/evaluations/useEvaluationCandidates";
+import { useEvaluationCreate } from "#/hooks/api/evaluations/useEvaluationCreate";
 import { authClient } from "#/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import {
@@ -84,21 +84,14 @@ function EvaluationCreationForm() {
 	const formRef = useFormTool("Add evaluation");
 	const [values, setValues] = useState(emptyForm);
 	const [error, setError] = useState<string | null>(null);
-	const trpc = useTRPC();
-	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-	const candidatesQuery = useQuery(trpc.evaluations.candidates.queryOptions());
-	const createEvaluation = useMutation(
-		trpc.evaluations.create.mutationOptions({
-			onSuccess: async () => {
-				await queryClient.invalidateQueries({
-					queryKey: trpc.evaluations.assignedToMe.queryKey(),
-				});
-				await navigate({ to: "/evaluation/upcoming" });
-			},
-			onError: (mutationError) => setError(mutationError.message),
-		}),
-	);
+	const candidatesQuery = useEvaluationCandidates();
+	const createEvaluation = useEvaluationCreate({
+		onSuccess: async () => {
+			await navigate({ to: "/evaluation/upcoming" });
+		},
+		onError: (mutationError) => setError(mutationError.message),
+	});
 	const candidates = candidatesQuery.data ?? [];
 
 	function update<K extends keyof FormValues>(key: K, value: FormValues[K]) {
@@ -158,7 +151,12 @@ function EvaluationCreationForm() {
 				Back to evaluations
 			</Link>
 			<header>
-				<PageBreadcrumb items={[{ label: "Evaluations", href: "/evaluation/running" }, { label: "Add evaluation" }]} />
+				<PageBreadcrumb
+					items={[
+						{ label: "Evaluations", href: "/evaluation/running" },
+						{ label: "Add evaluation" },
+					]}
+				/>
 				<p className="mt-1 text-sm text-muted-foreground">
 					Assign an evaluator, set the schedule, and fill in the evaluation file
 					details.
