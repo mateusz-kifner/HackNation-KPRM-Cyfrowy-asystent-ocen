@@ -20,9 +20,9 @@ function EvaluationDetailsPage() {
 	return (
 		<main className="mx-auto w-full max-w-5xl space-y-6 p-4 sm:p-6">
 			<header className="space-y-3">
-				<PageBreadcrumb items={[{ label: "Evaluations", href: "/evaluation/running" }, { label: "Evaluation details" }]} />
+				<PageBreadcrumb items={[{ label: "Evaluations", href: "/evaluation" }, { label: "Evaluation details" }]} />
 				<Button variant="ghost" size="sm" asChild>
-					<Link to="/evaluation/running"><IconArrowLeft /> Back to evaluations</Link>
+					<Link to="/evaluation"><IconArrowLeft /> Back to evaluations</Link>
 				</Button>
 			</header>
 			{query.isLoading ? <EvaluationDetailsLoading /> : null}

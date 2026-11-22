@@ -75,7 +75,7 @@ function AddEvaluationPage() {
 	const { data: session, isPending } = authClient.useSession();
 	const role = (session?.user as { role?: string } | undefined)?.role;
 	if (!isPending && role !== "Admin" && role !== "Manager")
-		return <Navigate to="/evaluation/running" />;
+		return <Navigate to="/evaluation" />;
 	if (isPending) return null;
 	return <EvaluationCreationForm />;
 }
@@ -88,7 +88,7 @@ function EvaluationCreationForm() {
 	const candidatesQuery = useEvaluationCandidates();
 	const createEvaluation = useEvaluationCreate({
 		onSuccess: async () => {
-			await navigate({ to: "/evaluation/upcoming" });
+			await navigate({ to: "/evaluation" });
 		},
 		onError: (mutationError) => setError(mutationError.message),
 	});
@@ -144,7 +144,7 @@ function EvaluationCreationForm() {
 	return (
 		<main className="mx-auto w-full max-w-4xl space-y-6 p-4 sm:p-6">
 			<Link
-				to="/evaluation/running"
+				to="/evaluation"
 				className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
 			>
 				<IconArrowLeft className="size-4" />
@@ -153,7 +153,7 @@ function EvaluationCreationForm() {
 			<header>
 				<PageBreadcrumb
 					items={[
-						{ label: "Evaluations", href: "/evaluation/running" },
+						{ label: "Evaluations", href: "/evaluation" },
 						{ label: "Add evaluation" },
 					]}
 				/>

@@ -1,6 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { EvaluationCategoryPage } from "#/components/evaluation-category-page";
+import { Navigate, createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/evaluation/upcoming")({
-	component: () => <EvaluationCategoryPage category="upcoming" />,
+	component: () => <Navigate to="/evaluation" />,
 });

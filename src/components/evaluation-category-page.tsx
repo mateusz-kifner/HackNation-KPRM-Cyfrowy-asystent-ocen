@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { EvaluationNavigation } from "@/components/evaluation-navigation";
 import { PageBreadcrumb } from "@/components/page-breadcrumb";
 import {
 	Table,
@@ -33,9 +32,10 @@ import {
 } from "@/components/ui/table";
 
 const categories = [
-	{ label: "Running", to: "/evaluation/running", key: "running" },
-	{ label: "Upcoming", to: "/evaluation/upcoming", key: "upcoming" },
-	{ label: "Completed", to: "/evaluation/completed", key: "completed" },
+	{ label: "All", key: "all" },
+	{ label: "Current", key: "running" },
+	{ label: "Upcoming", key: "upcoming" },
+	{ label: "Archived", key: "completed" },
 ] as const;
 
 type Category = (typeof categories)[number]["key"];
@@ -43,7 +43,7 @@ type Evaluation = NonNullable<
 	ReturnType<typeof useEvaluations>["data"]
 >[number];
 
-export function EvaluationCategoryPage({ category }: { category: Category }) {
+export function EvaluationCategoryPage({ category = "all" }: { category?: Category }) {
 	const evaluationsQuery = useEvaluations();
 	const { data: session } = authClient.useSession();
 	const role = (session?.user as { role?: string } | undefined)?.role;
@@ -51,7 +51,6 @@ export function EvaluationCategoryPage({ category }: { category: Category }) {
 	const evaluations = (evaluationsQuery.data ?? []).filter((evaluation) =>
 		belongsToCategory(evaluation, category),
 	);
-	const title = categories.find((item) => item.key === category)?.label;
 
 	return (
 		<main className="mx-auto w-full max-w-7xl space-y-6 p-4 sm:p-6">
@@ -60,12 +59,11 @@ export function EvaluationCategoryPage({ category }: { category: Category }) {
 					<div>
 						<PageBreadcrumb
 							items={[
-								{ label: "Evaluations", href: "/evaluation/running" },
-								{ label: title ?? "Evaluations" },
+								{ label: "Evaluations" },
 							]}
 						/>
 						<p className="mt-1 text-sm text-muted-foreground">
-							Track your assigned assessments by their current stage.
+							All evaluations, including current, upcoming, and archived assessments.
 						</p>
 					</div>
 					{canAddEvaluation && (
@@ -78,27 +76,24 @@ export function EvaluationCategoryPage({ category }: { category: Category }) {
 					)}
 				</div>
 			</header>
-			<div className="flex flex-col gap-6 md:flex-row md:items-start">
-				<EvaluationNavigation category={category} />
-				<Card className="min-w-0 flex-1">
-					<CardHeader>
-						<CardTitle>{title} evaluations</CardTitle>
-						<CardDescription>
-							{evaluationsQuery.isLoading
-								? "Loading assessments…"
-								: `${evaluations.length} ${evaluations.length === 1 ? "assessment" : "assessments"}`}
-						</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<EvaluationTable
-							evaluations={evaluations}
-							category={category}
-							isLoading={evaluationsQuery.isLoading}
-							hasError={evaluationsQuery.isError}
-						/>
-					</CardContent>
-				</Card>
-			</div>
+			<Card>
+				<CardHeader>
+					<CardTitle>Evaluations</CardTitle>
+					<CardDescription>
+						{evaluationsQuery.isLoading
+							? "Loading assessments…"
+							: `${evaluations.length} ${evaluations.length === 1 ? "assessment" : "assessments"}`}
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<EvaluationTable
+						evaluations={evaluations}
+						category={category}
+						isLoading={evaluationsQuery.isLoading}
+						hasError={evaluationsQuery.isError}
+					/>
+				</CardContent>
+			</Card>
 		</main>
 	);
 }
@@ -111,6 +106,7 @@ function useEvaluations() {
 }
 
 function belongsToCategory(evaluation: Evaluation, category: Category) {
+	if (category === "all") return true;
 	if (category === "completed") return evaluation.status === "completed";
 	if (evaluation.status === "completed" || evaluation.status === "cancelled") {
 		return false;
@@ -200,8 +196,8 @@ function EvaluationTable({
 									className="underline-offset-4 hover:underline"
 								>
 									{[evaluation.evaluatedFirstName, evaluation.evaluatedLastName]
-									.filter(Boolean)
-									.join(" ") || "Unnamed employee"}
+										.filter(Boolean)
+										.join(" ") || "Unnamed employee"}
 								</Link>
 								{evaluation.evaluatedOrganizationalUnit && (
 									<div className="text-xs text-muted-foreground">
