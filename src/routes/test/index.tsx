@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { PageBreadcrumb } from "#/components/page-breadcrumb";
 
 export const Route = createFileRoute("/test/")({
   component: TestIndex,
@@ -20,7 +21,7 @@ function TestIndex() {
 
   return (
     <main className="container mx-auto max-w-6xl px-4 py-8">
-      <h1 className="text-3xl font-bold tracking-tight mb-6">Tests</h1>
+      <div className="mb-6"><PageBreadcrumb items={[{ label: "Tests" }]} /></div>
       <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {pages.map(({ to, title }) => (
           <li key={to}>

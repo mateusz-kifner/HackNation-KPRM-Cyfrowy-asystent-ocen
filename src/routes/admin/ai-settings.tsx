@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { IconBrain, IconInfoCircle } from '@tabler/icons-react'
+import { PageBreadcrumb } from '#/components/page-breadcrumb'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import {
@@ -27,7 +28,7 @@ function AiSettingsPage() {
       <header>
         <div className="flex items-center gap-2">
           <IconBrain className="size-5 text-primary" aria-hidden="true" />
-          <h1 className="text-2xl font-semibold tracking-tight">AI settings</h1>
+          <PageBreadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'AI settings' }]} />
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
           Choose the model service endpoint for AI features.

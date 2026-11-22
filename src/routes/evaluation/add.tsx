@@ -8,6 +8,7 @@ import {
 import { IconArrowLeft, IconPlus } from "@tabler/icons-react";
 import { useState, type FormEvent } from "react";
 import { useFormTool } from "#/components/form-tool-context";
+import { PageBreadcrumb } from "#/components/page-breadcrumb";
 import { useTRPC } from "#/integrations/trpc/react";
 import { authClient } from "#/lib/auth-client";
 import { Button } from "@/components/ui/button";
@@ -157,9 +158,7 @@ function EvaluationCreationForm() {
 				Back to evaluations
 			</Link>
 			<header>
-				<h1 className="text-2xl font-semibold tracking-tight">
-					Add evaluation
-				</h1>
+				<PageBreadcrumb items={[{ label: "Evaluations", href: "/evaluation/running" }, { label: "Add evaluation" }]} />
 				<p className="mt-1 text-sm text-muted-foreground">
 					Assign an evaluator, set the schedule, and fill in the evaluation file
 					details.

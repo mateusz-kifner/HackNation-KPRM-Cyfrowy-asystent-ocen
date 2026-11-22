@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useTRPC } from '#/integrations/trpc/react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { PageBreadcrumb } from '#/components/page-breadcrumb'
 
 export const Route = createFileRoute('/admin/employees')({
   component: EmployeesPage,
@@ -40,7 +41,7 @@ function EmployeesPage() {
     <main className="flex-1 space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Employees Management</CardTitle>
+          <PageBreadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Employees' }]} />
         </CardHeader>
         <CardContent>
           <Table>

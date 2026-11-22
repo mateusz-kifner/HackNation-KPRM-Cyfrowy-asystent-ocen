@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { PageBreadcrumb } from '#/components/page-breadcrumb'
 
 export const Route = createFileRoute('/admin/')({
   component: AdminPage,
@@ -7,7 +8,7 @@ export const Route = createFileRoute('/admin/')({
 function AdminPage() {
   return (
     <main className="flex-1 space-y-6">
-      <h1>Admin dashboard</h1>
+      <PageBreadcrumb items={[{ label: 'Admin' }, { label: 'Dashboard' }]} />
     </main>
   )
 }

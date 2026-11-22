@@ -2,6 +2,7 @@ import { IconClipboardList } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { Navigate, createFileRoute } from "@tanstack/react-router";
 import { EvaluationDocxDownload } from "#/components/evaluation-docx-download";
+import { PageBreadcrumb } from "#/components/page-breadcrumb";
 import { useTRPC } from "#/integrations/trpc/react";
 import { authClient } from "#/lib/auth-client";
 import { AppSidebar } from "@/components/app-sidebar";
@@ -56,9 +57,7 @@ export function EvaluationsIndexPage() {
 				<AppSidebar />
 				<main className="min-w-0 flex-1 space-y-6 p-4 sm:p-6">
 					<header>
-						<h1 className="text-2xl font-semibold tracking-tight">
-							{hasManagerAccess ? "Evaluations" : "My evaluations"}
-						</h1>
+						<PageBreadcrumb items={[{ label: hasManagerAccess ? "Evaluations" : "My evaluations" }]} />
 						<p className="mt-1 text-sm text-muted-foreground">
 							{hasManagerAccess
 								? "All assessments in the system."

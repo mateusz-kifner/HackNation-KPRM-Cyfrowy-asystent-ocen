@@ -23,6 +23,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { EvaluationNavigation } from "@/components/evaluation-navigation";
+import { PageBreadcrumb } from "@/components/page-breadcrumb";
 import {
 	Table,
 	TableBody,
@@ -58,9 +59,7 @@ export function EvaluationCategoryPage({ category }: { category: Category }) {
 			<header>
 				<div className="flex flex-wrap items-start justify-between gap-4">
 					<div>
-						<h1 className="text-2xl font-semibold tracking-tight">
-							Evaluations
-						</h1>
+						<PageBreadcrumb items={[{ label: "Evaluations", href: "/evaluation/running" }, { label: title ?? "Evaluations" }]} />
 						<p className="mt-1 text-sm text-muted-foreground">
 							Track your assigned assessments by their current stage.
 						</p>
