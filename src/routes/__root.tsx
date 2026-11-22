@@ -1,4 +1,3 @@
-import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import {
   createRootRouteWithContext,
@@ -6,11 +5,9 @@ import {
   Scripts,
   useRouter,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TooltipProvider } from "#/components/ui/tooltip";
 import Header from "../components/Header";
 import { RootChatbot } from "../components/chatbot/RootChatbot";
-import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
 import { Toaster } from "#/components/ui/sonner"
 import { ResizableHandle,  ResizablePanel, ResizablePanelGroup } from "#/components/ui/resizable";
@@ -103,7 +100,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
           </TooltipProvider></FormToolProvider>
 
-        <TanStackDevtools
+        {/* <TanStackDevtools
           config={{
             position: "bottom-left",
           }}
@@ -114,7 +111,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             },
             TanStackQueryDevtools,
           ]}
-        />
+        /> */}
 <Toaster />
         <Scripts />
       </body>
