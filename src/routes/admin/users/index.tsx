@@ -95,10 +95,6 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 					<header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
 						<div>
 							<PageBreadcrumb items={[{ label: "Admin", href: "/admin" }, { label: "User accounts" }]} />
-							<p className="mt-1 text-sm text-muted-foreground">
-								Create accounts, manage roles, and maintain employee profile
-								information.
-							</p>
 						</div>
 						<Button asChild><Link to="/admin/users/new">
 							<IconPlus data-icon="inline-start" /> Add user
