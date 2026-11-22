@@ -20,7 +20,7 @@ export function RootChatbot() {
 	const basePaths = ["/", "/me"] as const;
 	const allowedPaths = [
 		...basePaths,
-		...(isManager ? ["/evaluation", "/evaluations/index"] : []),
+		...(isManager ? ["/evaluation"] : []),
 		...(isAdmin ? ["/admin", "/admin/"] : []),
 	];
 

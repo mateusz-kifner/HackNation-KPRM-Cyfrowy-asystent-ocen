@@ -15,7 +15,6 @@ import { Route as EvaluationRouteImport } from './routes/evaluation'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MeRouteImport } from './routes/me'
 import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as EvaluationsChar91indexChar93RouteImport } from './routes/evaluations/[index]'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminAiSettingsRouteImport } from './routes/admin/ai-settings'
 import { Route as AdminEmployeesRouteImport } from './routes/admin/employees'
@@ -63,12 +62,6 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EvaluationsChar91indexChar93Route =
-  EvaluationsChar91indexChar93RouteImport.update({
-    id: '/evaluations/index',
-    path: '/evaluations/index',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -165,7 +158,6 @@ export interface FileRoutesByFullPath {
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
   '/evaluation/upcoming': typeof EvaluationUpcomingRoute
-  '/evaluations/index': typeof EvaluationsChar91indexChar93Route
   '/test/shadcn': typeof TestShadcnRoute
   '/admin/': typeof AdminIndexRoute
   '/test/': typeof TestIndexRoute
@@ -189,7 +181,6 @@ export interface FileRoutesByTo {
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
   '/evaluation/upcoming': typeof EvaluationUpcomingRoute
-  '/evaluations/index': typeof EvaluationsChar91indexChar93Route
   '/test/shadcn': typeof TestShadcnRoute
   '/admin': typeof AdminIndexRoute
   '/test': typeof TestIndexRoute
@@ -215,7 +206,6 @@ export interface FileRoutesById {
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
   '/evaluation/upcoming': typeof EvaluationUpcomingRoute
-  '/evaluations/index': typeof EvaluationsChar91indexChar93Route
   '/test/shadcn': typeof TestShadcnRoute
   '/admin/': typeof AdminIndexRoute
   '/test/': typeof TestIndexRoute
@@ -242,7 +232,6 @@ export interface FileRouteTypes {
     | '/evaluation/completed'
     | '/evaluation/running'
     | '/evaluation/upcoming'
-    | '/evaluations/index'
     | '/test/shadcn'
     | '/admin/'
     | '/test/'
@@ -266,7 +255,6 @@ export interface FileRouteTypes {
     | '/evaluation/completed'
     | '/evaluation/running'
     | '/evaluation/upcoming'
-    | '/evaluations/index'
     | '/test/shadcn'
     | '/admin'
     | '/test'
@@ -291,7 +279,6 @@ export interface FileRouteTypes {
     | '/evaluation/completed'
     | '/evaluation/running'
     | '/evaluation/upcoming'
-    | '/evaluations/index'
     | '/test/shadcn'
     | '/admin/'
     | '/test/'
@@ -310,7 +297,6 @@ export interface RootRouteChildren {
   MeRoute: typeof MeRoute
   SettingsRoute: typeof SettingsRoute
   ApiChatRouteRoute: typeof ApiChatRouteRoute
-  EvaluationsChar91indexChar93Route: typeof EvaluationsChar91indexChar93Route
   TestShadcnRoute: typeof TestShadcnRoute
   TestIndexRoute: typeof TestIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -359,13 +345,6 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/evaluations/index': {
-      id: '/evaluations/index'
-      path: '/evaluations/index'
-      fullPath: '/evaluations/index'
-      preLoaderRoute: typeof EvaluationsChar91indexChar93RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -533,7 +512,6 @@ const rootRouteChildren: RootRouteChildren = {
   MeRoute: MeRoute,
   SettingsRoute: SettingsRoute,
   ApiChatRouteRoute: ApiChatRouteRoute,
-  EvaluationsChar91indexChar93Route: EvaluationsChar91indexChar93Route,
   TestShadcnRoute: TestShadcnRoute,
   TestIndexRoute: TestIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
