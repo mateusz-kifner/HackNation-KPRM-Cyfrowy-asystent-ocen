@@ -1,29 +1,30 @@
-import { TRPCError } from "@trpc/server";
-import type { TRPCRouterRecord } from "@trpc/server";
-import { and, desc, eq, like, or } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
+import type { TRPCRouterRecord } from "@trpc/server";
+import { TRPCError } from "@trpc/server";
+import { and, desc, eq, like, or } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "#/db";
 import {
 	acknowledgementTypes,
 	additionalAssessmentCriteria,
 	assessmentAcknowledgements,
+	assessmentCriterionPoints,
 	assessmentDateChangeRequests,
 	assessmentFileCriteria,
 	assessmentFiles,
-	assessmentCriterionPoints,
 	assessmentFormMandatoryCriteria,
 	assessmentHistory,
 	assessments,
 	user,
 } from "#/db/schema";
-import { employeeProcedure, managerProcedure } from "./init";
+import { generateAssessmentDocx } from "#/lib/documents/assessment-docx";
 import {
 	assertCanEditAssessment,
 	assertCanViewAssessment,
 	assertUserExists,
 	getAssessmentOrThrow,
 } from "./evaluations/access";
+import { employeeProcedure, managerProcedure } from "./init";
 
 const dateInput = z.coerce.date().nullable().optional();
 
@@ -324,6 +325,33 @@ export const evaluationsRouter = {
 				acknowledgements,
 				dateChangeRequests,
 				history,
+			};
+		}),
+
+	exportDocx: employeeProcedure
+		.input(z.object({ id: z.string().min(1) }))
+		.mutation(async ({ input, ctx }) => {
+			const assessment = await getAssessmentOrThrow(input.id);
+			assertCanViewAssessment(assessment, ctx.user);
+			const [file] = await db
+				.select()
+				.from(assessmentFiles)
+				.where(eq(assessmentFiles.assessmentId, input.id))
+				.limit(1);
+			const criteria = file
+				? await db
+						.select()
+						.from(assessmentFileCriteria)
+						.where(eq(assessmentFileCriteria.assessmentFileId, file.id))
+				: [];
+			const bytes = await generateAssessmentDocx(
+				assessment,
+				file ?? null,
+				criteria,
+			);
+			return {
+				filename: `ocena-${assessment.form ?? "arkusz"}-${assessment.id}.docx`,
+				contentBase64: bytes.toString("base64"),
 			};
 		}),
 

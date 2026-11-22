@@ -1,6 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
 import { IconClipboardList } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { EvaluationDocxDownload } from "#/components/evaluation-docx-download";
+import { useTRPC } from "#/integrations/trpc/react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -17,8 +19,8 @@ import {
 	EmptyMedia,
 	EmptyTitle,
 } from "@/components/ui/empty";
-import { Skeleton } from "@/components/ui/skeleton";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
 	Table,
 	TableBody,
@@ -27,7 +29,6 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { useTRPC } from "#/integrations/trpc/react";
 
 export const Route = createFileRoute("/evaluations/index")({
 	component: EvaluationsIndexPage,
@@ -128,6 +129,7 @@ function EvaluationsTable({
 					<TableHead>Assessment period</TableHead>
 					<TableHead>Assessment date</TableHead>
 					<TableHead>Due date</TableHead>
+					<TableHead>Document</TableHead>
 				</TableRow>
 			</TableHeader>
 			<TableBody>
@@ -154,6 +156,9 @@ function EvaluationsTable({
 						<TableCell>{formatDate(evaluation.assessmentDate)}</TableCell>
 						<TableCell>
 							<DueDate date={evaluation.dueAt} status={evaluation.status} />
+						</TableCell>
+						<TableCell>
+							<EvaluationDocxDownload assessmentId={evaluation.id} />
 						</TableCell>
 					</TableRow>
 				))}
