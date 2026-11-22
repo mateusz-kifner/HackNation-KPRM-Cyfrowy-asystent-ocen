@@ -17,18 +17,19 @@ export function RootChatbot() {
 	const isAdmin = role === "Admin";
 	const isManager = role === "Manager" || isAdmin;
 
-	const basePaths = ["/", "/me"] as const;
+	const basePaths = ["/", "/me", "/settings"] as const;
+	const evaluationPaths = ["/evaluation", "/evaluation/add"] as const;
 	const allowedPaths = [
 		...basePaths,
-		...(isManager ? ["/evaluation"] : []),
-		...(isAdmin ? ["/admin", "/admin/"] : []),
+		...(isManager ? evaluationPaths : []),
+		...(isAdmin ? ["/admin", "/admin/", "/admin/users", "/admin/users/new", "/admin/employees", "/admin/ai-settings"] : []),
 	];
 
 	const navigateTool = createNavigateToPageTool(allowedPaths);
 
 	return (
 		<ChatBot
-			systemPrompt={`You are a helpful assistant. You can use navigate_to_page to navigate between ${allowedPaths.join(", ")} without reloading the app. When the user asks about the form they are filling out, call get_form_state first. Use select_form_field to focus and highlight a field by its name or id; you can supply a color in that same call if requested. Only use edit_form_field after selecting that same field, and only change fields the user asked you to change.`}
+			systemPrompt={`You are a helpful assistant. The user is asking for a change off the current page only when they explicitly request navigation or a page change (for example, “go to evaluations”, “open my profile”, or “take me to admin users”). Only then call navigate_to_page, and only for the destination they asked for. Do not navigate because a page is relevant to the conversation, because you recommend it, or because they mention a page while asking a question. If they ask for information or help without requesting a page change, stay on the current page. Available destinations for this ${role ?? "Employee"} user are: ${allowedPaths.join(", ")}. Never navigate to a destination outside this list. When the user asks about the form they are filling out, call get_form_state first. Use select_form_field to focus and highlight a field by its name or id; you can supply a color in that same call if requested. Only use edit_form_field after selecting that same field, and only change fields the user asked you to change.`}
 			tools={[navigateTool, getFormStateTool, selectFormFieldTool, editFormFieldTool, ...(isAdmin ? [searchUsersTool] : [])]}
 			toolHandlers={{
 				navigate_to_page: createNavigateToPageHandler(
