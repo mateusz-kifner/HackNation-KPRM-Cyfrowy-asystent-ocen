@@ -15,13 +15,13 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 header-complementary border-b border-border px-4">
-      <nav className="flex flex-wrap items-center gap-x-6 gap-y-4 py-4 sm:py-6">
+      <nav className="flex flex-wrap items-center gap-x-4 gap-y-2 py-3 sm:py-4">
         <Link to="/" className="shrink-0 flex items-center gap-2">
           <img src="/logo.png" alt="Blue Void logo" className="size-10" />
           <span className="font-mono text-2xl">BlueVoid</span>
         </Link>
 
-        <div className="order-3 flex w-full flex-wrap items-center gap-x-8 gap-y-2 pb-1 font-semibold text-sm sm:order-none sm:w-auto sm:flex-nowrap sm:pb-0">
+        <div className="order-3 flex w-full flex-wrap items-center gap-x-4 gap-y-1 pb-1 font-semibold text-sm sm:order-none sm:w-auto sm:flex-nowrap sm:pb-0">
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
@@ -45,7 +45,7 @@ export default function Header() {
           </NavigationMenu>
         </div>
 
-        <div className="ml-auto flex items-center gap-3 sm:gap-4">
+        <div className="ml-auto flex items-center gap-2 sm:gap-3">
           <NotificationMenu />
           <UserProfileMenu />
         </div>
