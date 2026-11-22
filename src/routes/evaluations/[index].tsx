@@ -1,8 +1,9 @@
 import { IconClipboardList } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { Navigate, createFileRoute } from "@tanstack/react-router";
 import { EvaluationDocxDownload } from "#/components/evaluation-docx-download";
 import { useTRPC } from "#/integrations/trpc/react";
+import { authClient } from "#/lib/auth-client";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -34,8 +35,20 @@ export const Route = createFileRoute("/evaluations/index")({
 	component: EvaluationsIndexPage,
 });
 
-function EvaluationsIndexPage() {
+export function EvaluationsIndexPage() {
 	const evaluationsQuery = useEvaluatorAssessments();
+	const { data: session, isPending: isSessionPending } = authClient.useSession();
+	const role = (session?.user as { role?: string } | undefined)?.role;
+	const hasManagerAccess = role === "Manager" || role === "Admin";
+
+	if (
+		!evaluationsQuery.isLoading &&
+		!isSessionPending &&
+		!hasManagerAccess &&
+		(evaluationsQuery.isError || evaluationsQuery.data?.length === 0)
+	) {
+		return <Navigate to="/" />;
+	}
 
 	return (
 		<SidebarProvider>
@@ -44,16 +57,20 @@ function EvaluationsIndexPage() {
 				<main className="min-w-0 flex-1 space-y-6 p-4 sm:p-6">
 					<header>
 						<h1 className="text-2xl font-semibold tracking-tight">
-							My evaluations
+							{hasManagerAccess ? "Evaluations" : "My evaluations"}
 						</h1>
 						<p className="mt-1 text-sm text-muted-foreground">
-							Assessments where you are the assigned evaluator.
+							{hasManagerAccess
+								? "All assessments in the system."
+								: "Assessments where you are the assigned evaluator."}
 						</p>
 					</header>
 
 					<Card>
 						<CardHeader>
-							<CardTitle>Assigned assessments</CardTitle>
+							<CardTitle>
+								{hasManagerAccess ? "All assessments" : "Assigned assessments"}
+							</CardTitle>
 							<CardDescription>
 								{evaluationsQuery.data
 									? `${evaluationsQuery.data.length} ${evaluationsQuery.data.length === 1 ? "assessment" : "assessments"}`

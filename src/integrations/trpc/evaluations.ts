@@ -256,8 +256,8 @@ export const evaluationsRouter = {
 				.limit(50);
 		}),
 
-	assignedToMe: employeeProcedure.query(async ({ ctx }) =>
-		db
+	assignedToMe: employeeProcedure.query(async ({ ctx }) => {
+		const query = db
 			.select({
 				id: assessments.id,
 				evaluatedUserId: assessments.evaluatedUserId,
@@ -280,10 +280,16 @@ export const evaluationsRouter = {
 			.leftJoin(
 				assessmentFiles,
 				eq(assessmentFiles.assessmentId, assessments.id),
-			)
+			);
+
+		if (ctx.role === "Manager" || ctx.role === "Admin") {
+			return query.orderBy(desc(assessments.createdAt));
+		}
+
+		return query
 			.where(eq(assessments.evaluatorUserId, ctx.user.id))
-			.orderBy(desc(assessments.createdAt)),
-	),
+			.orderBy(desc(assessments.createdAt));
+	}),
 
 	get: employeeProcedure
 		.input(z.object({ id: z.string().min(1) }))
