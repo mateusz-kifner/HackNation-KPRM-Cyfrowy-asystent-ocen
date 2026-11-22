@@ -12,10 +12,7 @@ import { toast } from "sonner";
 import { authClient } from "#/lib/auth-client";
 import { useTRPC } from "#/integrations/trpc/react";
 import { UserFormDialog } from "@/components/admin/user-form-dialog";
-import type {
-	ManagedUser,
-	UserFormValues,
-} from "@/components/admin/user-form-dialog";
+import type { ManagedUser } from "@/components/admin/user-form-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
 	AlertDialog,
@@ -70,7 +67,7 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 	const [search, setSearch] = useState("");
 	const [roleFilter, setRoleFilter] = useState("all");
 	const [formOpen, setFormOpen] = useState(false);
-	const [editingUser, setEditingUser] = useState<ManagedUser | null>(null);
+	
 	const [deletingUser, setDeletingUser] = useState<ManagedUser | null>(null);
 	const usersQuery = useQuery(trpc.users.list.queryOptions());
 	const refreshUsers = () =>
@@ -81,17 +78,6 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 			onSuccess: () => {
 				toast.success("Account created");
 				setFormOpen(false);
-				refreshUsers();
-			},
-			onError: (error) => toast.error(error.message),
-		}),
-	);
-	const updateUser = useMutation(
-		trpc.users.update.mutationOptions({
-			onSuccess: () => {
-				toast.success("Account updated");
-				setFormOpen(false);
-				setEditingUser(null);
 				refreshUsers();
 			},
 			onError: (error) => toast.error(error.message),
@@ -116,31 +102,10 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 		return matchesSearch && (roleFilter === "all" || user.role === roleFilter);
 	});
 
-	function saveUser(values: UserFormValues) {
-		const profile = {
-			name: values.name,
-			email: values.email,
-			role: values.role,
-			position: values.position,
-			department: values.department,
-			organizationalUnit: values.organizationalUnit,
-			employmentStatus: values.employmentStatus,
-			employmentType: values.employmentType,
-			hireDate: values.hireDate,
-		};
-		if (editingUser) updateUser.mutate({ id: editingUser.id, ...profile });
-		else createUser.mutate({ ...profile, password: values.password ?? "" });
-	}
-
 	function openCreate() {
-		setEditingUser(null);
 		setFormOpen(true);
 	}
 
-	function openEdit(user: ManagedUser) {
-		setEditingUser(user);
-		setFormOpen(true);
-	}
 
 	return (
 		<>
@@ -256,7 +221,7 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 																variant="ghost"
 																size="icon-sm"
 																aria-label={`Edit ${user.name}`}
-																onClick={() => openEdit(user as ManagedUser)}
+																onClick={() => window.location.assign(`/admin/users/${user.id}`)}
 															>
 																<IconPencil />
 															</Button>
@@ -293,11 +258,10 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 				open={formOpen}
 				onOpenChange={(open) => {
 					setFormOpen(open);
-					if (!open) setEditingUser(null);
 				}}
-				user={editingUser}
-				isPending={createUser.isPending || updateUser.isPending}
-				onSubmit={saveUser}
+				user={null}
+				isPending={createUser.isPending}
+				onSubmit={(values) => createUser.mutate({ ...values, password: values.password ?? "" })}
 			/>
 
 			<AlertDialog

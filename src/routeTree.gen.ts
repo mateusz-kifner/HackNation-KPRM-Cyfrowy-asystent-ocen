@@ -14,6 +14,7 @@ import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as EvaluationRouteImport } from './routes/evaluation'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MeRouteImport } from './routes/me'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as EvaluationsChar91indexChar93RouteImport } from './routes/evaluations/[index]'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminAiSettingsRouteImport } from './routes/admin/ai-settings'
@@ -25,6 +26,7 @@ import { Route as EvaluationRunningRouteImport } from './routes/evaluation/runni
 import { Route as EvaluationUpcomingRouteImport } from './routes/evaluation/upcoming'
 import { Route as TestIndexRouteImport } from './routes/test/index'
 import { Route as TestShadcnRouteImport } from './routes/test/shadcn'
+import { Route as AdminUsersIdRouteImport } from './routes/admin/users.$id'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api.trpc.$'
 
@@ -51,6 +53,11 @@ const LoginRoute = LoginRouteImport.update({
 const MeRoute = MeRouteImport.update({
   id: '/me',
   path: '/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EvaluationsChar91indexChar93Route =
@@ -109,6 +116,11 @@ const TestShadcnRoute = TestShadcnRouteImport.update({
   path: '/test/shadcn',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminUsersIdRoute = AdminUsersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminUsersRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -126,10 +138,11 @@ export interface FileRoutesByFullPath {
   '/evaluation': typeof EvaluationRouteWithChildren
   '/login': typeof LoginRoute
   '/me': typeof MeRoute
+  '/settings': typeof SettingsRoute
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/employees': typeof AdminEmployeesRoute
-  '/admin/users': typeof AdminUsersRoute
+  '/admin/users': typeof AdminUsersRouteWithChildren
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
   '/evaluation/upcoming': typeof EvaluationUpcomingRoute
@@ -137,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/test/shadcn': typeof TestShadcnRoute
   '/admin/': typeof AdminIndexRoute
   '/test/': typeof TestIndexRoute
+  '/admin/users/$id': typeof AdminUsersIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
@@ -145,10 +159,11 @@ export interface FileRoutesByTo {
   '/evaluation': typeof EvaluationRouteWithChildren
   '/login': typeof LoginRoute
   '/me': typeof MeRoute
+  '/settings': typeof SettingsRoute
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/employees': typeof AdminEmployeesRoute
-  '/admin/users': typeof AdminUsersRoute
+  '/admin/users': typeof AdminUsersRouteWithChildren
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
   '/evaluation/upcoming': typeof EvaluationUpcomingRoute
@@ -156,6 +171,7 @@ export interface FileRoutesByTo {
   '/test/shadcn': typeof TestShadcnRoute
   '/admin': typeof AdminIndexRoute
   '/test': typeof TestIndexRoute
+  '/admin/users/$id': typeof AdminUsersIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
@@ -166,10 +182,11 @@ export interface FileRoutesById {
   '/evaluation': typeof EvaluationRouteWithChildren
   '/login': typeof LoginRoute
   '/me': typeof MeRoute
+  '/settings': typeof SettingsRoute
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/employees': typeof AdminEmployeesRoute
-  '/admin/users': typeof AdminUsersRoute
+  '/admin/users': typeof AdminUsersRouteWithChildren
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
   '/evaluation/upcoming': typeof EvaluationUpcomingRoute
@@ -177,6 +194,7 @@ export interface FileRoutesById {
   '/test/shadcn': typeof TestShadcnRoute
   '/admin/': typeof AdminIndexRoute
   '/test/': typeof TestIndexRoute
+  '/admin/users/$id': typeof AdminUsersIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
@@ -188,6 +206,7 @@ export interface FileRouteTypes {
     | '/evaluation'
     | '/login'
     | '/me'
+    | '/settings'
     | '/api/chat'
     | '/admin/ai-settings'
     | '/admin/employees'
@@ -199,6 +218,7 @@ export interface FileRouteTypes {
     | '/test/shadcn'
     | '/admin/'
     | '/test/'
+    | '/admin/users/$id'
     | '/api/auth/$'
     | '/api/trpc/$'
   fileRoutesByTo: FileRoutesByTo
@@ -207,6 +227,7 @@ export interface FileRouteTypes {
     | '/evaluation'
     | '/login'
     | '/me'
+    | '/settings'
     | '/api/chat'
     | '/admin/ai-settings'
     | '/admin/employees'
@@ -218,6 +239,7 @@ export interface FileRouteTypes {
     | '/test/shadcn'
     | '/admin'
     | '/test'
+    | '/admin/users/$id'
     | '/api/auth/$'
     | '/api/trpc/$'
   id:
@@ -227,6 +249,7 @@ export interface FileRouteTypes {
     | '/evaluation'
     | '/login'
     | '/me'
+    | '/settings'
     | '/api/chat'
     | '/admin/ai-settings'
     | '/admin/employees'
@@ -238,6 +261,7 @@ export interface FileRouteTypes {
     | '/test/shadcn'
     | '/admin/'
     | '/test/'
+    | '/admin/users/$id'
     | '/api/auth/$'
     | '/api/trpc/$'
   fileRoutesById: FileRoutesById
@@ -248,6 +272,7 @@ export interface RootRouteChildren {
   EvaluationRoute: typeof EvaluationRouteWithChildren
   LoginRoute: typeof LoginRoute
   MeRoute: typeof MeRoute
+  SettingsRoute: typeof SettingsRoute
   ApiChatRouteRoute: typeof ApiChatRouteRoute
   EvaluationsChar91indexChar93Route: typeof EvaluationsChar91indexChar93Route
   TestShadcnRoute: typeof TestShadcnRoute
@@ -291,6 +316,13 @@ declare module '@tanstack/react-router' {
       path: '/me'
       fullPath: '/me'
       preLoaderRoute: typeof MeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/evaluations/index': {
@@ -370,6 +402,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestShadcnRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/users/$id': {
+      id: '/admin/users/$id'
+      path: '/$id'
+      fullPath: '/admin/users/$id'
+      preLoaderRoute: typeof AdminUsersIdRouteImport
+      parentRoute: typeof AdminUsersRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -387,17 +426,29 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminUsersRouteChildren {
+  AdminUsersIdRoute: typeof AdminUsersIdRoute
+}
+
+const AdminUsersRouteChildren: AdminUsersRouteChildren = {
+  AdminUsersIdRoute: AdminUsersIdRoute,
+}
+
+const AdminUsersRouteWithChildren = AdminUsersRoute._addFileChildren(
+  AdminUsersRouteChildren,
+)
+
 interface AdminRouteRouteChildren {
   AdminAiSettingsRoute: typeof AdminAiSettingsRoute
   AdminEmployeesRoute: typeof AdminEmployeesRoute
-  AdminUsersRoute: typeof AdminUsersRoute
+  AdminUsersRoute: typeof AdminUsersRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAiSettingsRoute: AdminAiSettingsRoute,
   AdminEmployeesRoute: AdminEmployeesRoute,
-  AdminUsersRoute: AdminUsersRoute,
+  AdminUsersRoute: AdminUsersRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
 }
 
@@ -427,6 +478,7 @@ const rootRouteChildren: RootRouteChildren = {
   EvaluationRoute: EvaluationRouteWithChildren,
   LoginRoute: LoginRoute,
   MeRoute: MeRoute,
+  SettingsRoute: SettingsRoute,
   ApiChatRouteRoute: ApiChatRouteRoute,
   EvaluationsChar91indexChar93Route: EvaluationsChar91indexChar93Route,
   TestShadcnRoute: TestShadcnRoute,
