@@ -1,5 +1,13 @@
 import { db } from './index'
-import { employees, user, account, session, verification } from './schema'
+import {
+  assessmentFiles,
+  assessments,
+  employees,
+  user,
+  account,
+  session,
+  verification,
+} from './schema'
 import { hashPassword } from 'better-auth/crypto'
 import { randomUUID } from 'crypto'
 
@@ -47,6 +55,7 @@ async function seed() {
   await db.delete(account)
   await db.delete(session)
   await db.delete(verification)
+  await db.delete(assessments)
   await db.delete(user)
   await db.delete(employees)
 
@@ -77,6 +86,60 @@ async function seed() {
       hireDate: u.hireDate,
     })
     console.log(`Inserted user and employee: ${u.name}`)
+  }
+
+  const now = new Date()
+  const periodStart = new Date(now.getFullYear(), 0, 1)
+  const periodEnd = new Date(now.getFullYear(), 11, 31)
+  const mockEvaluations = [
+    {
+      id: 'mock-evaluation-started',
+      evaluatedUserId: 'Anna_Lewandowska_Emploee',
+      evaluatorUserId: 'Jan_Kowalski_Manager',
+      form: 'C' as const,
+      status: 'assessment_in_progress' as const,
+      name: ['Anna', 'Lewandowska'],
+    },
+    {
+      id: 'mock-evaluation-almost-complete',
+      evaluatedUserId: 'Mateusz_Kifner_Emploee',
+      evaluatorUserId: 'Jan_Kowalski_Manager',
+      form: 'C' as const,
+      status: 'awaiting_employee_acknowledgement' as const,
+      name: ['Mateusz', 'Kifner'],
+    },
+  ]
+
+  for (const evaluation of mockEvaluations) {
+    await db.insert(assessments).values({
+      id: evaluation.id,
+      evaluatedUserId: evaluation.evaluatedUserId,
+      evaluatorUserId: evaluation.evaluatorUserId,
+      appointedByUserId: 'Admin_admin',
+      form: evaluation.form,
+      status: evaluation.status,
+      periodStart,
+      periodEnd,
+      assessmentDate: now,
+      dueAt: new Date(now.getFullYear(), 11, 31),
+      ...(evaluation.status === 'awaiting_employee_acknowledgement'
+        ? { submittedAt: now }
+        : {}),
+    })
+    await db.insert(assessmentFiles).values({
+      id: `${evaluation.id}-file`,
+      assessmentId: evaluation.id,
+      evaluatedFirstName: evaluation.name[0],
+      evaluatedLastName: evaluation.name[1],
+      evaluatedPosition: 'Employee',
+      evaluatedOrganizationalUnit: 'Operations',
+      evaluatorFirstName: 'Jan',
+      evaluatorLastName: 'Kowalski',
+      evaluatorPosition: 'Manager',
+      evaluatorOrganizationalUnit: 'Management',
+      assessmentPeriodStart: periodStart,
+      assessmentPeriodEnd: periodEnd,
+    })
   }
 
   console.log('Seed complete')
