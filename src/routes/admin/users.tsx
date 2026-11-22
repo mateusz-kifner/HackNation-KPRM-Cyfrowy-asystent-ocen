@@ -199,12 +199,14 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 													<TableCell>
 														<div className="flex justify-end gap-1">
 															<Button
-																variant="ghost"
+															variant="ghost"
 																size="icon-sm"
+															asChild
 																aria-label={`Edit ${user.name}`}
-																onClick={() => window.location.assign(`/admin/users/${user.id}`)}
 															>
+															<Link to="/admin/users/$id" params={{ id: user.id }}>
 																<IconPencil />
+															</Link>
 															</Button>
 															<Button
 																variant="ghost"
