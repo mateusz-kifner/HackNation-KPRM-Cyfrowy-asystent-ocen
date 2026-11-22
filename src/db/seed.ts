@@ -62,6 +62,7 @@ async function seed() {
   // Seed users and accounts
   for (const u of mockUsers) {
     const hashed = await hashPassword(MOCK_PASSWORD)
+    console.log('[seed] Inserting into user')
     await db.insert(user).values({
       id: u.id,
       name: u.name,
@@ -70,6 +71,7 @@ async function seed() {
       isAnonymous: false,
       role: u.id === 'Admin_admin' ? 'Admin' : 'Employee',
     })
+    console.log('[seed] Inserting into account')
     await db.insert(account).values({
       id: randomUUID(),
       accountId: u.id,
@@ -77,6 +79,7 @@ async function seed() {
       userId: u.id,
       password: hashed,
     })
+    console.log('[seed] Inserting into employees')
     await db.insert(employees).values({
       id: u.id,
       name: u.name,
@@ -111,6 +114,7 @@ async function seed() {
   ]
 
   for (const evaluation of mockEvaluations) {
+    console.log('[seed] Inserting into assessments')
     await db.insert(assessments).values({
       id: evaluation.id,
       evaluatedUserId: evaluation.evaluatedUserId,
@@ -126,6 +130,7 @@ async function seed() {
         ? { submittedAt: now }
         : {}),
     })
+    console.log('[seed] Inserting into assessment_files')
     await db.insert(assessmentFiles).values({
       id: `${evaluation.id}-file`,
       assessmentId: evaluation.id,
