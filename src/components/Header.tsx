@@ -57,11 +57,6 @@ export default function Header() {
         </div>
 
         <div className="ml-auto flex items-center gap-3 sm:gap-4">
-          {isAdmin && (
-            <Button variant="outline" asChild>
-              <Link to="/admin">Admin</Link>
-            </Button>
-          )}
           {isPending ? (
             <div className="size-9 animate-pulse rounded-full bg-muted" />
           ) : session?.user ? (
