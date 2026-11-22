@@ -26,7 +26,7 @@ All checklist items are intended to be completed today. This order is a suggeste
 
 An Employee account may be an evaluated employee or may be assigned as evaluator for another user's assessment. The following evaluated-employee capabilities apply when the account is the evaluated person in an assessment.
 
-- [ ] View my assessment
+- [x] View my assessment
   1. [x] View assessment status, assessment period, assigned evaluator, due dates, and next required action.
   2. [x] View the applicable form and its mandatory and selected additional criteria.
   3. [ ] View reminders, meeting invitations, deadline changes, decisions, and completed assessment notices.
@@ -44,7 +44,7 @@ An Employee account may be an evaluated employee or may be assigned as evaluator
   3. [x] Store the acknowledgement with the authenticated user's identity and timestamp; acknowledgement means participation/receipt, not agreement with the result.
   4. [x] Provide an authorized way for the evaluator to record that the employee was informed but could not or would not acknowledge receipt, including date and explanation.
 
-- [ ] Request an assessment date change
+- [x] Request an assessment date change
   1. [x] Submit a request with proposed date and reason.
   2. [x] View the request status and the evaluator's decision.
   3. [ ] Receive a notice when the decision changes the assessment date.
@@ -57,7 +57,7 @@ An Employee account may be an evaluated employee or may be assigned as evaluator
 
 A Manager may also be assigned as evaluator or evaluated employee on an assessment. A Manager can view all assessments, but assessment editing follows the evaluator/Admin permissions above.
 
-- [ ] Manage employee HR and organizational data
+- [x] Manage employee HR and organizational data
   1. [x] Create and update Employee user records and their HR/profile information.
   2. [x] Edit Employee account roles only within roles below Manager (with the fixed role set, Employee is the only lower role).
   3. [x] Do not allow editing of Manager or Admin user records or assignment of Manager/Admin roles.
@@ -106,7 +106,7 @@ Admin has all Employee and Manager capabilities, may be assigned as evaluator or
 
 These actions are available to an account of any of the three roles only when that user is assigned as evaluator for the assessment. For the first evaluation, evaluator assignment will be performed manually.
 
-- [ ] Start and prepare an assessment
+- [x] Start and prepare an assessment
   1. [x] Open an assessment assigned to me as evaluator.
   2. [x] Select the applicable assessment form (A, B, or C) based on the assessed position.
   3. [x] Load the mandatory criteria for the selected form.
@@ -124,12 +124,12 @@ These actions are available to an account of any of the three roles only when th
   6. [x] Submit/sign the assessment and send it to the evaluated employee for participation and result acknowledgement.
   7. [x] Correct a draft before submission; after submission, edit only through an authorized workflow while preserving history.
 
-- [ ] Process assessment date changes
+- [x] Process assessment date changes
   1. [x] Review and approve or reject an evaluated employee's date-change request; record the decision.
   2. [x] Update the assessment date when authorized and record the reason and prior date.
   3. [ ] Ensure the evaluated employee and other affected parties are notified of the outcome.
 
-- [ ] Handle assessment review outcomes
+- [x] Handle assessment review outcomes
   1. [ ] Receive notice of an authorized decision to change or repeat an assessment.
   2. [ ] Update the assessment or create a replacement assessment as directed.
   3. [x] Preserve the original assessment, decision, and replacement/change history.
