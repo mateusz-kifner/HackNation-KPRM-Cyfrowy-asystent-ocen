@@ -27,11 +27,11 @@ All checklist items are intended to be completed today. This order is a suggeste
 An Employee account may be an evaluated employee or may be assigned as evaluator for another user's assessment. The following evaluated-employee capabilities apply when the account is the evaluated person in an assessment.
 
 - [ ] View my assessment
-  1. [ ] View assessment status, assessment period, assigned evaluator, due dates, and next required action.
+  1. [x] View assessment status, assessment period, assigned evaluator, due dates, and next required action.
   2. [x] View the applicable form and its mandatory and selected additional criteria.
   3. [ ] View reminders, meeting invitations, deadline changes, decisions, and completed assessment notices.
   4. [x] View current and previous assessments and their history.
-  5. [ ] Download or print my assessment form.
+  5. [x] Download or print my assessment form.
 
 - [x] Acknowledge participation in criteria-setting
   1. [x] View the evaluator's record of the criteria-setting discussion, selected criteria, and assessment date.
@@ -59,13 +59,13 @@ A Manager may also be assigned as evaluator or evaluated employee on an assessme
 
 - [ ] Manage employee HR and organizational data
   1. [ ] Create and update Employee user records and their HR/profile information.
-  2. [ ] Edit Employee account roles only within roles below Manager (with the fixed role set, Employee is the only lower role).
-  3. [ ] Do not allow editing of Manager or Admin user records or assignment of Manager/Admin roles.
-  4. [ ] Maintain employment status/type, organizational unit, and other employee information needed by the workflow.
+  2. [x] Edit Employee account roles only within roles below Manager (with the fixed role set, Employee is the only lower role).
+  3. [x] Do not allow editing of Manager or Admin user records or assignment of Manager/Admin roles.
+  4. [x] Maintain employment status/type, organizational unit, and other employee information needed by the workflow.
   5. [ ] Maintain reporting lines and effective dates.
   6. [ ] Maintain acting-substitution assignments, scopes, and effective dates.
   7. [ ] Maintain absence records and their dates/continuity where this information is in scope.
-  8. [ ] Search, sort, and view employee records within Manager permissions.
+  8. [x] Search, sort, and view employee records within Manager permissions.
 
 - [x] Appoint an evaluator to an assessment
   1. [x] Select an evaluator from eligible users; any account role may be selected.
@@ -75,7 +75,7 @@ A Manager may also be assigned as evaluator or evaluated employee on an assessme
 
 - [ ] Oversee assessments
   1. [x] View all assessments and their status, deadlines, evaluator, and evaluated employee.
-  2. [ ] Search and filter assessments to identify pending actions and overdue steps.
+  2. [x] Search and filter assessments to identify pending actions and overdue steps.
   3. [x] View assessment history and acknowledgements.
   4. [x] Do not edit criteria, ratings, or assessment details unless the Manager is the assigned evaluator for that assessment.
 
@@ -88,13 +88,13 @@ A Manager may also be assigned as evaluator or evaluated employee on an assessme
 
 Admin has all Employee and Manager capabilities, may be assigned as evaluator or evaluated employee, and additionally administers users and roles. Admin actions must still preserve assessment history and prevent self-evaluation.
 
-- [ ] Manage user accounts (CRUD)
+- [x] Manage user accounts (CRUD)
   1. [x] Create user accounts.
   2. [x] View and search all user accounts.
   3. [x] Update user profile, HR, and account data.
   4. [x] Assign one of the three supported account roles: Employee, Manager, or Admin.
-  5. [ ] Deactivate or delete user accounts according to the application's data-retention behavior; preserve assessment records and historical actor references.
-  6. [ ] Prevent invalid role assignments and record account/role changes in an audit history.
+  5. [x] Deactivate or delete user accounts according to the application's data-retention behavior; preserve assessment records and historical actor references.
+  6. [x] Prevent invalid role assignments and record account/role changes in an audit history.
 
 - [x] Perform authorized assessment administration
   1. [x] View all assessments and their history.
@@ -118,7 +118,7 @@ These actions are available to an account of any of the three roles only when th
 - [ ] Conduct the assessment and record the outcome
   1. [x] Record that the assessment discussion took place.
   2. [x] Rate each mandatory and selected additional criterion using the configured scale.
-  3. [ ] Calculate the overall result from the criterion ratings using the configured assessment rules.
+  3. [x] Calculate the overall result from the criterion ratings using the configured assessment rules.
   4. [x] Enter assessment rationale where applicable.
   5. [x] Record conclusions or recommendations for the evaluated employee's development plan.
   6. [x] Submit/sign the assessment and send it to the evaluated employee for participation and result acknowledgement.
@@ -132,7 +132,7 @@ These actions are available to an account of any of the three roles only when th
 - [ ] Handle assessment review outcomes
   1. [ ] Receive notice of an authorized decision to change or repeat an assessment.
   2. [ ] Update the assessment or create a replacement assessment as directed.
-  3. [ ] Preserve the original assessment, decision, and replacement/change history.
+  3. [x] Preserve the original assessment, decision, and replacement/change history.
   4. [ ] Send the updated assessment to the evaluated employee for acknowledgement.
 
 ## 5. Cross-cutting implementation notes

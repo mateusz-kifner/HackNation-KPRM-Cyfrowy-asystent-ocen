@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
-import { and, desc, eq, like, ne, or } from "drizzle-orm";
+import { and, desc, eq, like, ne, or, lt, isNotNull } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "#/db";
 import {
@@ -180,21 +180,32 @@ async function addHistory(
 
 export const evaluationsRouter = {
 	candidates: managerProcedure
-		.input(z.object({ query: z.string().trim().max(100).optional() }).optional())
+		.input(
+			z.object({ query: z.string().trim().max(100).optional() }).optional(),
+		)
 		.query(async ({ input }) => {
-		const query = input?.query;
-		return db
-			.select({
-				id: user.id,
-				name: user.name,
-				email: user.email,
-				role: user.role,
-				position: user.position,
-				organizationalUnit: user.organizationalUnit,
-			})
-			.from(user)
-			.where(query ? or(like(user.name, `%${query}%`), like(user.email, `%${query}%`), like(user.position, `%${query}%`), like(user.organizationalUnit, `%${query}%`)) : undefined)
-			.orderBy(user.name);
+			const query = input?.query;
+			return db
+				.select({
+					id: user.id,
+					name: user.name,
+					email: user.email,
+					role: user.role,
+					position: user.position,
+					organizationalUnit: user.organizationalUnit,
+				})
+				.from(user)
+				.where(
+					query
+						? or(
+								like(user.name, `%${query}%`),
+								like(user.email, `%${query}%`),
+								like(user.position, `%${query}%`),
+								like(user.organizationalUnit, `%${query}%`),
+							)
+						: undefined,
+				)
+				.orderBy(user.name);
 		}),
 
 	options: employeeProcedure.query(() => ({
@@ -204,25 +215,75 @@ export const evaluationsRouter = {
 	})),
 
 	list: employeeProcedure
-		.input(z.object({ query: z.string().trim().max(100).optional() }).optional())
+		.input(
+			z
+				.object({
+					query: z.string().trim().max(100).optional(),
+					status: z
+						.enum([
+							"draft",
+							"criteria_setting",
+							"ready_for_assessment",
+							"assessment_in_progress",
+							"awaiting_employee_acknowledgement",
+							"completed",
+							"cancelled",
+						])
+						.optional(),
+					evaluatorUserId: z.string().optional(),
+					evaluatedUserId: z.string().optional(),
+					overdueOnly: z.boolean().optional(),
+				})
+				.optional(),
+		)
 		.query(async ({ ctx, input }) => {
-		const actorId = ctx.user.id;
-		const query = input?.query;
-		const searchCondition = query ? or(like(assessments.id, `%${query}%`), like(assessments.form, `%${query}%`), like(assessments.status, `%${query}%`)) : undefined;
-		if (ctx.role === "Manager" || ctx.role === "Admin") {
-			return db.select().from(assessments).where(searchCondition).orderBy(desc(assessments.createdAt));
-		}
+			const actorId = ctx.user.id;
+			const query = input?.query;
+			const searchCondition = query
+				? or(
+						like(assessments.id, `%${query}%`),
+						like(assessments.form, `%${query}%`),
+						like(assessments.status, `%${query}%`),
+					)
+				: undefined;
+			const filters = [
+				searchCondition,
+				input?.status ? eq(assessments.status, input.status) : undefined,
+				input?.evaluatorUserId
+					? eq(assessments.evaluatorUserId, input.evaluatorUserId)
+					: undefined,
+				input?.evaluatedUserId
+					? eq(assessments.evaluatedUserId, input.evaluatedUserId)
+					: undefined,
+				input?.overdueOnly
+					? and(
+							isNotNull(assessments.dueAt),
+							lt(assessments.dueAt, new Date()),
+							ne(assessments.status, "completed"),
+						)
+					: undefined,
+			];
+			if (ctx.role === "Manager" || ctx.role === "Admin") {
+				return db
+					.select()
+					.from(assessments)
+					.where(and(...filters))
+					.orderBy(desc(assessments.createdAt));
+			}
 
-		return db
-			.select()
-			.from(assessments)
-			.where(
-				and(searchCondition, or(
-					eq(assessments.evaluatedUserId, actorId),
-					eq(assessments.evaluatorUserId, actorId),
-				)),
-			)
-			.orderBy(desc(assessments.createdAt));
+			return db
+				.select()
+				.from(assessments)
+				.where(
+					and(
+						...filters,
+						or(
+							eq(assessments.evaluatedUserId, actorId),
+							eq(assessments.evaluatorUserId, actorId),
+						),
+					),
+				)
+				.orderBy(desc(assessments.createdAt));
 		}),
 
 	search: employeeProcedure
@@ -279,42 +340,58 @@ export const evaluationsRouter = {
 		}),
 
 	assignedToMe: employeeProcedure
-		.input(z.object({ query: z.string().trim().max(100).optional() }).optional())
+		.input(
+			z.object({ query: z.string().trim().max(100).optional() }).optional(),
+		)
 		.query(async ({ ctx, input }) => {
-		const queryText = input?.query;
-		const searchCondition = queryText ? or(like(assessments.id, `%${queryText}%`), like(assessments.form, `%${queryText}%`), like(assessments.status, `%${queryText}%`), like(assessmentFiles.evaluatedFirstName, `%${queryText}%`), like(assessmentFiles.evaluatedLastName, `%${queryText}%`), like(assessmentFiles.evaluatedPosition, `%${queryText}%`), like(assessmentFiles.evaluatedOrganizationalUnit, `%${queryText}%`)) : undefined;
-		const query = db
-			.select({
-				id: assessments.id,
-				evaluatedUserId: assessments.evaluatedUserId,
-				evaluatorUserId: assessments.evaluatorUserId,
-				form: assessments.form,
-				status: assessments.status,
-				periodStart: assessments.periodStart,
-				periodEnd: assessments.periodEnd,
-				assessmentDate: assessments.assessmentDate,
-				dueAt: assessments.dueAt,
-				submittedAt: assessments.submittedAt,
-				createdAt: assessments.createdAt,
-				evaluatedFirstName: assessmentFiles.evaluatedFirstName,
-				evaluatedLastName: assessmentFiles.evaluatedLastName,
-				evaluatedPosition: assessmentFiles.evaluatedPosition,
-				evaluatedOrganizationalUnit:
-					assessmentFiles.evaluatedOrganizationalUnit,
-			})
-			.from(assessments)
-			.leftJoin(
-				assessmentFiles,
-				eq(assessmentFiles.assessmentId, assessments.id),
-			);
+			const queryText = input?.query;
+			const searchCondition = queryText
+				? or(
+						like(assessments.id, `%${queryText}%`),
+						like(assessments.form, `%${queryText}%`),
+						like(assessments.status, `%${queryText}%`),
+						like(assessmentFiles.evaluatedFirstName, `%${queryText}%`),
+						like(assessmentFiles.evaluatedLastName, `%${queryText}%`),
+						like(assessmentFiles.evaluatedPosition, `%${queryText}%`),
+						like(assessmentFiles.evaluatedOrganizationalUnit, `%${queryText}%`),
+					)
+				: undefined;
+			const query = db
+				.select({
+					id: assessments.id,
+					evaluatedUserId: assessments.evaluatedUserId,
+					evaluatorUserId: assessments.evaluatorUserId,
+					form: assessments.form,
+					status: assessments.status,
+					periodStart: assessments.periodStart,
+					periodEnd: assessments.periodEnd,
+					assessmentDate: assessments.assessmentDate,
+					dueAt: assessments.dueAt,
+					submittedAt: assessments.submittedAt,
+					createdAt: assessments.createdAt,
+					evaluatedFirstName: assessmentFiles.evaluatedFirstName,
+					evaluatedLastName: assessmentFiles.evaluatedLastName,
+					evaluatedPosition: assessmentFiles.evaluatedPosition,
+					evaluatedOrganizationalUnit:
+						assessmentFiles.evaluatedOrganizationalUnit,
+				})
+				.from(assessments)
+				.leftJoin(
+					assessmentFiles,
+					eq(assessmentFiles.assessmentId, assessments.id),
+				);
 
-		if (ctx.role === "Manager" || ctx.role === "Admin") {
-			return query.where(searchCondition).orderBy(desc(assessments.createdAt));
-		}
+			if (ctx.role === "Manager" || ctx.role === "Admin") {
+				return query
+					.where(searchCondition)
+					.orderBy(desc(assessments.createdAt));
+			}
 
-		return query
-			.where(and(eq(assessments.evaluatorUserId, ctx.user.id), searchCondition))
-			.orderBy(desc(assessments.createdAt));
+			return query
+				.where(
+					and(eq(assessments.evaluatorUserId, ctx.user.id), searchCondition),
+				)
+				.orderBy(desc(assessments.createdAt));
 		}),
 
 	evaluatedForMe: employeeProcedure.query(async ({ ctx }) => {
@@ -356,28 +433,38 @@ export const evaluationsRouter = {
 		.query(async ({ input, ctx }) => {
 			const assessment = await getAssessmentOrThrow(input.id);
 			assertCanViewAssessment(assessment, ctx.user);
-			const [[form], acknowledgements, dateChangeRequests, history] =
-				await Promise.all([
-					db
-						.select()
-						.from(assessmentFiles)
-						.where(eq(assessmentFiles.assessmentId, input.id))
-						.limit(1),
-					db
-						.select()
-						.from(assessmentAcknowledgements)
-						.where(eq(assessmentAcknowledgements.assessmentId, input.id)),
-					db
-						.select()
-						.from(assessmentDateChangeRequests)
-						.where(eq(assessmentDateChangeRequests.assessmentId, input.id))
-						.orderBy(desc(assessmentDateChangeRequests.createdAt)),
-					db
-						.select()
-						.from(assessmentHistory)
-						.where(eq(assessmentHistory.assessmentId, input.id))
-						.orderBy(desc(assessmentHistory.createdAt)),
-				]);
+			const [
+				[form],
+				acknowledgements,
+				dateChangeRequests,
+				history,
+				[assignedEvaluator],
+			] = await Promise.all([
+				db
+					.select()
+					.from(assessmentFiles)
+					.where(eq(assessmentFiles.assessmentId, input.id))
+					.limit(1),
+				db
+					.select()
+					.from(assessmentAcknowledgements)
+					.where(eq(assessmentAcknowledgements.assessmentId, input.id)),
+				db
+					.select()
+					.from(assessmentDateChangeRequests)
+					.where(eq(assessmentDateChangeRequests.assessmentId, input.id))
+					.orderBy(desc(assessmentDateChangeRequests.createdAt)),
+				db
+					.select()
+					.from(assessmentHistory)
+					.where(eq(assessmentHistory.assessmentId, input.id))
+					.orderBy(desc(assessmentHistory.createdAt)),
+				db
+					.select({ id: user.id, name: user.name, email: user.email })
+					.from(user)
+					.where(eq(user.id, assessment.evaluatorUserId))
+					.limit(1),
+			]);
 			const criteria = form
 				? await db
 						.select()
@@ -386,6 +473,8 @@ export const evaluationsRouter = {
 				: [];
 			return {
 				...assessment,
+				assignedEvaluator: assignedEvaluator ?? null,
+				nextRequiredAction: getNextRequiredAction(assessment, acknowledgements),
 				file: form ?? null,
 				criteria,
 				acknowledgements,
@@ -1455,15 +1544,19 @@ export const evaluationsRouter = {
 				});
 			}
 			const average = calculateAverage(points);
+			const calculatedLevel =
+				average < 2
+					? "far_below_expectations"
+					: average < 4
+						? "below_expectations"
+						: average < 6
+							? "meets_expectations"
+							: average < 8
+								? "above_expectations"
+								: "far_above_expectations";
+			const calculatedOutcome = average >= 5 ? "positive" : "negative";
 			const rationale = input.rationale ?? file.assessmentRationale;
-			if (!file.overallOutcome || !file.overallLevel) {
-				throw new TRPCError({
-					code: "PRECONDITION_FAILED",
-					message:
-						"Select the overall level and outcome using the configured assessment rules before submitting.",
-				});
-			}
-			if (file.overallOutcome === "negative" && !rationale?.trim()) {
+			if (calculatedOutcome === "negative" && !rationale?.trim()) {
 				throw new TRPCError({
 					code: "PRECONDITION_FAILED",
 					message: "A rationale is required for a negative assessment.",
@@ -1474,6 +1567,8 @@ export const evaluationsRouter = {
 					.update(assessmentFiles)
 					.set({
 						averagePoints: average,
+						overallLevel: calculatedLevel,
+						overallOutcome: calculatedOutcome,
 						assessmentRationale: rationale,
 						evaluatorSignedAt: new Date(),
 						evaluatorSignatureLocation: file.evaluatorSignatureLocation,
@@ -1516,4 +1611,120 @@ export const evaluationsRouter = {
 				.where(eq(assessmentHistory.assessmentId, input.assessmentId))
 				.orderBy(desc(assessmentHistory.createdAt));
 		}),
+
+	calculateResult: employeeProcedure
+		.input(z.object({ assessmentId: z.string().min(1) }))
+		.query(async ({ input, ctx }) => {
+			const assessment = await getAssessmentOrThrow(input.assessmentId);
+			assertCanViewAssessment(assessment, ctx.user);
+			const [file] = await db
+				.select()
+				.from(assessmentFiles)
+				.where(eq(assessmentFiles.assessmentId, input.assessmentId))
+				.limit(1);
+			if (!file)
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Assessment form not found.",
+				});
+			const criteria = await db
+				.select()
+				.from(assessmentFileCriteria)
+				.where(eq(assessmentFileCriteria.assessmentFileId, file.id));
+			if (
+				!criteria.length ||
+				criteria.some((criterion) => criterion.points === null)
+			)
+				throw new TRPCError({
+					code: "PRECONDITION_FAILED",
+					message: "Rate every criterion before calculating the result.",
+				});
+			const average = calculateAverage(
+				criteria.map((criterion) => criterion.points!),
+			);
+			const overallLevel =
+				average < 2
+					? "far_below_expectations"
+					: average < 4
+						? "below_expectations"
+						: average < 6
+							? "meets_expectations"
+							: average < 8
+								? "above_expectations"
+								: "far_above_expectations";
+			return {
+				average,
+				overallLevel,
+				overallOutcome:
+					average >= 5 ? ("positive" as const) : ("negative" as const),
+			};
+		}),
+
+	recordReviewOutcome: managerProcedure
+		.input(
+			z.object({
+				assessmentId: z.string().min(1),
+				outcome: z.enum(["change", "repeat"]),
+				reason: z.string().trim().min(1),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const assessment = await getAssessmentOrThrow(input.assessmentId);
+			if (ctx.role !== "Admin")
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "Only an Admin can record a review decision.",
+				});
+			return db.transaction(async (tx) => {
+				let replacement: typeof assessment | null = null;
+				if (input.outcome === "repeat") {
+					const [created] = await tx
+						.insert(assessments)
+						.values({
+							id: randomUUID(),
+							evaluatedUserId: assessment.evaluatedUserId,
+							evaluatorUserId: assessment.evaluatorUserId,
+							appointedByUserId: ctx.user.id,
+							form: assessment.form,
+							status: "criteria_setting",
+							periodStart: assessment.periodStart,
+							periodEnd: assessment.periodEnd,
+							assessmentDate: assessment.assessmentDate,
+							dueAt: assessment.dueAt,
+						})
+						.returning();
+					replacement = created;
+				}
+				await addHistory(
+					tx,
+					input.assessmentId,
+					ctx.user.id,
+					"review_outcome_recorded",
+					undefined,
+					{
+						outcome: input.outcome,
+						replacementAssessmentId: replacement?.id ?? null,
+					},
+					input.reason,
+				);
+				return {
+					recorded: true,
+					replacementAssessmentId: replacement?.id ?? null,
+				};
+			});
+		}),
 } satisfies TRPCRouterRecord;
+
+function getNextRequiredAction(
+	assessment: typeof assessments.$inferSelect,
+	acknowledgements: (typeof assessmentAcknowledgements.$inferSelect)[],
+) {
+	if (assessment.status === "cancelled" || assessment.status === "completed")
+		return null;
+	if (!acknowledgements.some((item) => item.type === "criteria_participation"))
+		return "employee_criteria_acknowledgement" as const;
+	if (!assessment.submittedAt) return "evaluator_complete_assessment" as const;
+	if (!acknowledgements.some((item) => item.type === "result_receipt"))
+		return "employee_result_acknowledgement" as const;
+	return null;
+}
