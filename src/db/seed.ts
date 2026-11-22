@@ -15,8 +15,8 @@ const MOCK_PASSWORD = 'password123'
 
 const mockUsers = [
   {
-    id: 'Admin_admin',
-    name: 'Admin_admin',
+    id: 'admin_admin',
+    name: 'Admin Admin',
     email: 'admin.admin@example.com',
     position: 'Admin',
     department: 'Administration',
@@ -46,6 +46,30 @@ const mockUsers = [
     department: 'Operations',
     hireDate: new Date('2022-07-10'),
   },
+  {
+    id: 'Katarzyna_Nowak_Employee',
+    name: 'Katarzyna Nowak',
+    email: 'katarzyna.nowak@example.com',
+    position: 'Employee',
+    department: 'Finance',
+    hireDate: new Date('2023-02-06'),
+  },
+  {
+    id: 'Piotr_Zielinski_Employee',
+    name: 'Piotr Zielinski',
+    email: 'piotr.zielinski@example.com',
+    position: 'Employee',
+    department: 'Engineering',
+    hireDate: new Date('2022-11-14'),
+  },
+  {
+    id: 'Marta_Wisniewska_Manager',
+    name: 'Marta Wisniewska',
+    email: 'marta.wisniewska@example.com',
+    position: 'Manager',
+    department: 'Customer Success',
+    hireDate: new Date('2020-08-03'),
+  },
 ]
 
 async function seed() {
@@ -69,7 +93,7 @@ async function seed() {
       email: u.email,
       emailVerified: false,
       isAnonymous: false,
-      role: u.id === 'Admin_admin' ? 'Admin' : 'Employee',
+      role: u.position === 'Admin' ? 'Admin' : u.position === 'Manager' ? 'Manager' : 'Employee',
     })
     console.log('[seed] Inserting into account')
     await db.insert(account).values({
@@ -186,15 +210,46 @@ async function seed() {
       overallLevel: 'meets_expectations' as const,
       averagePoints: 3.8,
     },
+    {
+      id: 'mock-evaluation-admin-in-progress',
+      evaluatedUserId: 'admin_admin',
+      evaluatorUserId: 'Jan_Kowalski_Manager',
+      form: 'A' as const,
+      status: 'assessment_in_progress' as const,
+      name: ['Admin', 'Admin'],
+    },
+    {
+      id: 'mock-evaluation-admin-completed-2025',
+      evaluatedUserId: 'admin_admin',
+      evaluatorUserId: 'Marta_Wisniewska_Manager',
+      form: 'B' as const,
+      status: 'completed' as const,
+      name: ['Admin', 'Admin'],
+      completed: true,
+      overallOutcome: 'positive' as const,
+      overallLevel: 'meets_expectations' as const,
+      averagePoints: 3.9,
+    },
+    {
+      id: 'mock-evaluation-admin-follow-up',
+      evaluatedUserId: 'admin_admin',
+      evaluatorUserId: 'Jan_Kowalski_Manager',
+      form: 'A' as const,
+      status: 'ready_for_assessment' as const,
+      name: ['Admin', 'Admin'],
+    },
   ]
 
   for (const evaluation of mockEvaluations) {
+    const evaluatedUser = mockUsers.find((u) => u.id === evaluation.evaluatedUserId)!
+    const evaluatorUser = mockUsers.find((u) => u.id === evaluation.evaluatorUserId)!
+    const [evaluatorFirstName, ...evaluatorLastName] = evaluatorUser.name.split(' ')
     console.log('[seed] Inserting into assessments')
     await db.insert(assessments).values({
       id: evaluation.id,
       evaluatedUserId: evaluation.evaluatedUserId,
       evaluatorUserId: evaluation.evaluatorUserId,
-      appointedByUserId: 'Admin_admin',
+      appointedByUserId: 'admin_admin',
       form: evaluation.form,
       status: evaluation.status,
       periodStart: evaluation.completed
@@ -225,12 +280,12 @@ async function seed() {
       assessmentId: evaluation.id,
       evaluatedFirstName: evaluation.name[0],
       evaluatedLastName: evaluation.name[1],
-      evaluatedPosition: 'Employee',
-      evaluatedOrganizationalUnit: 'Operations',
-      evaluatorFirstName: 'Jan',
-      evaluatorLastName: 'Kowalski',
-      evaluatorPosition: 'Manager',
-      evaluatorOrganizationalUnit: 'Management',
+      evaluatedPosition: evaluatedUser.position,
+      evaluatedOrganizationalUnit: evaluatedUser.department,
+      evaluatorFirstName,
+      evaluatorLastName: evaluatorLastName.join(' '),
+      evaluatorPosition: evaluatorUser.position,
+      evaluatorOrganizationalUnit: evaluatorUser.department,
       assessmentPeriodStart: evaluation.completed
         ? new Date(now.getFullYear() - (evaluation.id.endsWith('2024') ? 2 : 1), 0, 1)
         : periodStart,
