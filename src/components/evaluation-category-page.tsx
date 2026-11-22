@@ -62,9 +62,6 @@ export function EvaluationCategoryPage({ category = "all" }: { category?: Catego
 								{ label: "Evaluations" },
 							]}
 						/>
-						<p className="mt-1 text-sm text-muted-foreground">
-							All evaluations, including current, upcoming, and archived assessments.
-						</p>
 					</div>
 					{canAddEvaluation && (
 						<Button asChild>
