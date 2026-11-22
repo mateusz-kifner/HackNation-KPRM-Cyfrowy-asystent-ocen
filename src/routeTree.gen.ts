@@ -20,6 +20,9 @@ import { Route as AdminAiSettingsRouteImport } from './routes/admin/ai-settings'
 import { Route as AdminEmployeesRouteImport } from './routes/admin/employees'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as ApiChatRouteRouteImport } from './routes/api/chat/route'
+import { Route as EvaluationCompletedRouteImport } from './routes/evaluation/completed'
+import { Route as EvaluationRunningRouteImport } from './routes/evaluation/running'
+import { Route as EvaluationUpcomingRouteImport } from './routes/evaluation/upcoming'
 import { Route as TestIndexRouteImport } from './routes/test/index'
 import { Route as TestShadcnRouteImport } from './routes/test/shadcn'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -81,6 +84,21 @@ const ApiChatRouteRoute = ApiChatRouteRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EvaluationCompletedRoute = EvaluationCompletedRouteImport.update({
+  id: '/completed',
+  path: '/completed',
+  getParentRoute: () => EvaluationRoute,
+} as any)
+const EvaluationRunningRoute = EvaluationRunningRouteImport.update({
+  id: '/running',
+  path: '/running',
+  getParentRoute: () => EvaluationRoute,
+} as any)
+const EvaluationUpcomingRoute = EvaluationUpcomingRouteImport.update({
+  id: '/upcoming',
+  path: '/upcoming',
+  getParentRoute: () => EvaluationRoute,
+} as any)
 const TestIndexRoute = TestIndexRouteImport.update({
   id: '/test/',
   path: '/test/',
@@ -105,13 +123,16 @@ const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
-  '/evaluation': typeof EvaluationRoute
+  '/evaluation': typeof EvaluationRouteWithChildren
   '/login': typeof LoginRoute
   '/me': typeof MeRoute
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/users': typeof AdminUsersRoute
+  '/evaluation/completed': typeof EvaluationCompletedRoute
+  '/evaluation/running': typeof EvaluationRunningRoute
+  '/evaluation/upcoming': typeof EvaluationUpcomingRoute
   '/evaluations/index': typeof EvaluationsChar91indexChar93Route
   '/test/shadcn': typeof TestShadcnRoute
   '/admin/': typeof AdminIndexRoute
@@ -121,13 +142,16 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/evaluation': typeof EvaluationRoute
+  '/evaluation': typeof EvaluationRouteWithChildren
   '/login': typeof LoginRoute
   '/me': typeof MeRoute
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/users': typeof AdminUsersRoute
+  '/evaluation/completed': typeof EvaluationCompletedRoute
+  '/evaluation/running': typeof EvaluationRunningRoute
+  '/evaluation/upcoming': typeof EvaluationUpcomingRoute
   '/evaluations/index': typeof EvaluationsChar91indexChar93Route
   '/test/shadcn': typeof TestShadcnRoute
   '/admin': typeof AdminIndexRoute
@@ -139,13 +163,16 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
-  '/evaluation': typeof EvaluationRoute
+  '/evaluation': typeof EvaluationRouteWithChildren
   '/login': typeof LoginRoute
   '/me': typeof MeRoute
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/users': typeof AdminUsersRoute
+  '/evaluation/completed': typeof EvaluationCompletedRoute
+  '/evaluation/running': typeof EvaluationRunningRoute
+  '/evaluation/upcoming': typeof EvaluationUpcomingRoute
   '/evaluations/index': typeof EvaluationsChar91indexChar93Route
   '/test/shadcn': typeof TestShadcnRoute
   '/admin/': typeof AdminIndexRoute
@@ -165,6 +192,9 @@ export interface FileRouteTypes {
     | '/admin/ai-settings'
     | '/admin/employees'
     | '/admin/users'
+    | '/evaluation/completed'
+    | '/evaluation/running'
+    | '/evaluation/upcoming'
     | '/evaluations/index'
     | '/test/shadcn'
     | '/admin/'
@@ -181,6 +211,9 @@ export interface FileRouteTypes {
     | '/admin/ai-settings'
     | '/admin/employees'
     | '/admin/users'
+    | '/evaluation/completed'
+    | '/evaluation/running'
+    | '/evaluation/upcoming'
     | '/evaluations/index'
     | '/test/shadcn'
     | '/admin'
@@ -198,6 +231,9 @@ export interface FileRouteTypes {
     | '/admin/ai-settings'
     | '/admin/employees'
     | '/admin/users'
+    | '/evaluation/completed'
+    | '/evaluation/running'
+    | '/evaluation/upcoming'
     | '/evaluations/index'
     | '/test/shadcn'
     | '/admin/'
@@ -209,7 +245,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
-  EvaluationRoute: typeof EvaluationRoute
+  EvaluationRoute: typeof EvaluationRouteWithChildren
   LoginRoute: typeof LoginRoute
   MeRoute: typeof MeRoute
   ApiChatRouteRoute: typeof ApiChatRouteRoute
@@ -299,6 +335,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/evaluation/completed': {
+      id: '/evaluation/completed'
+      path: '/completed'
+      fullPath: '/evaluation/completed'
+      preLoaderRoute: typeof EvaluationCompletedRouteImport
+      parentRoute: typeof EvaluationRoute
+    }
+    '/evaluation/running': {
+      id: '/evaluation/running'
+      path: '/running'
+      fullPath: '/evaluation/running'
+      preLoaderRoute: typeof EvaluationRunningRouteImport
+      parentRoute: typeof EvaluationRoute
+    }
+    '/evaluation/upcoming': {
+      id: '/evaluation/upcoming'
+      path: '/upcoming'
+      fullPath: '/evaluation/upcoming'
+      preLoaderRoute: typeof EvaluationUpcomingRouteImport
+      parentRoute: typeof EvaluationRoute
+    }
     '/test/': {
       id: '/test/'
       path: '/test'
@@ -348,10 +405,26 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
   AdminRouteRouteChildren,
 )
 
+interface EvaluationRouteChildren {
+  EvaluationCompletedRoute: typeof EvaluationCompletedRoute
+  EvaluationRunningRoute: typeof EvaluationRunningRoute
+  EvaluationUpcomingRoute: typeof EvaluationUpcomingRoute
+}
+
+const EvaluationRouteChildren: EvaluationRouteChildren = {
+  EvaluationCompletedRoute: EvaluationCompletedRoute,
+  EvaluationRunningRoute: EvaluationRunningRoute,
+  EvaluationUpcomingRoute: EvaluationUpcomingRoute,
+}
+
+const EvaluationRouteWithChildren = EvaluationRoute._addFileChildren(
+  EvaluationRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
-  EvaluationRoute: EvaluationRoute,
+  EvaluationRoute: EvaluationRouteWithChildren,
   LoginRoute: LoginRoute,
   MeRoute: MeRoute,
   ApiChatRouteRoute: ApiChatRouteRoute,
