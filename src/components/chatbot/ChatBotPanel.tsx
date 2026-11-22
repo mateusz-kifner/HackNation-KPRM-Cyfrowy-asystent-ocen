@@ -17,6 +17,7 @@ import type { ChatMessage } from "./chatbot-types";
 type ChatBotPanelProps = {
 	title?: string;
 	pinned?: boolean;
+	mobile?: boolean;
 	messages: ChatMessage[];
 	loading?: boolean;
 	error?: string | null;
@@ -29,6 +30,7 @@ type ChatBotPanelProps = {
 export function ChatBotPanel({
 	title = "Chatbot",
 	pinned = false,
+	mobile = false,
 	messages = [],
 	loading = false,
 	error = null,
@@ -38,12 +40,13 @@ export function ChatBotPanel({
 	headerButtons,
 }: ChatBotPanelProps) {
 	const [windowState, setWindowState] = useChatbotWindowState();
-	const drag = useChatbotDrag(!pinned, setWindowState);
-	const resize = useChatbotResize(!pinned, windowState, setWindowState);
+	const isFloating = !pinned && !mobile;
+	const drag = useChatbotDrag(isFloating, setWindowState);
+	const resize = useChatbotResize(isFloating, windowState, setWindowState);
 
 	return (
 		<>
-			{!pinned && (
+			{isFloating && (
 				<div
 					ref={drag.ref}
 					aria-hidden="true"
@@ -53,7 +56,7 @@ export function ChatBotPanel({
 			<Card
 				ref={drag.windowRef}
 				style={
-					pinned
+					pinned || mobile
 						? undefined
 						: {
 								width: `min(${windowState.width}px, 90vw)`,
@@ -64,9 +67,11 @@ export function ChatBotPanel({
 				}
 				className={cn(
 					"z-50 flex flex-col gap-0 overflow-hidden border bg-background/95 p-0 shadow-2xl backdrop-blur",
-					pinned
-						? "relative h-full min-h-0 w-full min-w-0 max-w-none rounded-none"
-						: "fixed max-h-[calc(100vh-8rem)] max-w-[90vw] rounded-2xl",
+					mobile
+						? "relative h-full min-h-0 w-full min-w-0 max-w-none rounded-t-2xl"
+						: pinned
+							? "relative h-full min-h-0 w-full min-w-0 max-w-none rounded-none"
+							: "fixed max-h-[calc(100vh-8rem)] max-w-[90vw] rounded-2xl",
 				)}
 			>
 				<CardHeader className="items-center border-b bg-muted/40 pt-4">
@@ -75,7 +80,7 @@ export function ChatBotPanel({
 						onTouchStart={drag.startDragWithTouch}
 						className={cn(
 							"flex items-center gap-2 text-base font-semibold",
-							!pinned && "cursor-move touch-none select-none",
+							isFloating && "cursor-move touch-none select-none",
 							drag.active && "cursor-grabbing",
 						)}
 					>
@@ -105,7 +110,7 @@ export function ChatBotPanel({
 						/>
 					</div>
 				</CardContent>
-				{!pinned && (
+				{isFloating && (
 					<div
 						{...resize}
 						role="separator"

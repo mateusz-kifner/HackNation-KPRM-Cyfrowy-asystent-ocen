@@ -41,7 +41,7 @@ function AiSettingsPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           <Label htmlFor="model-endpoint">Model URL</Label>
-          <Select value={modelUrl} onValueChange={setModelUrl}>
+          <Select value={modelUrl} onValueChange={setModelUrl} disabled>
             <SelectTrigger id="model-endpoint" className="w-full sm:max-w-lg">
               <SelectValue placeholder="Choose a model URL" />
             </SelectTrigger>

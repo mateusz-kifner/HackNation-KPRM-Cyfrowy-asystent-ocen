@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { adminProcedure, protectedProcedure } from "./init";
+import { adminProcedure, protectedProcedure, publicProcedure } from "./init";
 import { db } from "#/db";
 import { account, user } from "#/db/schema";
 import { eq, like, or } from "drizzle-orm";
@@ -21,6 +21,9 @@ const profileSchema = z.object({
 });
 
 export const usersRouter = {
+	loginOptions: publicProcedure.query(async () =>
+		db.select({ id: user.id, name: user.name, email: user.email }).from(user),
+	),
 	list: adminProcedure.query(async () => db.select().from(user)),
 	search: adminProcedure
 		.input(z.object({ query: z.string().trim().min(1).max(100) }))

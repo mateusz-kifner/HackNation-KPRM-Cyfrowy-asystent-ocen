@@ -12,27 +12,29 @@ import { FieldDescription } from "@/components/ui/field"
 import { authClient } from '#/lib/auth-client'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useTRPC } from '#/integrations/trpc/react'
 
-const MOCK_USERS = [
-  { name: 'Admin_admin', email: 'admin.admin@example.com', password: 'password123' },
-  { name: 'Jan_Kowalski_Manager', email: 'jan.kowalski.manager@example.com', password: 'password123' },
-  { name: 'Anna_Lewandowska_Emploee', email: 'anna.lewandowska.emploee@example.com', password: 'password123' },
-  { name: 'Mateusz_Kifner_Emploee', email: 'mateusz.kifner.emploee@example.com', password: 'password123' },
-]
+const MOCK_PASSWORD = 'password123'
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const navigate = useNavigate()
+  const trpc = useTRPC()
+  const usersQuery = useQuery({
+    ...trpc.users.loginOptions.queryOptions(),
+    refetchInterval: 5_000,
+  })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleMockSignIn = async (email: string, password: string) => {
+  const handleMockSignIn = async (email: string) => {
     setLoading(true)
     setError(null)
     try {
-      await authClient.signIn.email({ email, password })
+      await authClient.signIn.email({ email, password: MOCK_PASSWORD })
       navigate({ to: '/' })
     } catch (e: any) {
       setError(e?.message ?? 'Failed to sign in')
@@ -46,21 +48,24 @@ export function LoginForm({
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome</CardTitle>
-          <CardDescription>
-            Sign in as a mock user
-          </CardDescription>
+          <CardDescription>Sign in as a mock user</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-3">
-          {MOCK_USERS.map((user) => (
-            <Button
-              key={user.name}
-              onClick={() => handleMockSignIn(user.email, user.password)}
-              disabled={loading}
-              className="w-full"
-            >
-              {loading ? 'Signing in...' : `Login as ${user.name}`}
-            </Button>
-          ))}
+        <CardContent>
+          {usersQuery.isPending ? <p className="text-sm text-muted-foreground">Loading accounts…</p> : null}
+          {usersQuery.isError ? <p role="alert" className="text-sm text-destructive">Could not load accounts. Please refresh the page.</p> : null}
+          {usersQuery.data?.length === 0 ? <p className="text-sm text-muted-foreground">No accounts are available.</p> : null}
+          <div className="max-h-48 space-y-2 overflow-y-auto">
+            {usersQuery.data?.map((user) => (
+              <Button
+                key={user.id}
+                onClick={() => handleMockSignIn(user.email)}
+                disabled={loading}
+                className="w-full"
+              >
+                {loading ? 'Signing in...' : `Login as ${user.name}`}
+              </Button>
+            ))}
+          </div>
           {error && (
             <p className="mt-4 text-sm text-red-600 text-center">{error}</p>
           )}
