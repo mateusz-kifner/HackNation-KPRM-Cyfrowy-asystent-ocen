@@ -1,15 +1,13 @@
 import { Message, MessageContent, MessageFooter } from "@/components/ui/message";
+import { ChatbotMarkdown } from "./chatbot-markdown";
 import type { ChatMessage } from "./chatbot-types";
 
-/**
- * Assistant output. The shadcn chat example keeps replies outside of bubbles;
- * this project has no markdown renderer, so text stays plain and preserves newlines.
- */
+/** Assistant output, rendered as Markdown outside of a message bubble. */
 export function ChatbotAssistantMessage({ message }: { message: ChatMessage }) {
   return (
     <Message>
       <MessageContent>
-        <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
+        <ChatbotMarkdown content={message.content} />
         {message.timestamp && (
           <MessageFooter className="ms-0 text-xs text-muted-foreground">
             {new Date(message.timestamp).toLocaleTimeString()}

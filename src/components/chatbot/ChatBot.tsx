@@ -24,7 +24,7 @@ import {
  * when not) and wires the transcript composable to the header and composer.
  */
 export function ChatBot({
-	systemPrompt = "You are a helpful assistant. You are running in console, so markdown formatting is limited, please output text only.",
+	systemPrompt = "You are a helpful assistant. Format responses with Markdown when it improves readability.",
 	tools = [],
 	toolHandlers = {},
 	title = "Chatbot",
