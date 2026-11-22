@@ -6,6 +6,7 @@ import {
 } from "@tanstack/ai";
 import { openaiCompatible } from "@tanstack/ai-openai/compatible";
 import { createFileRoute } from "@tanstack/react-router";
+import { auth } from "@/lib/auth";
 
 export const Route = createFileRoute("/api/chat")({
 	server: {
@@ -23,6 +24,11 @@ const defaultModel = openaiCompatible({
 });
 
 export async function POST(request: Request) {
+	const session = await auth.api.getSession({ headers: request.headers });
+	if (!session || session.user.isAnonymous) {
+		return new Response("Sign in is required to use chat.", { status: 401 });
+	}
+
 	const { messages, threadId, runId, tools, forwardedProps } =
 		await chatParamsFromRequest(request);
 

@@ -25,8 +25,14 @@ export function RootChatbot() {
 	const navigate = useNavigate();
 	const currentPath = useRouterState({ select: (state) => state.location.pathname });
 	const pageContext = getPageContext(currentPath);
-	const { data: session } = authClient.useSession();
-	const role = (session?.user as { role?: string } | undefined)?.role;
+	const { data: session, isPending } = authClient.useSession();
+	const user = session?.user as
+		| { name?: string | null; role?: string; isAnonymous?: boolean }
+		| undefined;
+	if (isPending || !user || user.isAnonymous) {
+		return null;
+	}
+	const role = user.role;
 	const isAdmin = role === "Admin";
 	const isManager = role === "Manager" || isAdmin;
 
@@ -59,7 +65,7 @@ export function RootChatbot() {
 				select_form_field: ({ name, color }) => typeof name === "string" && (color === undefined || typeof color === "string") ? formToolContext.selectField(name, color as string | undefined) : { success: false, error: "A field name and optional string color are required." },
 				edit_form_field: ({ name, value }) => typeof name === "string" && typeof value === "string" ? formToolContext.editField(name, value) : { success: false, error: "A field name and string value are required." },
 			}}
-			username={session?.user?.name ?? undefined}
+			username={user.name ?? undefined}
 			title="AI Assistant"
 		/>
 	);
