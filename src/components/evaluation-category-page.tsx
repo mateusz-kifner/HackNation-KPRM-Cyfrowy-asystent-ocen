@@ -70,7 +70,7 @@ export function EvaluationCategoryPage({ category = "all" }: { category?: Catego
 						<Button asChild>
 							<Link to="/evaluation/add">
 								<IconPlus aria-hidden="true" />
-								Add evaluation
+								New evaluation
 							</Link>
 						</Button>
 					)}
