@@ -13,10 +13,13 @@ export const selectFormFieldTool: ToolDefinition = {
 	type: "function",
 	function: {
 		name: "select_form_field",
-		description: "Focus, scroll to, and highlight a form field by its name or id.",
+		description: "Focus, scroll to, and highlight a form field by its name or id. Optionally set this field's highlight color with a CSS color.",
 		parameters: {
 			type: "object",
-			properties: { name: { type: "string", description: "The form field name or id." } },
+			properties: {
+				name: { type: "string", description: "The form field name or id." },
+				color: { type: "string", description: "Optional CSS color, such as #ff6600 or red." },
+			},
 			required: ["name"],
 		},
 	},
@@ -34,19 +37,6 @@ export const editFormFieldTool: ToolDefinition = {
 				value: { type: "string", description: "The new field value. For checkboxes, use true or false." },
 			},
 			required: ["name", "value"],
-		},
-	},
-};
-
-export const setFormHighlightColorTool: ToolDefinition = {
-	type: "function",
-	function: {
-		name: "set_form_highlight_color",
-		description: "Change the highlight color for all fields currently highlighted by AI and any fields highlighted later.",
-		parameters: {
-			type: "object",
-			properties: { color: { type: "string", description: "A CSS color such as #ff6600, red, or rgb(255, 102, 0)." } },
-			required: ["color"],
 		},
 	},
 };
