@@ -3,7 +3,7 @@ import { TRPCError } from '@trpc/server'
 import { adminProcedure, managerProcedure, protectedProcedure } from './init'
 import { db } from '#/db'
 import { employees } from '#/db/schema'
-import { eq } from 'drizzle-orm'
+import { eq, like, or } from 'drizzle-orm'
 import type { TRPCRouterRecord } from '@trpc/server'
 import { randomUUID } from 'crypto'
 
@@ -17,8 +17,13 @@ const employeeSchema = z.object({
 })
 
 export const employeesRouter = {
-  list: managerProcedure.query(async () => {
-    const empList = await db.select().from(employees)
+  list: managerProcedure
+    .input(z.object({ query: z.string().trim().max(100).optional() }).optional())
+    .query(async ({ input }) => {
+    const search = input?.query
+    const empList = await db.select().from(employees).where(search
+      ? or(like(employees.name, `%${search}%`), like(employees.email, `%${search}%`), like(employees.position, `%${search}%`), like(employees.department, `%${search}%`))
+      : undefined)
     return empList
   }),
   get: protectedProcedure

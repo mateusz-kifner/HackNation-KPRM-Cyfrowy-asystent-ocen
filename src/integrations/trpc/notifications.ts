@@ -53,10 +53,16 @@ function getUserNotifications(userId: string) {
 }
 
 export const notificationsRouter = {
-  list: protectedProcedure.query(({ ctx }) => {
+  list: protectedProcedure
+    .input(z.object({ query: z.string().trim().max(100).optional() }).optional())
+    .query(({ ctx, input }) => {
     const userId = ctx.session.user.id;
     const items = getUserNotifications(userId);
-    return { items, unreadCount: items.filter((n) => !n.read).length };
+    const query = input?.query?.toLocaleLowerCase();
+    const visibleItems = query
+      ? items.filter((n) => `${n.title} ${n.message} ${n.type}`.toLocaleLowerCase().includes(query))
+      : items;
+    return { items: visibleItems, unreadCount: items.filter((n) => !n.read).length };
   }),
   markRead: protectedProcedure
     .input(z.object({ id: z.string() }))

@@ -3,7 +3,7 @@ import { TRPCError } from '@trpc/server'
 import { protectedProcedure } from './init'
 import { db } from '#/db'
 import { files } from '#/db/schema'
-import { eq } from 'drizzle-orm'
+import { and, eq, like, or } from 'drizzle-orm'
 import type { TRPCRouterRecord } from '@trpc/server'
 import { randomUUID } from 'crypto'
 
@@ -17,10 +17,13 @@ const fileSchema = z.object({
 })
 
 export const filesRouter = {
-  list: protectedProcedure.query(async ({ ctx }) => {
-    const fileList = ctx.session.user.role === 'Admin'
-      ? await db.select().from(files)
-      : await db.select().from(files).where(eq(files.userId, ctx.session.user.id))
+  list: protectedProcedure
+    .input(z.object({ query: z.string().trim().max(100).optional() }).optional())
+    .query(async ({ ctx, input }) => {
+    const search = input?.query
+    const visibility = ctx.session.user.role === 'Admin' ? undefined : eq(files.userId, ctx.session.user.id)
+    const matches = search ? or(like(files.name, `%${search}%`), like(files.mimeType, `%${search}%`)) : undefined
+    const fileList = await db.select().from(files).where(and(visibility, matches))
     return fileList
   }),
   get: protectedProcedure

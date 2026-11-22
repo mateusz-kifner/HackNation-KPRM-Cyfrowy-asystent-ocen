@@ -179,8 +179,11 @@ async function addHistory(
 }
 
 export const evaluationsRouter = {
-	candidates: managerProcedure.query(async () =>
-		db
+	candidates: managerProcedure
+		.input(z.object({ query: z.string().trim().max(100).optional() }).optional())
+		.query(async ({ input }) => {
+		const query = input?.query;
+		return db
 			.select({
 				id: user.id,
 				name: user.name,
@@ -190,8 +193,9 @@ export const evaluationsRouter = {
 				organizationalUnit: user.organizationalUnit,
 			})
 			.from(user)
-			.orderBy(user.name),
-	),
+			.where(query ? or(like(user.name, `%${query}%`), like(user.email, `%${query}%`), like(user.position, `%${query}%`), like(user.organizationalUnit, `%${query}%`)) : undefined)
+			.orderBy(user.name);
+		}),
 
 	options: employeeProcedure.query(() => ({
 		forms: assessmentFormMandatoryCriteria,
@@ -199,23 +203,27 @@ export const evaluationsRouter = {
 		ratingPoints: assessmentCriterionPoints,
 	})),
 
-	list: employeeProcedure.query(async ({ ctx }) => {
+	list: employeeProcedure
+		.input(z.object({ query: z.string().trim().max(100).optional() }).optional())
+		.query(async ({ ctx, input }) => {
 		const actorId = ctx.user.id;
+		const query = input?.query;
+		const searchCondition = query ? or(like(assessments.id, `%${query}%`), like(assessments.form, `%${query}%`), like(assessments.status, `%${query}%`)) : undefined;
 		if (ctx.role === "Manager" || ctx.role === "Admin") {
-			return db.select().from(assessments).orderBy(desc(assessments.createdAt));
+			return db.select().from(assessments).where(searchCondition).orderBy(desc(assessments.createdAt));
 		}
 
 		return db
 			.select()
 			.from(assessments)
 			.where(
-				or(
+				and(searchCondition, or(
 					eq(assessments.evaluatedUserId, actorId),
 					eq(assessments.evaluatorUserId, actorId),
-				),
+				)),
 			)
 			.orderBy(desc(assessments.createdAt));
-	}),
+		}),
 
 	search: employeeProcedure
 		.input(z.object({ query: z.string().trim().min(1).max(100) }))
@@ -270,7 +278,11 @@ export const evaluationsRouter = {
 				.limit(50);
 		}),
 
-	assignedToMe: employeeProcedure.query(async ({ ctx }) => {
+	assignedToMe: employeeProcedure
+		.input(z.object({ query: z.string().trim().max(100).optional() }).optional())
+		.query(async ({ ctx, input }) => {
+		const queryText = input?.query;
+		const searchCondition = queryText ? or(like(assessments.id, `%${queryText}%`), like(assessments.form, `%${queryText}%`), like(assessments.status, `%${queryText}%`), like(assessmentFiles.evaluatedFirstName, `%${queryText}%`), like(assessmentFiles.evaluatedLastName, `%${queryText}%`), like(assessmentFiles.evaluatedPosition, `%${queryText}%`), like(assessmentFiles.evaluatedOrganizationalUnit, `%${queryText}%`)) : undefined;
 		const query = db
 			.select({
 				id: assessments.id,
@@ -297,13 +309,13 @@ export const evaluationsRouter = {
 			);
 
 		if (ctx.role === "Manager" || ctx.role === "Admin") {
-			return query.orderBy(desc(assessments.createdAt));
+			return query.where(searchCondition).orderBy(desc(assessments.createdAt));
 		}
 
 		return query
-			.where(eq(assessments.evaluatorUserId, ctx.user.id))
+			.where(and(eq(assessments.evaluatorUserId, ctx.user.id), searchCondition))
 			.orderBy(desc(assessments.createdAt));
-	}),
+		}),
 
 	get: employeeProcedure
 		.input(z.object({ id: z.string().min(1) }))

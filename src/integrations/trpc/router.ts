@@ -17,7 +17,11 @@ const todos = [
 ]
 
 const todosRouter = {
-  list: protectedProcedure.query(() => todos),
+  list: protectedProcedure
+    .input(z.object({ query: z.string().trim().max(100).optional() }).optional())
+    .query(({ input }) => input?.query
+      ? todos.filter((todo) => todo.name.toLocaleLowerCase().includes(input.query!.toLocaleLowerCase()))
+      : todos),
   add: protectedProcedure
     .input(z.object({ name: z.string() }))
     .mutation(({ input }) => {

@@ -28,7 +28,14 @@ export const usersRouter = {
 	loginOptions: publicProcedure.query(async () =>
 		db.select({ id: user.id, name: user.name, email: user.email }).from(user),
 	),
-	list: adminProcedure.query(async () => db.select().from(user)),
+	list: adminProcedure
+		.input(z.object({ query: z.string().trim().max(100).optional() }).optional())
+		.query(async ({ input }) => {
+			const query = input?.query;
+			return db.select().from(user).where(query
+				? or(like(user.name, `%${query}%`), like(user.email, `%${query}%`), like(user.role, `%${query}%`), like(user.position, `%${query}%`), like(user.department, `%${query}%`))
+				: undefined);
+		}),
 	search: adminProcedure
 		.input(z.object({ query: z.string().trim().min(1).max(100) }))
 		.query(async ({ input }) => {
