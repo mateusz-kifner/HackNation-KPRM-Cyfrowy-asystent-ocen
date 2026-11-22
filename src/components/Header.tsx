@@ -31,7 +31,7 @@ export default function Header() {
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
-                  <Link to="/me">Me</Link>
+                  <Link to="/me">My carrier</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
               {isAdmin && (
