@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { IconPlus } from "@tabler/icons-react";
 import { authClient } from "#/lib/auth-client";
 import { EvaluationDocxDownload } from "#/components/evaluation-docx-download";
+import { EvaluationPreviewLink } from "#/components/evaluation-preview-link";
 import { useEvaluationAssignedToMe } from "#/hooks/api/evaluations/useEvaluationAssignedToMe";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -187,15 +188,11 @@ function EvaluationTable({
 					{evaluations.map((evaluation) => (
 						<TableRow key={evaluation.id}>
 							<TableCell className="font-medium">
-								<Link
-									to="/evaluation/$id"
-									params={{ id: evaluation.id }}
-									className="underline-offset-4 hover:underline"
-								>
+								<EvaluationPreviewLink evaluationId={evaluation.id}>
 									{[evaluation.evaluatedFirstName, evaluation.evaluatedLastName]
 										.filter(Boolean)
 										.join(" ") || "Unnamed employee"}
-								</Link>
+								</EvaluationPreviewLink>
 								{evaluation.evaluatedOrganizationalUnit && (
 									<div className="text-xs text-muted-foreground">
 										{evaluation.evaluatedOrganizationalUnit}

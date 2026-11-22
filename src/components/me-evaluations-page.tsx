@@ -1,6 +1,6 @@
 import { IconClipboardList } from "@tabler/icons-react";
-import { Link } from "@tanstack/react-router";
 import { EvaluationDocxDownload } from "#/components/evaluation-docx-download";
+import { EvaluationPreviewLink } from "#/components/evaluation-preview-link";
 import { useEvaluationsForMe } from "#/hooks/api/evaluations/useEvaluationsForMe";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -127,13 +127,9 @@ function EvaluationsTable({
 					{evaluations.map((evaluation) => (
 						<TableRow key={evaluation.id}>
 							<TableCell className="font-medium">
-								<Link
-									to="/evaluation/$id"
-									params={{ id: evaluation.id }}
-									className="underline-offset-4 hover:underline"
-								>
+								<EvaluationPreviewLink evaluationId={evaluation.id}>
 									{evaluation.form ? `Form ${evaluation.form}` : "Evaluation"}
-								</Link>
+								</EvaluationPreviewLink>
 							</TableCell>
 							<TableCell>
 								<Badge
