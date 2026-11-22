@@ -10,9 +10,6 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import {
@@ -87,14 +84,7 @@ export default function Header() {
                       Settings
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                      Theme
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent>
-                      <ThemeSelector />
-                    </DropdownMenuSubContent>
-                  </DropdownMenuSub>
+                  <ThemeSelector />
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
