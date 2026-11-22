@@ -1,6 +1,8 @@
 import { relations, sql } from "drizzle-orm";
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
 
+export const accountRoles = ["Employee", "Manager", "Admin"] as const;
+
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -17,7 +19,15 @@ export const user = sqliteTable("user", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
   isAnonymous: integer("is_anonymous", { mode: "boolean" }).default(false),
-  role: text("role").notNull().default("normal"),
+  role: text("role", { enum: accountRoles }).notNull().default("Employee"),
+  // HR/profile data belongs to the account. Assessment-specific data belongs
+  // to assessment records and is intentionally not stored here.
+  position: text("position"),
+  department: text("department"),
+  organizationalUnit: text("organizational_unit"),
+  employmentStatus: text("employment_status"),
+  employmentType: text("employment_type"),
+  hireDate: integer("hire_date", { mode: "timestamp_ms" }),
 });
 
 export const session = sqliteTable(
