@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
+import { resolveFormHighlightColor } from "#/lib/form-highlight-color";
 
 type FormToolContextValue = {
 	registerForm: (name: string, form: HTMLFormElement | null) => void;
@@ -39,8 +40,8 @@ export function FormToolProvider({ children }: { children: ReactNode }) {
 		return { form: name, fields };
 	}, []);
 	const selectField = useCallback((name: string, color?: string) => {
-		const normalizedColor = color?.trim();
-		if (normalizedColor && !CSS.supports("color", normalizedColor)) {
+		const resolvedColor = color === undefined ? null : resolveFormHighlightColor(color);
+		if (color !== undefined && !resolvedColor) {
 			return { success: false, error: `"${color}" is not a valid CSS color.` };
 		}
 		for (const form of forms.current.values()) {
@@ -56,12 +57,12 @@ export function FormToolProvider({ children }: { children: ReactNode }) {
 			if (field.id) selectedFields.current.set(field.id, field);
 			if (field.getAttribute("name")) selectedFields.current.set(field.getAttribute("name")!, field);
 			setHighlightedFields((current) => current.includes(name) ? current : [...current, name]);
-			if (normalizedColor) field.style.setProperty("--ai-highlight-color", normalizedColor);
+			if (resolvedColor) field.style.setProperty("--ai-highlight-color", resolvedColor.cssValue);
 			else field.style.removeProperty("--ai-highlight-color");
 			field.setAttribute("data-ai-highlight", "true");
 			field.focus({ preventScroll: true });
 			field.scrollIntoView({ behavior: "smooth", block: "center" });
-			return { success: true, field: name, ...(normalizedColor ? { color: normalizedColor } : {}) };
+			return { success: true, field: name, ...(resolvedColor ? { color: resolvedColor.label } : {}) };
 		}
 		return { success: false, error: `No active form field named "${name}" was found.` };
 	}, []);
