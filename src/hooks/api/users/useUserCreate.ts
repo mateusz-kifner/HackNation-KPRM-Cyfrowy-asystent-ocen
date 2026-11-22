@@ -1,0 +1,20 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTRPC } from "@/integrations/trpc/react";
+
+export function useUserCreate(
+	options?: Parameters<
+		ReturnType<typeof useTRPC>["users"]["create"]["mutationOptions"]
+	>[0],
+) {
+	const trpc = useTRPC();
+	const queryClient = useQueryClient();
+	return useMutation(
+		trpc.users.create.mutationOptions({
+			...options,
+			onSuccess: async (...args) => {
+				await queryClient.invalidateQueries({ queryKey: [["users", "list"]] });
+				await options?.onSuccess?.(...args);
+			},
+		}),
+	);
+}

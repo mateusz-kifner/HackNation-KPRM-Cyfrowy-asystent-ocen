@@ -1,9 +1,8 @@
 import { IconClipboardList } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
 import { Navigate, createFileRoute } from "@tanstack/react-router";
 import { EvaluationDocxDownload } from "#/components/evaluation-docx-download";
 import { PageBreadcrumb } from "#/components/page-breadcrumb";
-import { useTRPC } from "#/integrations/trpc/react";
+import { useMeEvaluations } from "#/hooks/api/me/useMeEvaluations";
 import { authClient } from "#/lib/auth-client";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Badge } from "@/components/ui/badge";
@@ -38,7 +37,8 @@ export const Route = createFileRoute("/evaluations/index")({
 
 export function EvaluationsIndexPage() {
 	const evaluationsQuery = useEvaluatorAssessments();
-	const { data: session, isPending: isSessionPending } = authClient.useSession();
+	const { data: session, isPending: isSessionPending } =
+		authClient.useSession();
 	const role = (session?.user as { role?: string } | undefined)?.role;
 	const hasManagerAccess = role === "Manager" || role === "Admin";
 
@@ -57,7 +57,11 @@ export function EvaluationsIndexPage() {
 				<AppSidebar />
 				<main className="min-w-0 flex-1 space-y-6 p-4 sm:p-6">
 					<header>
-						<PageBreadcrumb items={[{ label: hasManagerAccess ? "Evaluations" : "My evaluations" }]} />
+						<PageBreadcrumb
+							items={[
+								{ label: hasManagerAccess ? "Evaluations" : "My evaluations" },
+							]}
+						/>
 						<p className="mt-1 text-sm text-muted-foreground">
 							{hasManagerAccess
 								? "All assessments in the system."
@@ -95,8 +99,7 @@ type EvaluatorAssessment = NonNullable<
 >[number];
 
 function useEvaluatorAssessments() {
-	const trpc = useTRPC();
-	return useQuery(trpc.evaluations.assignedToMe.queryOptions());
+	return useMeEvaluations();
 }
 
 function EvaluationsTable({

@@ -1,10 +1,9 @@
 import { IconClipboardList } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { IconPlus } from "@tabler/icons-react";
 import { authClient } from "#/lib/auth-client";
 import { EvaluationDocxDownload } from "#/components/evaluation-docx-download";
-import { useTRPC } from "#/integrations/trpc/react";
+import { useMeEvaluations } from "#/hooks/api/me/useMeEvaluations";
 import { Badge } from "@/components/ui/badge";
 import {
 	Card,
@@ -59,7 +58,12 @@ export function EvaluationCategoryPage({ category }: { category: Category }) {
 			<header>
 				<div className="flex flex-wrap items-start justify-between gap-4">
 					<div>
-						<PageBreadcrumb items={[{ label: "Evaluations", href: "/evaluation/running" }, { label: title ?? "Evaluations" }]} />
+						<PageBreadcrumb
+							items={[
+								{ label: "Evaluations", href: "/evaluation/running" },
+								{ label: title ?? "Evaluations" },
+							]}
+						/>
 						<p className="mt-1 text-sm text-muted-foreground">
 							Track your assigned assessments by their current stage.
 						</p>
@@ -103,8 +107,7 @@ export { categories };
 export type { Category };
 
 function useEvaluations() {
-	const trpc = useTRPC();
-	return useQuery(trpc.evaluations.assignedToMe.queryOptions());
+	return useMeEvaluations();
 }
 
 function belongsToCategory(evaluation: Evaluation, category: Category) {
