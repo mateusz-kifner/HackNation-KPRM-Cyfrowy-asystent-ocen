@@ -25,16 +25,20 @@ export default function Header() {
 				<div className="order-3 flex w-full flex-wrap items-center gap-x-4 gap-y-1 pb-1 font-semibold text-sm sm:order-none sm:w-auto sm:flex-nowrap sm:pb-0">
 					<NavigationMenu>
 						<NavigationMenuList>
-							<NavigationMenuItem>
-								<NavigationMenuLink asChild>
-									<Link to="/evaluation">Evaluation</Link>
-								</NavigationMenuLink>
-							</NavigationMenuItem>
-							<NavigationMenuItem>
-								<NavigationMenuLink asChild>
-									<Link to="/me">My carrier</Link>
-								</NavigationMenuLink>
-							</NavigationMenuItem>
+							{session?.user && (
+								<>
+									<NavigationMenuItem>
+										<NavigationMenuLink asChild>
+											<Link to="/evaluation">Evaluation</Link>
+										</NavigationMenuLink>
+									</NavigationMenuItem>
+									<NavigationMenuItem>
+										<NavigationMenuLink asChild>
+											<Link to="/me">My carrier</Link>
+										</NavigationMenuLink>
+									</NavigationMenuItem>
+								</>
+							)}
 							{canManageUsers && (
 								<NavigationMenuItem>
 									<NavigationMenuLink asChild>
