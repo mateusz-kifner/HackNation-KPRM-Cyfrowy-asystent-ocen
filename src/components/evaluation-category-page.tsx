@@ -1,10 +1,11 @@
-import { IconClipboardList } from "@tabler/icons-react";
+import { IconClipboardList, IconSearch } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import { IconPlus } from "@tabler/icons-react";
+import { useState } from "react";
 import { authClient } from "#/lib/auth-client";
 import { EvaluationDocxDownload } from "#/components/evaluation-docx-download";
 import { EvaluationPreviewLink } from "#/components/evaluation-preview-link";
-import { useEvaluationAssignedToMe } from "#/hooks/api/evaluations/useEvaluationAssignedToMe";
+import { useEvaluationList } from "#/hooks/api/evaluations/useEvaluationList";
 import { Badge } from "@/components/ui/badge";
 import {
 	Card,
@@ -31,6 +32,14 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 
 const categories = [
 	{ label: "All", key: "all" },
@@ -41,14 +50,35 @@ const categories = [
 
 type Category = (typeof categories)[number]["key"];
 type Evaluation = NonNullable<
-	ReturnType<typeof useEvaluations>["data"]
+	ReturnType<typeof useEvaluationList>["data"]
 >[number];
 
-export function EvaluationCategoryPage({ category = "all" }: { category?: Category }) {
-	const evaluationsQuery = useEvaluations();
+export function EvaluationCategoryPage({
+	category = "all",
+}: {
+	category?: Category;
+}) {
+	const [search, setSearch] = useState("");
+	const [status, setStatus] = useState("all");
+	const [overdueOnly, setOverdueOnly] = useState(false);
 	const { data: session } = authClient.useSession();
 	const role = (session?.user as { role?: string } | undefined)?.role;
 	const canAddEvaluation = role === "Admin" || role === "Manager";
+	const evaluationsQuery = useEvaluationList({
+		query: search.trim() || undefined,
+		status:
+			status === "all"
+				? undefined
+				: (status as
+						| "draft"
+						| "criteria_setting"
+						| "ready_for_assessment"
+						| "assessment_in_progress"
+						| "awaiting_employee_acknowledgement"
+						| "completed"
+						| "cancelled"),
+		overdueOnly: overdueOnly || undefined,
+	});
 	const evaluations = (evaluationsQuery.data ?? []).filter((evaluation) =>
 		belongsToCategory(evaluation, category),
 	);
@@ -58,11 +88,7 @@ export function EvaluationCategoryPage({ category = "all" }: { category?: Catego
 			<header>
 				<div className="flex flex-wrap items-start justify-between gap-4">
 					<div>
-						<PageBreadcrumb
-							items={[
-								{ label: "Evaluations" },
-							]}
-						/>
+						<PageBreadcrumb items={[{ label: "Evaluations" }]} />
 					</div>
 					{canAddEvaluation && (
 						<Button asChild>
@@ -84,6 +110,51 @@ export function EvaluationCategoryPage({ category = "all" }: { category?: Catego
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
+					{canAddEvaluation ? (
+						<div className="mb-5 grid gap-3 sm:grid-cols-[minmax(14rem,1fr)_14rem_auto]">
+							<div className="relative">
+								<IconSearch className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+								<Input
+									className="pl-9"
+									value={search}
+									onChange={(event) => setSearch(event.target.value)}
+									placeholder="Search ID, form, or status"
+									aria-label="Search assessments"
+								/>
+							</div>
+							<Select value={status} onValueChange={setStatus}>
+								<SelectTrigger aria-label="Filter assessments by status">
+									<SelectValue placeholder="Any status" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="all">Any status</SelectItem>
+									<SelectItem value="draft">Draft</SelectItem>
+									<SelectItem value="criteria_setting">
+										Criteria setting
+									</SelectItem>
+									<SelectItem value="ready_for_assessment">
+										Ready for assessment
+									</SelectItem>
+									<SelectItem value="assessment_in_progress">
+										Assessment in progress
+									</SelectItem>
+									<SelectItem value="awaiting_employee_acknowledgement">
+										Awaiting acknowledgement
+									</SelectItem>
+									<SelectItem value="completed">Completed</SelectItem>
+									<SelectItem value="cancelled">Cancelled</SelectItem>
+								</SelectContent>
+							</Select>
+							<label className="flex items-center gap-2 rounded-md border px-3 text-sm">
+								<input
+									type="checkbox"
+									checked={overdueOnly}
+									onChange={(event) => setOverdueOnly(event.target.checked)}
+								/>
+								Overdue only
+							</label>
+						</div>
+					) : null}
 					<EvaluationTable
 						evaluations={evaluations}
 						category={category}
@@ -98,10 +169,6 @@ export function EvaluationCategoryPage({ category = "all" }: { category?: Catego
 
 export { categories };
 export type { Category };
-
-function useEvaluations() {
-	return useEvaluationAssignedToMe();
-}
 
 function belongsToCategory(evaluation: Evaluation, category: Category) {
 	if (category === "all") return true;

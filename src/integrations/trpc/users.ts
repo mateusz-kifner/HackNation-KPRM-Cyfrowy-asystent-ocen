@@ -38,6 +38,53 @@ function changedProfile(
 }
 
 export const usersRouter = {
+	createEmployee: managerProcedure
+		.input(
+			profileSchema
+				.omit({ role: true })
+				.extend({ password: z.string().min(8) }),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const { password, ...profile } = input;
+			const id = randomUUID();
+			const hashedPassword = await hashPassword(password);
+			return db.transaction((tx) => {
+				const created = tx
+					.insert(user)
+					.values({
+						id,
+						...profile,
+						role: "Employee",
+						emailVerified: false,
+						isAnonymous: false,
+					})
+					.returning()
+					.get();
+				tx.insert(account)
+					.values({
+						id: randomUUID(),
+						accountId: id,
+						providerId: "credential",
+						userId: id,
+						password: hashedPassword,
+					})
+					.run();
+				tx.insert(userAuditLog)
+					.values({
+						id: randomUUID(),
+						userId: id,
+						actorId: ctx.user.id,
+						action: "created",
+						changes: JSON.stringify({
+							role: "Employee",
+							name: profile.name,
+							email: profile.email,
+						}),
+					})
+					.run();
+				return created;
+			});
+		}),
 	loginOptions: publicProcedure.query(async () =>
 		db.select({ id: user.id, name: user.name, email: user.email }).from(user),
 	),
@@ -118,15 +165,13 @@ export const usersRouter = {
 				.set(data)
 				.where(eq(user.id, id))
 				.returning();
-			await db
-				.insert(userAuditLog)
-				.values({
-					id: randomUUID(),
-					userId: id,
-					actorId: ctx.user.id,
-					action: "updated",
-					changes: JSON.stringify(changedProfile(data, before)),
-				});
+			await db.insert(userAuditLog).values({
+				id: randomUUID(),
+				userId: id,
+				actorId: ctx.user.id,
+				action: "updated",
+				changes: JSON.stringify(changedProfile(data, before)),
+			});
 			return updated;
 		}),
 	search: adminProcedure

@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as MeRouteImport } from './routes/me'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ApiChatRouteRouteImport } from './routes/api/chat/route'
+import { Route as EmployeesIndexRouteImport } from './routes/employees/index'
 import { Route as EvaluationIdRouteImport } from './routes/evaluation/$id'
 import { Route as EvaluationAddRouteImport } from './routes/evaluation/add'
 import { Route as EvaluationCompletedRouteImport } from './routes/evaluation/completed'
@@ -56,6 +57,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const ApiChatRouteRoute = ApiChatRouteRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployeesIndexRoute = EmployeesIndexRouteImport.update({
+  id: '/employees/',
+  path: '/employees/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EvaluationIdRoute = EvaluationIdRouteImport.update({
@@ -133,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/evaluation/upcoming': typeof EvaluationUpcomingRoute
   '/test/shadcn': typeof TestShadcnRoute
   '/users/new': typeof UsersNewRoute
+  '/employees/': typeof EmployeesIndexRoute
   '/test/': typeof TestIndexRoute
   '/users/': typeof UsersIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -153,6 +160,7 @@ export interface FileRoutesByTo {
   '/evaluation/upcoming': typeof EvaluationUpcomingRoute
   '/test/shadcn': typeof TestShadcnRoute
   '/users/new': typeof UsersNewRoute
+  '/employees': typeof EmployeesIndexRoute
   '/test': typeof TestIndexRoute
   '/users': typeof UsersIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -174,6 +182,7 @@ export interface FileRoutesById {
   '/evaluation/upcoming': typeof EvaluationUpcomingRoute
   '/test/shadcn': typeof TestShadcnRoute
   '/users/new': typeof UsersNewRoute
+  '/employees/': typeof EmployeesIndexRoute
   '/test/': typeof TestIndexRoute
   '/users/': typeof UsersIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/evaluation/upcoming'
     | '/test/shadcn'
     | '/users/new'
+    | '/employees/'
     | '/test/'
     | '/users/'
     | '/api/auth/$'
@@ -216,6 +226,7 @@ export interface FileRouteTypes {
     | '/evaluation/upcoming'
     | '/test/shadcn'
     | '/users/new'
+    | '/employees'
     | '/test'
     | '/users'
     | '/api/auth/$'
@@ -236,6 +247,7 @@ export interface FileRouteTypes {
     | '/evaluation/upcoming'
     | '/test/shadcn'
     | '/users/new'
+    | '/employees/'
     | '/test/'
     | '/users/'
     | '/api/auth/$'
@@ -252,6 +264,7 @@ export interface RootRouteChildren {
   ApiChatRouteRoute: typeof ApiChatRouteRoute
   TestShadcnRoute: typeof TestShadcnRoute
   UsersNewRoute: typeof UsersNewRoute
+  EmployeesIndexRoute: typeof EmployeesIndexRoute
   TestIndexRoute: typeof TestIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -301,6 +314,13 @@ declare module '@tanstack/react-router' {
       path: '/api/chat'
       fullPath: '/api/chat'
       preLoaderRoute: typeof ApiChatRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employees/': {
+      id: '/employees/'
+      path: '/employees'
+      fullPath: '/employees/'
+      preLoaderRoute: typeof EmployeesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/evaluation/$id': {
@@ -419,6 +439,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRouteRoute: ApiChatRouteRoute,
   TestShadcnRoute: TestShadcnRoute,
   UsersNewRoute: UsersNewRoute,
+  EmployeesIndexRoute: EmployeesIndexRoute,
   TestIndexRoute: TestIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

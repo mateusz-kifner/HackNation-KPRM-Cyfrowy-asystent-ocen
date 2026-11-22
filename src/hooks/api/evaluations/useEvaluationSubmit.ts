@@ -1,14 +1,33 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/integrations/trpc/react";
 
-export function useEvaluationSubmit() {
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
-  return useMutation(trpc.evaluations.submit.mutationOptions({
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: trpc.evaluations.list.queryKey() });
-      await queryClient.invalidateQueries({ queryKey: trpc.evaluations.assignedToMe.queryKey() });
-      await queryClient.invalidateQueries({ queryKey: trpc.evaluations.evaluatedForMe.queryKey() });
-    },
-  }));
+export function useEvaluationSubmit(
+	options?: Parameters<
+		ReturnType<typeof useTRPC>["evaluations"]["submit"]["mutationOptions"]
+	>[0],
+) {
+	const trpc = useTRPC();
+	const queryClient = useQueryClient();
+	return useMutation(
+		trpc.evaluations.submit.mutationOptions({
+			...options,
+			onSuccess: async (...args) => {
+				await Promise.all([
+					queryClient.invalidateQueries({
+						queryKey: trpc.evaluations.list.queryKey(),
+					}),
+					queryClient.invalidateQueries({
+						queryKey: trpc.evaluations.assignedToMe.queryKey(),
+					}),
+					queryClient.invalidateQueries({
+						queryKey: trpc.evaluations.evaluatedForMe.queryKey(),
+					}),
+					queryClient.invalidateQueries({
+						queryKey: trpc.evaluations.get.queryKey(),
+					}),
+				]);
+				await options?.onSuccess?.(...args);
+			},
+		}),
+	);
 }

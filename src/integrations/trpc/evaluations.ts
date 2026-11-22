@@ -244,6 +244,10 @@ export const evaluationsRouter = {
 						like(assessments.id, `%${query}%`),
 						like(assessments.form, `%${query}%`),
 						like(assessments.status, `%${query}%`),
+						like(assessmentFiles.evaluatedFirstName, `%${query}%`),
+						like(assessmentFiles.evaluatedLastName, `%${query}%`),
+						like(assessmentFiles.evaluatedPosition, `%${query}%`),
+						like(assessmentFiles.evaluatedOrganizationalUnit, `%${query}%`),
 					)
 				: undefined;
 			const filters = [
@@ -263,26 +267,42 @@ export const evaluationsRouter = {
 						)
 					: undefined,
 			];
-			if (ctx.role === "Manager" || ctx.role === "Admin") {
-				return db
-					.select()
-					.from(assessments)
-					.where(and(...filters))
-					.orderBy(desc(assessments.createdAt));
-			}
-
-			return db
-				.select()
+			const listQuery = db
+				.select({
+					id: assessments.id,
+					evaluatedUserId: assessments.evaluatedUserId,
+					evaluatorUserId: assessments.evaluatorUserId,
+					form: assessments.form,
+					status: assessments.status,
+					periodStart: assessments.periodStart,
+					periodEnd: assessments.periodEnd,
+					assessmentDate: assessments.assessmentDate,
+					dueAt: assessments.dueAt,
+					submittedAt: assessments.submittedAt,
+					createdAt: assessments.createdAt,
+					evaluatedFirstName: assessmentFiles.evaluatedFirstName,
+					evaluatedLastName: assessmentFiles.evaluatedLastName,
+					evaluatedPosition: assessmentFiles.evaluatedPosition,
+					evaluatedOrganizationalUnit:
+						assessmentFiles.evaluatedOrganizationalUnit,
+				})
 				.from(assessments)
-				.where(
-					and(
-						...filters,
-						or(
-							eq(assessments.evaluatedUserId, actorId),
-							eq(assessments.evaluatorUserId, actorId),
-						),
-					),
-				)
+				.leftJoin(
+					assessmentFiles,
+					eq(assessmentFiles.assessmentId, assessments.id),
+				);
+			const visibleFilters =
+				ctx.role === "Manager" || ctx.role === "Admin"
+					? and(...filters)
+					: and(
+							...filters,
+							or(
+								eq(assessments.evaluatedUserId, actorId),
+								eq(assessments.evaluatorUserId, actorId),
+							),
+						);
+			return listQuery
+				.where(visibleFilters)
 				.orderBy(desc(assessments.createdAt));
 		}),
 
@@ -1678,10 +1698,24 @@ export const evaluationsRouter = {
 			return db.transaction(async (tx) => {
 				let replacement: typeof assessment | null = null;
 				if (input.outcome === "repeat") {
+					const [sourceFile] = await tx
+						.select()
+						.from(assessmentFiles)
+						.where(eq(assessmentFiles.assessmentId, input.assessmentId))
+						.limit(1);
+					const sourceCriteria = sourceFile
+						? await tx
+								.select()
+								.from(assessmentFileCriteria)
+								.where(
+									eq(assessmentFileCriteria.assessmentFileId, sourceFile.id),
+								)
+						: [];
+					const replacementId = randomUUID();
 					const [created] = await tx
 						.insert(assessments)
 						.values({
-							id: randomUUID(),
+							id: replacementId,
 							evaluatedUserId: assessment.evaluatedUserId,
 							evaluatorUserId: assessment.evaluatorUserId,
 							appointedByUserId: ctx.user.id,
@@ -1694,6 +1728,58 @@ export const evaluationsRouter = {
 						})
 						.returning();
 					replacement = created;
+					if (sourceFile) {
+						const {
+							id: _sourceId,
+							assessmentId: _sourceAssessmentId,
+							createdAt: _sourceCreatedAt,
+							updatedAt: _sourceUpdatedAt,
+							...sourceValues
+						} = sourceFile;
+						const replacementFileId = randomUUID();
+						await tx.insert(assessmentFiles).values({
+							...sourceValues,
+							id: replacementFileId,
+							assessmentId: replacementId,
+							averagePoints: null,
+							overallLevel: null,
+							overallOutcome: null,
+							assessmentRationale: null,
+							evaluatorSignedAt: null,
+							employeeAcknowledgedAt: null,
+							employeeReceiptLocation: null,
+							employeeReceiptName: null,
+							criteriaDiscussionEmployeeName: null,
+						});
+						if (sourceCriteria.length) {
+							await tx.insert(assessmentFileCriteria).values(
+								sourceCriteria.map((criterion) => ({
+									id: randomUUID(),
+									assessmentFileId: replacementFileId,
+									code: criterion.code,
+									title: criterion.title,
+									mandatory: criterion.mandatory,
+									description: criterion.description,
+									duties: criterion.duties,
+									expectations: criterion.expectations,
+									goals: criterion.goals,
+									measurementMethod: criterion.measurementMethod,
+									points: null,
+									comment: null,
+									sortOrder: criterion.sortOrder,
+								})),
+							);
+						}
+						await addHistory(
+							tx,
+							replacementId,
+							ctx.user.id,
+							"created",
+							undefined,
+							created,
+							input.reason,
+						);
+					}
 				}
 				await addHistory(
 					tx,

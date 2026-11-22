@@ -58,7 +58,7 @@ An Employee account may be an evaluated employee or may be assigned as evaluator
 A Manager may also be assigned as evaluator or evaluated employee on an assessment. A Manager can view all assessments, but assessment editing follows the evaluator/Admin permissions above.
 
 - [ ] Manage employee HR and organizational data
-  1. [ ] Create and update Employee user records and their HR/profile information.
+  1. [x] Create and update Employee user records and their HR/profile information.
   2. [x] Edit Employee account roles only within roles below Manager (with the fixed role set, Employee is the only lower role).
   3. [x] Do not allow editing of Manager or Admin user records or assignment of Manager/Admin roles.
   4. [x] Maintain employment status/type, organizational unit, and other employee information needed by the workflow.
@@ -73,7 +73,7 @@ A Manager may also be assigned as evaluator or evaluated employee on an assessme
   3. [x] Record who appointed the evaluator and when; preserve assignment changes in the assessment history.
   4. [x] Do not let the evaluated employee appoint or select their own evaluator.
 
-- [ ] Oversee assessments
+- [x] Oversee assessments
   1. [x] View all assessments and their status, deadlines, evaluator, and evaluated employee.
   2. [x] Search and filter assessments to identify pending actions and overdue steps.
   3. [x] View assessment history and acknowledgements.
@@ -115,7 +115,7 @@ These actions are available to an account of any of the three roles only when th
   6. [ ] Send the criteria and assessment date to the evaluated employee for participation acknowledgement.
   7. [x] Edit criteria while the workflow permits it and retain a history of changes.
 
-- [ ] Conduct the assessment and record the outcome
+- [x] Conduct the assessment and record the outcome
   1. [x] Record that the assessment discussion took place.
   2. [x] Rate each mandatory and selected additional criterion using the configured scale.
   3. [x] Calculate the overall result from the criterion ratings using the configured assessment rules.
