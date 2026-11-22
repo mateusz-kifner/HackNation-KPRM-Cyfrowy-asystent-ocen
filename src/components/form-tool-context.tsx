@@ -4,6 +4,7 @@ type FormToolContextValue = {
 	registerForm: (name: string, form: HTMLFormElement | null) => void;
 	getFormState: () => { form: string; fields: Record<string, string | string[]> } | { error: string };
 	selectField: (name: string) => { success: boolean; field?: string; error?: string };
+	editField: (name: string, value: string) => Promise<{ success: boolean; field?: string; value?: string; error?: string }>;
 	highlightedFields: string[];
 };
 
@@ -11,6 +12,7 @@ const FormToolContext = createContext<FormToolContextValue | null>(null);
 
 export function FormToolProvider({ children }: { children: ReactNode }) {
 	const forms = useRef(new Map<string, HTMLFormElement>());
+	const selectedFields = useRef(new Map<string, HTMLElement>());
 	const [highlightedFields, setHighlightedFields] = useState<string[]>([]);
 	const registerForm = useCallback((name: string, form: HTMLFormElement | null) => {
 		if (form) {
@@ -46,6 +48,9 @@ export function FormToolProvider({ children }: { children: ReactNode }) {
 					(element.getAttribute("name") === name || element.id === name),
 			) ?? form.querySelector<HTMLElement>(`[role="combobox"][id="${CSS.escape(name)}"]`);
 			if (!(field instanceof HTMLElement)) continue;
+			selectedFields.current.set(name, field);
+			if (field.id) selectedFields.current.set(field.id, field);
+			if (field.getAttribute("name")) selectedFields.current.set(field.getAttribute("name")!, field);
 			setHighlightedFields((current) => current.includes(name) ? current : [...current, name]);
 			field.setAttribute("data-ai-highlight", "true");
 			field.focus({ preventScroll: true });
@@ -54,7 +59,57 @@ export function FormToolProvider({ children }: { children: ReactNode }) {
 		}
 		return { success: false, error: `No active form field named "${name}" was found.` };
 	}, []);
-	const value = useMemo(() => ({ registerForm, getFormState, selectField, highlightedFields }), [registerForm, getFormState, selectField, highlightedFields]);
+	const editField = useCallback(async (name: string, nextValue: string) => {
+		const field = selectedFields.current.get(name);
+		if (!field?.isConnected || ![...forms.current.values()].some((form) => form.contains(field))) {
+			return { success: false, error: `Select the form field "${name}" before editing it.` };
+		}
+		if (("disabled" in field && field.disabled) || ("readOnly" in field && field.readOnly)) {
+			return { success: false, error: `The selected field "${name}" is read-only.` };
+		}
+		if (field instanceof HTMLInputElement) {
+			if (["submit", "button", "reset", "file", "hidden"].includes(field.type)) {
+				return { success: false, error: `The selected field "${name}" cannot be edited.` };
+			}
+			if (field.type === "checkbox") {
+				if (nextValue !== "true" && nextValue !== "false") return { success: false, error: "Checkbox values must be \"true\" or \"false\"." };
+				Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "checked")?.set?.call(field, nextValue === "true");
+			} else if (field.type === "radio") {
+				const radios = [...(field.form?.querySelectorAll<HTMLInputElement>(`input[type="radio"][name="${CSS.escape(field.name)}"]`) ?? [])];
+				const checkedSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "checked")?.set;
+				for (const radio of radios) checkedSetter?.call(radio, radio.value === nextValue);
+				if (!radios.some((radio) => radio.value === nextValue)) return { success: false, error: `"${nextValue}" is not an available radio value.` };
+			} else {
+				Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set?.call(field, nextValue);
+			}
+			field.dispatchEvent(new Event("input", { bubbles: true }));
+			field.dispatchEvent(new Event("change", { bubbles: true }));
+			return { success: true, field: name, value: field.type === "checkbox" ? String(field.checked) : field.value };
+		}
+		if (field instanceof HTMLTextAreaElement) {
+			Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")?.set?.call(field, nextValue);
+			field.dispatchEvent(new Event("input", { bubbles: true }));
+			field.dispatchEvent(new Event("change", { bubbles: true }));
+			return { success: true, field: name, value: field.value };
+		}
+		if (field instanceof HTMLSelectElement) {
+			if (![...field.options].some((option) => option.value === nextValue)) return { success: false, error: `"${nextValue}" is not an available option for "${name}".` };
+			Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value")?.set?.call(field, nextValue);
+			field.dispatchEvent(new Event("input", { bubbles: true }));
+			field.dispatchEvent(new Event("change", { bubbles: true }));
+			return { success: true, field: name, value: field.value };
+		}
+		if (field.getAttribute("role") === "combobox") {
+			field.click();
+			await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+			const option = [...document.querySelectorAll<HTMLElement>("[role=option]")].find((candidate) => candidate.dataset.value === nextValue || candidate.textContent?.trim() === nextValue);
+			if (!option) return { success: false, error: `"${nextValue}" is not an available option for "${name}".` };
+			option.click();
+			return { success: true, field: name, value: nextValue };
+		}
+		return { success: false, error: `The selected field "${name}" cannot be edited.` };
+	}, []);
+	const value = useMemo(() => ({ registerForm, getFormState, selectField, editField, highlightedFields }), [registerForm, getFormState, selectField, editField, highlightedFields]);
 	return <FormToolContext.Provider value={value}>{children}</FormToolContext.Provider>;
 }
 
