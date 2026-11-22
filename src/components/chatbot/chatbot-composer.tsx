@@ -64,7 +64,7 @@ export function ChatbotComposer({
               type="button"
               variant="destructive"
               size="icon-sm"
-              className="ml-auto"
+              className="ml-auto rounded-full"
               onClick={onStop}
               aria-label="Stop generating response"
               title="Stop generating response"
@@ -76,7 +76,7 @@ export function ChatbotComposer({
               type="submit"
               variant="default"
               size="icon-sm"
-              className="ml-auto"
+              className="ml-auto rounded-full"
               disabled={!canSend}
               aria-label="Send message"
             >
