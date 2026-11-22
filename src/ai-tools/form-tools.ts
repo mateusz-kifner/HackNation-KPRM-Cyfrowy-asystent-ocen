@@ -13,7 +13,7 @@ export const selectFormFieldTool: ToolDefinition = {
 	type: "function",
 	function: {
 		name: "select_form_field",
-		description: "Focus, scroll to, and highlight a form field by its name or id. Optional basic colors (red, orange, yellow, green, blue, purple, pink, gray, black, white) map to Tailwind shades; for example red maps to red-700.",
+		description: "If user asks you to show any field use this tool. Focus, scroll to, and highlight a form field by its name or id. Optional basic colors",
 		parameters: {
 			type: "object",
 			properties: {
