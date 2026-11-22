@@ -10,7 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EvaluationRouteImport } from './routes/evaluation'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ManagerRouteImport } from './routes/manager'
+import { Route as MeRouteImport } from './routes/me'
 import { Route as PanelOceniajacegoRouteImport } from './routes/panel-oceniajacego'
 import { Route as PanelPracowniczyRouteImport } from './routes/panel-pracowniczy'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
@@ -29,9 +32,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EvaluationRoute = EvaluationRouteImport.update({
+  id: '/evaluation',
+  path: '/evaluation',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManagerRoute = ManagerRouteImport.update({
+  id: '/manager',
+  path: '/manager',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeRoute = MeRouteImport.update({
+  id: '/me',
+  path: '/me',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PanelOceniajacegoRoute = PanelOceniajacegoRouteImport.update({
@@ -97,7 +115,10 @@ const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/evaluation': typeof EvaluationRoute
   '/login': typeof LoginRoute
+  '/manager': typeof ManagerRoute
+  '/me': typeof MeRoute
   '/panel-oceniajacego': typeof PanelOceniajacegoRoute
   '/panel-pracowniczy': typeof PanelPracowniczyRoute
   '/api/chat': typeof ApiChatRouteRoute
@@ -113,7 +134,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/evaluation': typeof EvaluationRoute
   '/login': typeof LoginRoute
+  '/manager': typeof ManagerRoute
+  '/me': typeof MeRoute
   '/panel-oceniajacego': typeof PanelOceniajacegoRoute
   '/panel-pracowniczy': typeof PanelPracowniczyRoute
   '/api/chat': typeof ApiChatRouteRoute
@@ -130,7 +154,10 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/evaluation': typeof EvaluationRoute
   '/login': typeof LoginRoute
+  '/manager': typeof ManagerRoute
+  '/me': typeof MeRoute
   '/panel-oceniajacego': typeof PanelOceniajacegoRoute
   '/panel-pracowniczy': typeof PanelPracowniczyRoute
   '/api/chat': typeof ApiChatRouteRoute
@@ -148,7 +175,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/evaluation'
     | '/login'
+    | '/manager'
+    | '/me'
     | '/panel-oceniajacego'
     | '/panel-pracowniczy'
     | '/api/chat'
@@ -164,7 +194,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/evaluation'
     | '/login'
+    | '/manager'
+    | '/me'
     | '/panel-oceniajacego'
     | '/panel-pracowniczy'
     | '/api/chat'
@@ -180,7 +213,10 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/evaluation'
     | '/login'
+    | '/manager'
+    | '/me'
     | '/panel-oceniajacego'
     | '/panel-pracowniczy'
     | '/api/chat'
@@ -197,7 +233,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EvaluationRoute: typeof EvaluationRoute
   LoginRoute: typeof LoginRoute
+  ManagerRoute: typeof ManagerRoute
+  MeRoute: typeof MeRoute
   PanelOceniajacegoRoute: typeof PanelOceniajacegoRoute
   PanelPracowniczyRoute: typeof PanelPracowniczyRoute
   ApiChatRouteRoute: typeof ApiChatRouteRoute
@@ -221,11 +260,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/evaluation': {
+      id: '/evaluation'
+      path: '/evaluation'
+      fullPath: '/evaluation'
+      preLoaderRoute: typeof EvaluationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manager': {
+      id: '/manager'
+      path: '/manager'
+      fullPath: '/manager'
+      preLoaderRoute: typeof ManagerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me': {
+      id: '/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof MeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/panel-oceniajacego': {
@@ -317,7 +377,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EvaluationRoute: EvaluationRoute,
   LoginRoute: LoginRoute,
+  ManagerRoute: ManagerRoute,
+  MeRoute: MeRoute,
   PanelOceniajacegoRoute: PanelOceniajacegoRoute,
   PanelPracowniczyRoute: PanelPracowniczyRoute,
   ApiChatRouteRoute: ApiChatRouteRoute,
