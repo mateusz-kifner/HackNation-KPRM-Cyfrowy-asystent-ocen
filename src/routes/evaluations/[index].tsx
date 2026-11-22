@@ -35,7 +35,7 @@ export const Route = createFileRoute("/evaluations/index")({
 	component: EvaluationsIndexPage,
 });
 
-export function EvaluationsIndexPage() {
+function EvaluationsIndexPage() {
 	const evaluationsQuery = useEvaluatorAssessments();
 	const { data: session, isPending: isSessionPending } =
 		authClient.useSession();
