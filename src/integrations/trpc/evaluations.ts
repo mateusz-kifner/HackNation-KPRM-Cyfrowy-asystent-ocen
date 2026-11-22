@@ -25,6 +25,7 @@ import {
 	getAssessmentOrThrow,
 } from "./evaluations/access";
 import { employeeProcedure, managerProcedure } from "./init";
+import { createNotification } from "./notifications";
 
 const dateInput = z.coerce.date().nullable().optional();
 
@@ -687,7 +688,7 @@ export const evaluationsRouter = {
 				.from(user)
 				.where(eq(user.id, input.evaluatorUserId))
 				.limit(1);
-			return db.transaction(async (tx) => {
+			const updatedAssessment = await db.transaction(async (tx) => {
 				const [updated] = await tx
 					.update(assessments)
 					.set({
@@ -724,6 +725,11 @@ export const evaluationsRouter = {
 				);
 				return updated;
 			});
+			await createNotification(input.evaluatorUserId, "Assessment assigned", "You have been appointed as evaluator for an assessment.", `/evaluation/${assessment.id}`);
+			if (assessment.evaluatorUserId !== input.evaluatorUserId) {
+				await createNotification(assessment.evaluatorUserId, "Evaluator assignment changed", "You are no longer assigned to this assessment.", `/evaluation/${assessment.id}`);
+			}
+			return updatedAssessment;
 		}),
 
 	selectForm: employeeProcedure
@@ -782,7 +788,7 @@ export const evaluationsRouter = {
 				.from(assessmentFileCriteria)
 				.where(eq(assessmentFileCriteria.assessmentFileId, file.id));
 			const mandatoryCriteria = assessmentFormMandatoryCriteria[input.form];
-			return db.transaction(async (tx) => {
+			const result = await db.transaction(async (tx) => {
 				const [updatedAssessment] = await tx
 					.update(assessments)
 					.set({ form: input.form })
@@ -815,6 +821,8 @@ export const evaluationsRouter = {
 				);
 				return { assessment: updatedAssessment, criteria: updatedCriteria };
 			});
+			await createNotification(assessment.evaluatedUserId, "Criteria ready for participation", "The evaluator updated the criteria. Review the discussion record and acknowledge participation.", `/evaluation/${assessment.id}`);
+			return result;
 		}),
 
 	updateSchedule: employeeProcedure
@@ -880,7 +888,7 @@ export const evaluationsRouter = {
 				});
 			}
 			const { assessmentId, reason, ...schedule } = input;
-			return db.transaction(async (tx) => {
+			const updated = await db.transaction(async (tx) => {
 				const [updated] = await tx
 					.update(assessments)
 					.set(schedule)
@@ -923,6 +931,14 @@ export const evaluationsRouter = {
 				);
 				return updated;
 			});
+			if (hasScheduleChange) {
+				const message = schedule.assessmentDate
+					? `The assessment schedule changed. The assessment date is ${schedule.assessmentDate.toLocaleDateString()}. ${reason ?? ""}`.trim()
+					: `The assessment schedule changed. ${reason ?? ""}`.trim();
+				await createNotification(assessment.evaluatedUserId, "Assessment schedule updated", message, `/evaluation/${assessment.id}`);
+				await createNotification(assessment.evaluatorUserId, "Assessment schedule updated", message, `/evaluation/${assessment.id}`);
+			}
+			return updated;
 		}),
 
 	updateForm: employeeProcedure
@@ -1252,7 +1268,7 @@ export const evaluationsRouter = {
 					message: "This acknowledgement has already been recorded.",
 				});
 
-			return db.transaction(async (tx) => {
+			const acknowledgement = await db.transaction(async (tx) => {
 				const [acknowledgement] = await tx
 					.insert(assessmentAcknowledgements)
 					.values({
@@ -1304,6 +1320,13 @@ export const evaluationsRouter = {
 				);
 				return acknowledgement;
 			});
+			if (input.type === "result_receipt") {
+				await createNotification(assessment.evaluatorUserId, "Assessment completed", "The evaluated employee acknowledged receipt of the assessment result.", `/evaluation/${assessment.id}`);
+				await createNotification(assessment.evaluatedUserId, "Assessment completed", "Your assessment is complete. You can view its history at any time.", `/evaluation/${assessment.id}`);
+			} else {
+				await createNotification(assessment.evaluatorUserId, "Criteria discussion acknowledged", "The evaluated employee acknowledged participation in criteria setting.", `/evaluation/${assessment.id}`);
+			}
+			return acknowledgement;
 		}),
 
 	recordUnacknowledgedReceipt: employeeProcedure
@@ -1412,6 +1435,7 @@ export const evaluationsRouter = {
 					request,
 					input.reason,
 				);
+				await createNotification(assessment.evaluatorUserId, "Assessment date change requested", "The evaluated employee requested a new assessment date.", `/evaluation/${assessment.id}`);
 				return request;
 			});
 		}),
@@ -1478,6 +1502,7 @@ export const evaluationsRouter = {
 					},
 					input.decisionNote ?? undefined,
 				);
+				await createNotification(assessment.evaluatedUserId, "Assessment date change decided", input.status === "approved" ? `The assessment date was changed to ${request.proposedDate.toLocaleDateString()}.` : "Your assessment date change request was declined.", `/evaluation/${assessment.id}`);
 				return updatedRequest;
 			});
 		}),
@@ -1616,6 +1641,7 @@ export const evaluationsRouter = {
 					},
 					input.reason ?? undefined,
 				);
+				await createNotification(assessment.evaluatedUserId, "Assessment ready for acknowledgement", "Your evaluator submitted the assessment. Review the result and acknowledge receipt.", `/evaluation/${assessment.id}`);
 				return { assessment: updatedAssessment, file: updatedFile };
 			});
 		}),
@@ -1695,7 +1721,7 @@ export const evaluationsRouter = {
 					code: "FORBIDDEN",
 					message: "Only an Admin can record a review decision.",
 				});
-			return db.transaction(async (tx) => {
+			const result = await db.transaction(async (tx) => {
 				let replacement: typeof assessment | null = null;
 				if (input.outcome === "repeat") {
 					const [sourceFile] = await tx
@@ -1798,6 +1824,12 @@ export const evaluationsRouter = {
 					replacementAssessmentId: replacement?.id ?? null,
 				};
 			});
+			const notice = input.outcome === "repeat"
+				? "An authorized review decision requires a replacement assessment."
+				: "An authorized review decision requires changes to this assessment.";
+			await createNotification(assessment.evaluatorUserId, "Assessment review decision", notice, `/evaluation/${result.replacementAssessmentId ?? assessment.id}`);
+			await createNotification(assessment.evaluatedUserId, "Assessment review decision", notice, `/evaluation/${result.replacementAssessmentId ?? assessment.id}`);
+			return result;
 		}),
 } satisfies TRPCRouterRecord;
 

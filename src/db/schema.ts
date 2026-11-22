@@ -68,6 +68,46 @@ export const employees = sqliteTable('employees', {
     .notNull(),
 })
 
+export const notifications = sqliteTable('notifications', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  message: text('message').notNull(),
+  type: text('type', { enum: ['info', 'warning', 'success', 'error'] }).notNull().default('info'),
+  href: text('href'),
+  readAt: integer('read_at', { mode: 'timestamp_ms' }),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`),
+})
+
+export const reportingLines = sqliteTable('reporting_lines', {
+  id: text('id').primaryKey(),
+  employeeUserId: text('employee_user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  managerUserId: text('manager_user_id').notNull().references(() => user.id, { onDelete: 'restrict' }),
+  startsAt: integer('starts_at', { mode: 'timestamp_ms' }).notNull(),
+  endsAt: integer('ends_at', { mode: 'timestamp_ms' }),
+  createdByUserId: text('created_by_user_id').notNull().references(() => user.id, { onDelete: 'restrict' }),
+})
+
+export const actingSubstitutions = sqliteTable('acting_substitutions', {
+  id: text('id').primaryKey(),
+  substituteUserId: text('substitute_user_id').notNull().references(() => user.id, { onDelete: 'restrict' }),
+  representedUserId: text('represented_user_id').notNull().references(() => user.id, { onDelete: 'restrict' }),
+  scope: text('scope').notNull(),
+  startsAt: integer('starts_at', { mode: 'timestamp_ms' }).notNull(),
+  endsAt: integer('ends_at', { mode: 'timestamp_ms' }),
+  createdByUserId: text('created_by_user_id').notNull().references(() => user.id, { onDelete: 'restrict' }),
+})
+
+export const absences = sqliteTable('absences', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  startsAt: integer('starts_at', { mode: 'timestamp_ms' }).notNull(),
+  endsAt: integer('ends_at', { mode: 'timestamp_ms' }).notNull(),
+  continuous: integer('continuous', { mode: 'boolean' }).notNull().default(false),
+  reason: text('reason'),
+  recordedByUserId: text('recorded_by_user_id').notNull().references(() => user.id, { onDelete: 'restrict' }),
+})
+
 // Re-export Better Auth tables
 export const user = authSchema.user
 export const session = authSchema.session
