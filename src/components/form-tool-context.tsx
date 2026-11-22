@@ -50,10 +50,6 @@ export function FormToolProvider({ children }: { children: ReactNode }) {
 			field.setAttribute("data-ai-highlight", "true");
 			field.focus({ preventScroll: true });
 			field.scrollIntoView({ behavior: "smooth", block: "center" });
-			window.setTimeout(() => {
-				field.removeAttribute("data-ai-highlight");
-				setHighlightedField((current) => current === name ? null : current);
-			}, 2500);
 			return { success: true, field: name };
 		}
 		return { success: false, error: `No active form field named "${name}" was found.` };
