@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { IconMessageChatbot } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,7 @@ export function ChatBot({
   const [open, setOpen] = useState(false);
   const [pinned, setPinned] = useChatPinState(false);
   const [draft, setDraft] = useState("");
-  const portalContainerRef = useRef<HTMLElement | null>(null);
+  const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
 
   const { visibleMessages, loading, error, send, reset } = useChatbotChat({
     systemPrompt,
@@ -46,8 +46,8 @@ export function ChatBot({
       container.id = "CHATBOT";
       document.body.appendChild(container);
     }
-    portalContainerRef.current = container;
-  }, []);
+    setPortalContainer(container);
+  }, [pinned]);
 
   function handleSend(content: string) {
     setDraft("");
@@ -109,10 +109,7 @@ export function ChatBot({
   );
 
   const shouldRender = pinned || open;
-  const container =
-    typeof document === "undefined"
-      ? null
-      : (portalContainerRef.current ?? document.body);
+  const container = typeof document === "undefined" ? null : portalContainer;
 
   return (
     <>

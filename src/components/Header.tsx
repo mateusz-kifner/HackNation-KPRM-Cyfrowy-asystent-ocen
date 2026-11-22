@@ -25,22 +25,12 @@ export default function Header() {
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
-                  <Link to="/panel-pracowniczy">Panel Pracowniczy</Link>
+                  <Link to="/evaluation">Evaluation</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
-                  <Link to="/panel-oceniajacego">Panel Oceniającego</Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link to="/admin/">Admin</Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link to="/test">Test</Link>
+                  <Link to="/me">Me</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>

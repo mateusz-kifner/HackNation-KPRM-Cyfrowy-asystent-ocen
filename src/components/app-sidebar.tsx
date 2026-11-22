@@ -38,24 +38,14 @@ const data = {
 	},
 	navMain: [
 		{
-			title: "Panel Pracowniczy",
-			url: "/panel-pracowniczy",
+			title: "Evaluation",
+			url: "/evaluation",
 			icon: <IconDashboard />,
 		},
 		{
-			title: "Panel Oceniającego",
-			url: "/panel-oceniajacego",
+			title: "Me",
+			url: "/me",
 			icon: <IconListDetails />,
-		},
-		{
-			title: "Moje oceny",
-      url: "/evaluations/index",
-			icon: <IconClipboardList />,
-		},
-		{
-			title: "Admin",
-			url: "/admin/",
-			icon: <IconChartBar />,
 		},
 	],
 	navClouds: [

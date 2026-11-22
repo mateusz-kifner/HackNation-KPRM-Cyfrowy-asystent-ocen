@@ -12,17 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EvaluationRouteImport } from './routes/evaluation'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as ManagerRouteImport } from './routes/manager'
 import { Route as MeRouteImport } from './routes/me'
-import { Route as PanelOceniajacegoRouteImport } from './routes/panel-oceniajacego'
-import { Route as PanelPracowniczyRouteImport } from './routes/panel-pracowniczy'
 import { Route as EvaluationsChar91indexChar93RouteImport } from './routes/evaluations/[index]'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminEmployeesRouteImport } from './routes/admin/employees'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as ApiChatRouteRouteImport } from './routes/api/chat/route'
 import { Route as TestIndexRouteImport } from './routes/test/index'
-import { Route as TestChatbotRouteImport } from './routes/test/chatbot'
 import { Route as TestShadcnRouteImport } from './routes/test/shadcn'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api.trpc.$'
@@ -42,24 +38,9 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ManagerRoute = ManagerRouteImport.update({
-  id: '/manager',
-  path: '/manager',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const MeRoute = MeRouteImport.update({
   id: '/me',
   path: '/me',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PanelOceniajacegoRoute = PanelOceniajacegoRouteImport.update({
-  id: '/panel-oceniajacego',
-  path: '/panel-oceniajacego',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PanelPracowniczyRoute = PanelPracowniczyRouteImport.update({
-  id: '/panel-pracowniczy',
-  path: '/panel-pracowniczy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EvaluationsChar91indexChar93Route =
@@ -93,11 +74,6 @@ const TestIndexRoute = TestIndexRouteImport.update({
   path: '/test/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TestChatbotRoute = TestChatbotRouteImport.update({
-  id: '/test/chatbot',
-  path: '/test/chatbot',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const TestShadcnRoute = TestShadcnRouteImport.update({
   id: '/test/shadcn',
   path: '/test/shadcn',
@@ -118,15 +94,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/evaluation': typeof EvaluationRoute
   '/login': typeof LoginRoute
-  '/manager': typeof ManagerRoute
   '/me': typeof MeRoute
-  '/panel-oceniajacego': typeof PanelOceniajacegoRoute
-  '/panel-pracowniczy': typeof PanelPracowniczyRoute
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/users': typeof AdminUsersRoute
   '/evaluations/index': typeof EvaluationsChar91indexChar93Route
-  '/test/chatbot': typeof TestChatbotRoute
   '/test/shadcn': typeof TestShadcnRoute
   '/admin/': typeof AdminIndexRoute
   '/test/': typeof TestIndexRoute
@@ -137,15 +109,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/evaluation': typeof EvaluationRoute
   '/login': typeof LoginRoute
-  '/manager': typeof ManagerRoute
   '/me': typeof MeRoute
-  '/panel-oceniajacego': typeof PanelOceniajacegoRoute
-  '/panel-pracowniczy': typeof PanelPracowniczyRoute
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/users': typeof AdminUsersRoute
   '/evaluations/index': typeof EvaluationsChar91indexChar93Route
-  '/test/chatbot': typeof TestChatbotRoute
   '/test/shadcn': typeof TestShadcnRoute
   '/admin': typeof AdminIndexRoute
   '/test': typeof TestIndexRoute
@@ -157,15 +125,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/evaluation': typeof EvaluationRoute
   '/login': typeof LoginRoute
-  '/manager': typeof ManagerRoute
   '/me': typeof MeRoute
-  '/panel-oceniajacego': typeof PanelOceniajacegoRoute
-  '/panel-pracowniczy': typeof PanelPracowniczyRoute
   '/api/chat': typeof ApiChatRouteRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/users': typeof AdminUsersRoute
   '/evaluations/index': typeof EvaluationsChar91indexChar93Route
-  '/test/chatbot': typeof TestChatbotRoute
   '/test/shadcn': typeof TestShadcnRoute
   '/admin/': typeof AdminIndexRoute
   '/test/': typeof TestIndexRoute
@@ -178,15 +142,11 @@ export interface FileRouteTypes {
     | '/'
     | '/evaluation'
     | '/login'
-    | '/manager'
     | '/me'
-    | '/panel-oceniajacego'
-    | '/panel-pracowniczy'
     | '/api/chat'
     | '/admin/employees'
     | '/admin/users'
     | '/evaluations/index'
-    | '/test/chatbot'
     | '/test/shadcn'
     | '/admin/'
     | '/test/'
@@ -197,15 +157,11 @@ export interface FileRouteTypes {
     | '/'
     | '/evaluation'
     | '/login'
-    | '/manager'
     | '/me'
-    | '/panel-oceniajacego'
-    | '/panel-pracowniczy'
     | '/api/chat'
     | '/admin/employees'
     | '/admin/users'
     | '/evaluations/index'
-    | '/test/chatbot'
     | '/test/shadcn'
     | '/admin'
     | '/test'
@@ -216,15 +172,11 @@ export interface FileRouteTypes {
     | '/'
     | '/evaluation'
     | '/login'
-    | '/manager'
     | '/me'
-    | '/panel-oceniajacego'
-    | '/panel-pracowniczy'
     | '/api/chat'
     | '/admin/employees'
     | '/admin/users'
     | '/evaluations/index'
-    | '/test/chatbot'
     | '/test/shadcn'
     | '/admin/'
     | '/test/'
@@ -236,15 +188,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EvaluationRoute: typeof EvaluationRoute
   LoginRoute: typeof LoginRoute
-  ManagerRoute: typeof ManagerRoute
   MeRoute: typeof MeRoute
-  PanelOceniajacegoRoute: typeof PanelOceniajacegoRoute
-  PanelPracowniczyRoute: typeof PanelPracowniczyRoute
   ApiChatRouteRoute: typeof ApiChatRouteRoute
   AdminEmployeesRoute: typeof AdminEmployeesRoute
   AdminUsersRoute: typeof AdminUsersRoute
   EvaluationsChar91indexChar93Route: typeof EvaluationsChar91indexChar93Route
-  TestChatbotRoute: typeof TestChatbotRoute
   TestShadcnRoute: typeof TestShadcnRoute
   AdminIndexRoute: typeof AdminIndexRoute
   TestIndexRoute: typeof TestIndexRoute
@@ -275,32 +223,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/manager': {
-      id: '/manager'
-      path: '/manager'
-      fullPath: '/manager'
-      preLoaderRoute: typeof ManagerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/me': {
       id: '/me'
       path: '/me'
       fullPath: '/me'
       preLoaderRoute: typeof MeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/panel-oceniajacego': {
-      id: '/panel-oceniajacego'
-      path: '/panel-oceniajacego'
-      fullPath: '/panel-oceniajacego'
-      preLoaderRoute: typeof PanelOceniajacegoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/panel-pracowniczy': {
-      id: '/panel-pracowniczy'
-      path: '/panel-pracowniczy'
-      fullPath: '/panel-pracowniczy'
-      preLoaderRoute: typeof PanelPracowniczyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/evaluations/index': {
@@ -345,13 +272,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/test/chatbot': {
-      id: '/test/chatbot'
-      path: '/test/chatbot'
-      fullPath: '/test/chatbot'
-      preLoaderRoute: typeof TestChatbotRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/test/shadcn': {
       id: '/test/shadcn'
       path: '/test/shadcn'
@@ -380,15 +300,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EvaluationRoute: EvaluationRoute,
   LoginRoute: LoginRoute,
-  ManagerRoute: ManagerRoute,
   MeRoute: MeRoute,
-  PanelOceniajacegoRoute: PanelOceniajacegoRoute,
-  PanelPracowniczyRoute: PanelPracowniczyRoute,
   ApiChatRouteRoute: ApiChatRouteRoute,
   AdminEmployeesRoute: AdminEmployeesRoute,
   AdminUsersRoute: AdminUsersRoute,
   EvaluationsChar91indexChar93Route: EvaluationsChar91indexChar93Route,
-  TestChatbotRoute: TestChatbotRoute,
   TestShadcnRoute: TestShadcnRoute,
   AdminIndexRoute: AdminIndexRoute,
   TestIndexRoute: TestIndexRoute,
