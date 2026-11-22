@@ -43,7 +43,7 @@ export function ChatbotComposer({
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
           aria-label="Message"
-          className="min-h-14"
+          className="min-h-14 max-h-48 overflow-y-auto"
           onKeyDown={(event) => {
             if (event.key === "Enter" && !event.shiftKey) {
               event.preventDefault();
