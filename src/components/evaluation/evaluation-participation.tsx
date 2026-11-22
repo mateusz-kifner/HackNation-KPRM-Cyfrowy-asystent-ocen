@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useFormTool } from "#/components/form-tool-context";
 import { authClient } from "#/lib/auth-client";
 import { useEvaluationAcknowledge } from "#/hooks/api/evaluations/useEvaluationAcknowledge";
 import { useEvaluationDecideDateChange } from "#/hooks/api/evaluations/useEvaluationDecideDateChange";
@@ -20,6 +21,7 @@ export function EvaluationParticipation({
 }: {
 	evaluation: EvaluationDetails;
 }) {
+	const dateRequestFormRef = useFormTool("Assessment date change request");
 	const session = authClient.useSession();
 	const actor = session.data?.user as { id: string; role?: string } | undefined;
 	const isEvaluatedPerson = actor?.id === evaluation.evaluatedUserId;
@@ -121,6 +123,7 @@ export function EvaluationParticipation({
 					</CardHeader>
 					<CardContent>
 						<form
+							ref={dateRequestFormRef}
 							onSubmit={submitDateRequest}
 							className="grid gap-4 sm:grid-cols-2"
 						>

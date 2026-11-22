@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useFormTool } from "#/components/form-tool-context";
 import { toast } from "sonner";
 import { useEvaluationRateCriteria } from "#/hooks/api/evaluations/useEvaluationRateCriteria";
 import { useEvaluationCalculateResult } from "#/hooks/api/evaluations/useEvaluationCalculateResult";
@@ -26,6 +27,8 @@ export function AssessmentEditor({
 	evaluation: EvaluationDetails;
 	isAdmin?: boolean;
 }) {
+	const discussionFormRef = useFormTool("Assessment discussion details");
+	const ratingsFormRef = useFormTool("Criterion ratings");
 	const [error, setError] = useState<string | null>(null);
 	const [reason, setReason] = useState("");
 	const rate = useEvaluationRateCriteria({
@@ -117,7 +120,11 @@ export function AssessmentEditor({
 							/>
 						</div>
 					) : null}
-					<form onSubmit={saveDiscussion} className="grid gap-4 sm:grid-cols-2">
+					<form
+						ref={discussionFormRef}
+						onSubmit={saveDiscussion}
+						className="grid gap-4 sm:grid-cols-2"
+					>
 						<div className="grid gap-2">
 							<Label htmlFor="assessmentDiscussionDate">Discussion date</Label>
 							<input
@@ -181,7 +188,11 @@ export function AssessmentEditor({
 							item.type === "criteria_participation" &&
 							item.status === "acknowledged",
 					) ? (
-						<form onSubmit={saveRatings} className="space-y-4">
+						<form
+							ref={ratingsFormRef}
+							onSubmit={saveRatings}
+							className="space-y-4"
+						>
 							{evaluation.criteria.map((criterion) => (
 								<section
 									key={criterion.id}

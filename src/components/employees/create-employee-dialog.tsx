@@ -1,3 +1,4 @@
+import { useFormTool } from "#/components/form-tool-context";
 import {
 	Dialog,
 	DialogContent,
@@ -33,6 +34,7 @@ export function CreateEmployeeDialog({
 	onOpenChange: (open: boolean) => void;
 	onSave: (employee: NewEmployee) => void;
 }) {
+	const formRef = useFormTool("Create employee account");
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl">
@@ -44,6 +46,7 @@ export function CreateEmployeeDialog({
 					</DialogDescription>
 				</DialogHeader>
 				<form
+					ref={formRef}
 					id="create-employee-form"
 					className="grid gap-4 sm:grid-cols-2"
 					onSubmit={(event) => {

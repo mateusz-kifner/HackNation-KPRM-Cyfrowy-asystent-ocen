@@ -1,6 +1,5 @@
 import { IconClipboardList, IconEye } from "@tabler/icons-react";
-import { useState } from "react";
-import { EvaluationDocumentPreview } from "#/components/evaluation-document-preview";
+import { Link } from "@tanstack/react-router";
 import { EvaluationDocxDownload } from "#/components/evaluation-docx-download";
 import { useEvaluationAssignedToMe } from "#/hooks/api/evaluations/useEvaluationAssignedToMe";
 import { Badge } from "#/components/ui/badge";
@@ -12,13 +11,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "#/components/ui/card";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-} from "#/components/ui/dialog";
 import {
 	Empty,
 	EmptyDescription,
@@ -37,14 +29,8 @@ import {
 } from "#/components/ui/table";
 import { PageBreadcrumb } from "#/components/page-breadcrumb";
 
-type Assessment = NonNullable<
-	ReturnType<typeof useEvaluationAssignedToMe>["data"]
->[number];
-
 export function EvaluationDocumentsPage() {
 	const assessmentsQuery = useEvaluationAssignedToMe();
-	const [selectedAssessment, setSelectedAssessment] =
-		useState<Assessment | null>(null);
 	const assessments = assessmentsQuery.data ?? [];
 
 	return (
@@ -131,13 +117,14 @@ export function EvaluationDocumentsPage() {
 											<TableCell>{formatDate(assessment.dueAt)}</TableCell>
 											<TableCell>
 												<div className="flex justify-end gap-2">
-													<Button
-														variant="outline"
-														size="sm"
-														onClick={() => setSelectedAssessment(assessment)}
-													>
-														<IconEye aria-hidden="true" />
-														Preview
+													<Button variant="outline" size="sm" asChild>
+														<Link
+															to="/evaluation/preview/$id"
+															params={{ id: assessment.id }}
+														>
+															<IconEye aria-hidden="true" />
+															Preview
+														</Link>
 													</Button>
 													<EvaluationDocxDownload
 														assessmentId={assessment.id}
@@ -152,24 +139,6 @@ export function EvaluationDocumentsPage() {
 					) : null}
 				</CardContent>
 			</Card>
-			<Dialog
-				open={Boolean(selectedAssessment)}
-				onOpenChange={(open) => {
-					if (!open) setSelectedAssessment(null);
-				}}
-			>
-				<DialogContent className="flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden">
-					<DialogHeader>
-						<DialogTitle>Assessment document preview</DialogTitle>
-						<DialogDescription>
-							Preview uses the saved assessment details and ratings.
-						</DialogDescription>
-					</DialogHeader>
-					{selectedAssessment ? (
-						<EvaluationDocumentPreview assessmentId={selectedAssessment.id} />
-					) : null}
-				</DialogContent>
-			</Dialog>
 		</main>
 	);
 }

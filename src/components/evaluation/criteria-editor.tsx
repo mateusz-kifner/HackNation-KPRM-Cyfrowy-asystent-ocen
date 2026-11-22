@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useFormTool } from "#/components/form-tool-context";
 import { useQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/integrations/trpc/react";
 import { useEvaluationSelectForm } from "#/hooks/api/evaluations/useEvaluationSelectForm";
@@ -22,6 +23,7 @@ export function CriteriaEditor({
 	evaluation: EvaluationDetails;
 	isAdmin?: boolean;
 }) {
+	const criteriaFormRef = useFormTool("Evaluation criteria");
 	const trpc = useTRPC();
 	const options = useQuery(trpc.evaluations.options.queryOptions());
 	const [selectedAdditional, setSelectedAdditional] = useState<string[]>(
@@ -177,7 +179,7 @@ export function CriteriaEditor({
 					</fieldset>
 				) : null}
 				{canChangeForm ? (
-					<form onSubmit={save} className="space-y-5">
+					<form ref={criteriaFormRef} onSubmit={save} className="space-y-5">
 						{[
 							...mandatory,
 							...selectedAdditional.map(

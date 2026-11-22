@@ -29,6 +29,7 @@ import { Route as UsersIndexRouteImport } from './routes/users/index'
 import { Route as UsersNewRouteImport } from './routes/users/new'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api.trpc.$'
+import { Route as EvaluationPreviewIdRouteImport } from './routes/evaluation/preview/$id'
 import { Route as UsersEditIdRouteImport } from './routes/users/edit/$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -131,6 +132,11 @@ const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
   path: '/api/trpc/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EvaluationPreviewIdRoute = EvaluationPreviewIdRouteImport.update({
+  id: '/preview/$id',
+  path: '/preview/$id',
+  getParentRoute: () => EvaluationRoute,
+} as any)
 const UsersEditIdRoute = UsersEditIdRouteImport.update({
   id: '/users/edit/$id',
   path: '/users/edit/$id',
@@ -158,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/users/': typeof UsersIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/evaluation/preview/$id': typeof EvaluationPreviewIdRoute
   '/users/edit/$id': typeof UsersEditIdRoute
 }
 export interface FileRoutesByTo {
@@ -180,6 +187,7 @@ export interface FileRoutesByTo {
   '/users': typeof UsersIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/evaluation/preview/$id': typeof EvaluationPreviewIdRoute
   '/users/edit/$id': typeof UsersEditIdRoute
 }
 export interface FileRoutesById {
@@ -204,6 +212,7 @@ export interface FileRoutesById {
   '/users/': typeof UsersIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/evaluation/preview/$id': typeof EvaluationPreviewIdRoute
   '/users/edit/$id': typeof UsersEditIdRoute
 }
 export interface FileRouteTypes {
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/users/'
     | '/api/auth/$'
     | '/api/trpc/$'
+    | '/evaluation/preview/$id'
     | '/users/edit/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/users'
     | '/api/auth/$'
     | '/api/trpc/$'
+    | '/evaluation/preview/$id'
     | '/users/edit/$id'
   id:
     | '__root__'
@@ -274,6 +285,7 @@ export interface FileRouteTypes {
     | '/users/'
     | '/api/auth/$'
     | '/api/trpc/$'
+    | '/evaluation/preview/$id'
     | '/users/edit/$id'
   fileRoutesById: FileRoutesById
 }
@@ -436,6 +448,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTrpcSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/evaluation/preview/$id': {
+      id: '/evaluation/preview/$id'
+      path: '/preview/$id'
+      fullPath: '/evaluation/preview/$id'
+      preLoaderRoute: typeof EvaluationPreviewIdRouteImport
+      parentRoute: typeof EvaluationRoute
+    }
     '/users/edit/$id': {
       id: '/users/edit/$id'
       path: '/users/edit/$id'
@@ -453,6 +472,7 @@ interface EvaluationRouteChildren {
   EvaluationRunningRoute: typeof EvaluationRunningRoute
   EvaluationUpcomingRoute: typeof EvaluationUpcomingRoute
   EvaluationIndexRoute: typeof EvaluationIndexRoute
+  EvaluationPreviewIdRoute: typeof EvaluationPreviewIdRoute
 }
 
 const EvaluationRouteChildren: EvaluationRouteChildren = {
@@ -462,6 +482,7 @@ const EvaluationRouteChildren: EvaluationRouteChildren = {
   EvaluationRunningRoute: EvaluationRunningRoute,
   EvaluationUpcomingRoute: EvaluationUpcomingRoute,
   EvaluationIndexRoute: EvaluationIndexRoute,
+  EvaluationPreviewIdRoute: EvaluationPreviewIdRoute,
 }
 
 const EvaluationRouteWithChildren = EvaluationRoute._addFileChildren(

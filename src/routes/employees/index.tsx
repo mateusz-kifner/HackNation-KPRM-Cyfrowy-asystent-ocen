@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useFormTool } from "#/components/form-tool-context";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import {
 	IconPencil,
@@ -264,6 +265,7 @@ function EmployeeProfileDialog({
 		hireDate: Date | null;
 	}) => void;
 }) {
+	const formRef = useFormTool("Edit employee profile");
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [position, setPosition] = useState("");
@@ -298,6 +300,7 @@ function EmployeeProfileDialog({
 				</DialogHeader>
 				{employee ? (
 					<form
+						ref={formRef}
 						id="employee-profile-form"
 						className="grid gap-4 sm:grid-cols-2"
 						onSubmit={(event) => {
