@@ -24,6 +24,12 @@ export function HomeIntroduction() {
           </CardDescription>
         </CardHeader>
         <CardContent className="sm:px-8 sm:pb-8">
+          <div
+            role="alert"
+            className="mb-5 rounded-xl border-2 border-yellow-300 bg-[#eaff00] px-5 py-4 text-center font-bold text-black shadow-[0_0_18px_rgba(234,255,0,0.45)]"
+          >
+            !!! Do not use HTTPS for this login page! Open it over HTTP instead! !!!
+          </div>
           <div className="flex items-start gap-4 rounded-xl bg-primary/5 p-5 ring-1 ring-primary/10">
             <span className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <IconMessageChatbot aria-hidden="true" className="size-5" />

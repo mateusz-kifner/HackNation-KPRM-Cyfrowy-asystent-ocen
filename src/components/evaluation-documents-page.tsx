@@ -1,5 +1,6 @@
-import { IconClipboardList, IconEye } from "@tabler/icons-react";
+import { IconClipboardList, IconEye, IconPlus } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
+import { authClient } from "#/lib/auth-client";
 import { EvaluationDocxDownload } from "#/components/evaluation-docx-download";
 import { useEvaluationAssignedToMe } from "#/hooks/api/evaluations/useEvaluationAssignedToMe";
 import { Badge } from "#/components/ui/badge";
@@ -32,11 +33,22 @@ import { PageBreadcrumb } from "#/components/page-breadcrumb";
 export function EvaluationDocumentsPage() {
 	const assessmentsQuery = useEvaluationAssignedToMe();
 	const assessments = assessmentsQuery.data ?? [];
+	const { data: session } = authClient.useSession();
+	const role = (session?.user as { role?: string } | undefined)?.role;
+	const canAddEvaluation = role === "Admin" || role === "Manager";
 
 	return (
 		<main className="mx-auto w-full max-w-7xl space-y-6 p-4 sm:p-6">
-			<header>
+			<header className="flex items-center justify-between gap-4">
 				<PageBreadcrumb items={[{ label: "Evaluation documents" }]} />
+				{canAddEvaluation ? (
+					<Button asChild>
+						<Link to="/evaluation/add">
+							<IconPlus aria-hidden="true" />
+							Add evaluation
+						</Link>
+					</Button>
+				) : null}
 			</header>
 			<Card>
 				<CardHeader>
