@@ -1,4 +1,5 @@
 import type { ToolDefinition } from "@/components/chatbot/chatbot-types";
+import { civilServiceEvaluationSummarySkill } from "@/components/chatbot/civil-service-evaluation-summary-skill";
 import { myEvaluationSkill } from "@/components/chatbot/my-evaluation-skill";
 
 export type ChatbotSkill = {
@@ -15,6 +16,13 @@ export const chatbotSkills: readonly ChatbotSkill[] = [
 		description:
 			"Workflow and reference guidance for understanding and completing employee evaluations.",
 		content: myEvaluationSkill,
+	},
+	{
+		id: "civil_service_evaluation_handbook",
+		name: "Civil service evaluation handbook",
+		description:
+			"Summarize and explain the 2016 Polish civil service periodic evaluation handbook, with clear source-date limits.",
+		content: civilServiceEvaluationSummarySkill,
 	},
 ];
 
