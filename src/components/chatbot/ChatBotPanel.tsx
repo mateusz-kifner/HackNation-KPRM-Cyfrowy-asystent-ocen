@@ -21,6 +21,7 @@ type ChatBotPanelProps = {
 	messages: ChatMessage[];
 	loading?: boolean;
 	error?: string | null;
+	username?: string;
 	draft?: string;
 	onDraftChange?: (value: string) => void;
 	onSubmit?: (content: string) => void;
@@ -34,6 +35,7 @@ export function ChatBotPanel({
 	messages = [],
 	loading = false,
 	error = null,
+	username,
 	draft = "",
 	onDraftChange = () => {},
 	onSubmit = () => {},
@@ -99,6 +101,7 @@ export function ChatBotPanel({
 							messages={messages}
 							loading={loading}
 							error={error}
+							username={username}
 						/>
 					</div>
 					<div className="px-4 pb-4">

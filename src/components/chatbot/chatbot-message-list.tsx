@@ -27,10 +27,12 @@ export function ChatbotMessageList({
   messages,
   loading,
   error,
+  username,
 }: {
   messages: ChatMessage[];
   loading: boolean;
   error: string | null;
+  username?: string;
 }) {
   const visibleMessages = messages.filter((message) => message.content.trim() !== "");
   const lastUserMessageId = [...visibleMessages]
@@ -44,9 +46,9 @@ export function ChatbotMessageList({
           <EmptyMedia variant="icon">
             <IconRobot />
           </EmptyMedia>
-          <EmptyTitle>Start a conversation</EmptyTitle>
+          <EmptyTitle>Welcome{username ? `, ${username}` : ""}!</EmptyTitle>
           <EmptyDescription>
-            Ask the assistant anything. It can call tools when it needs live data.
+            How can I help you?
           </EmptyDescription>
         </EmptyHeader>
       </Empty>
