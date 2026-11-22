@@ -15,6 +15,7 @@ import appCss from "../styles.css?url";
 import { Toaster } from "#/components/ui/sonner"
 import { ResizableHandle,  ResizablePanel, ResizablePanelGroup } from "#/components/ui/resizable";
 import  useChatPinState  from "#/hooks/use-chat-pin-state";
+import { FormToolProvider } from "#/components/form-tool-context";
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -73,7 +74,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           <div className="vignette" />
           <div className="noise" />
         </div>
-          <TooltipProvider>
+          <FormToolProvider><TooltipProvider>
             <Header />
             <RootChatbot />
 
@@ -100,7 +101,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 }
 
 
-          </TooltipProvider>
+          </TooltipProvider></FormToolProvider>
 
         <TanStackDevtools
           config={{

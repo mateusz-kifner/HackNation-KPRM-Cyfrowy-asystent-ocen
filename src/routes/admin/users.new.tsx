@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { authClient } from "#/lib/auth-client";
+import { useFormTool } from "#/components/form-tool-context";
 import { useTRPC } from "#/integrations/trpc/react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export const Route = createFileRoute("/admin/users/new")({ component: AddUserPage });
 
 function AddUserPage() {
+  const formRef = useFormTool("Add user account");
   const session = authClient.useSession();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -27,9 +29,9 @@ function AddUserPage() {
     event.preventDefault(); const values = new FormData(event.currentTarget);
     create.mutate({ name: String(values.get("name")).trim(), email: String(values.get("email")).trim(), password: String(values.get("password")), role: String(values.get("role")) as "Employee" | "Manager" | "Admin", position: String(values.get("position")) || null, department: String(values.get("department")) || null, organizationalUnit: String(values.get("organizationalUnit")) || null, employmentStatus: String(values.get("employmentStatus")) || null, employmentType: String(values.get("employmentType")) || null, hireDate: values.get("hireDate") ? new Date(`${values.get("hireDate")}T00:00:00`) : null });
   }
-  return <Card><CardHeader><CardTitle>Add user account</CardTitle></CardHeader><CardContent><form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
+  return <Card><CardHeader><CardTitle>Add user account</CardTitle></CardHeader><CardContent><form ref={formRef} onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
     <Field label="Name"><Input name="name" required autoComplete="name" /></Field><Field label="Email"><Input name="email" type="email" required autoComplete="email" /></Field>
-    <Field label="Role"><Select name="role" defaultValue="Employee"><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Employee">Employee</SelectItem><SelectItem value="Manager">Manager</SelectItem><SelectItem value="Admin">Admin</SelectItem></SelectContent></Select></Field>
+    <Field label="Role"><Select name="role" defaultValue="Employee"><SelectTrigger id="role"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Employee">Employee</SelectItem><SelectItem value="Manager">Manager</SelectItem><SelectItem value="Admin">Admin</SelectItem></SelectContent></Select></Field>
     <Field label="Initial password"><Input name="password" type="password" minLength={8} required autoComplete="new-password" /></Field>
     <Field label="Position"><Input name="position" /></Field><Field label="Department"><Input name="department" /></Field><Field label="Organizational unit"><Input name="organizationalUnit" /></Field><Field label="Employment status"><Input name="employmentStatus" placeholder="e.g. Active" /></Field><Field label="Employment type"><Input name="employmentType" placeholder="e.g. Full-time" /></Field><Field label="Hire date"><Input name="hireDate" type="date" /></Field>
     <div className="flex gap-2 sm:col-span-2"><Button type="submit" disabled={create.isPending}>{create.isPending ? "Creating…" : "Create account"}</Button><Button asChild variant="outline"><Link to="/admin/users">Cancel</Link></Button></div>

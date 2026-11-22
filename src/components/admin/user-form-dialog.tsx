@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useFormTool } from "#/components/form-tool-context";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -90,6 +91,7 @@ export function UserFormDialog({
 	isPending,
 	onSubmit,
 }: UserFormDialogProps) {
+	const formRef = useFormTool("User account dialog");
 	const [values, setValues] = useState<FormState>(() => toFormState(user));
 	const [formError, setFormError] = useState("");
 
@@ -134,17 +136,17 @@ export function UserFormDialog({
 						{user ? "Update account and employee profile details." : "Create an account and set its initial password."}
 					</DialogDescription>
 				</DialogHeader>
-				<form onSubmit={submit} className="space-y-5">
+				<form ref={formRef} onSubmit={submit} className="space-y-5">
 					<div className="grid gap-4 sm:grid-cols-2">
 						<FormField label="Name" required>
-							<Input value={values.name} onChange={(event) => update("name", event.target.value)} required autoComplete="name" />
+							<Input id="name" name="name" value={values.name} onChange={(event) => update("name", event.target.value)} required autoComplete="name" />
 						</FormField>
 						<FormField label="Email" required>
-							<Input type="email" value={values.email} onChange={(event) => update("email", event.target.value)} required autoComplete="email" />
+							<Input id="email" name="email" type="email" value={values.email} onChange={(event) => update("email", event.target.value)} required autoComplete="email" />
 						</FormField>
 						<FormField label="Role" required>
-							<Select value={values.role} onValueChange={(value) => update("role", value as ManagedUser["role"])}>
-								<SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+							<Select name="role" value={values.role} onValueChange={(value) => update("role", value as ManagedUser["role"])}>
+								<SelectTrigger id="role" className="w-full"><SelectValue /></SelectTrigger>
 								<SelectContent>
 									<SelectItem value="Employee">Employee</SelectItem>
 									<SelectItem value="Manager">Manager</SelectItem>
@@ -153,14 +155,14 @@ export function UserFormDialog({
 							</Select>
 						</FormField>
 						{!user && <FormField label="Initial password" required hint="At least 8 characters">
-							<Input type="password" value={values.password} onChange={(event) => update("password", event.target.value)} minLength={8} required autoComplete="new-password" />
+							<Input id="password" name="password" type="password" value={values.password} onChange={(event) => update("password", event.target.value)} minLength={8} required autoComplete="new-password" />
 						</FormField>}
-						<FormField label="Position"><Input value={values.position} onChange={(event) => update("position", event.target.value)} /></FormField>
-						<FormField label="Department"><Input value={values.department} onChange={(event) => update("department", event.target.value)} /></FormField>
-						<FormField label="Organizational unit"><Input value={values.organizationalUnit} onChange={(event) => update("organizationalUnit", event.target.value)} /></FormField>
-						<FormField label="Employment status"><Input value={values.employmentStatus} onChange={(event) => update("employmentStatus", event.target.value)} placeholder="e.g. Active" /></FormField>
-						<FormField label="Employment type"><Input value={values.employmentType} onChange={(event) => update("employmentType", event.target.value)} placeholder="e.g. Full-time" /></FormField>
-						<FormField label="Hire date"><Input type="date" value={values.hireDate} onChange={(event) => update("hireDate", event.target.value)} /></FormField>
+						<FormField label="Position"><Input id="position" name="position" value={values.position} onChange={(event) => update("position", event.target.value)} /></FormField>
+						<FormField label="Department"><Input id="department" name="department" value={values.department} onChange={(event) => update("department", event.target.value)} /></FormField>
+						<FormField label="Organizational unit"><Input id="organizationalUnit" name="organizationalUnit" value={values.organizationalUnit} onChange={(event) => update("organizationalUnit", event.target.value)} /></FormField>
+						<FormField label="Employment status"><Input id="employmentStatus" name="employmentStatus" value={values.employmentStatus} onChange={(event) => update("employmentStatus", event.target.value)} placeholder="e.g. Active" /></FormField>
+						<FormField label="Employment type"><Input id="employmentType" name="employmentType" value={values.employmentType} onChange={(event) => update("employmentType", event.target.value)} placeholder="e.g. Full-time" /></FormField>
+						<FormField label="Hire date"><Input id="hireDate" name="hireDate" type="date" value={values.hireDate} onChange={(event) => update("hireDate", event.target.value)} /></FormField>
 					</div>
 					{formError && <p role="alert" className="text-sm text-destructive">{formError}</p>}
 					<DialogFooter>

@@ -24,15 +24,17 @@ import {
  * when not) and wires the transcript composable to the header and composer.
  */
 export function ChatBot({
-	systemPrompt = "You are a helpful assistant.",
+	systemPrompt = "You are a helpful assistant. You are running in console, so markdown formatting is limited, please output text only.",
 	tools = [],
 	toolHandlers = {},
 	title = "Chatbot",
+	username,
 }: {
 	systemPrompt?: string;
 	tools?: ToolDefinition[];
 	toolHandlers?: Record<string, ToolHandler>;
 	title?: string;
+	username?: string;
 }) {
 	const [open, setOpen] = useState(false);
 	const [pinned, setPinned] = useChatPinState(false);
@@ -160,6 +162,7 @@ export function ChatBot({
 					pinned={false}
 					mobile
 					messages={visibleMessages}
+					username={username}
 					loading={loading}
 					error={error}
 					draft={draft}
@@ -174,6 +177,7 @@ export function ChatBot({
 			title={title}
 			pinned={effectivePinned}
 			messages={visibleMessages}
+			username={username}
 			loading={loading}
 			error={error}
 			draft={draft}

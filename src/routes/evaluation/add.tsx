@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { IconArrowLeft, IconPlus } from "@tabler/icons-react";
 import { useState, type FormEvent } from "react";
+import { useFormTool } from "#/components/form-tool-context";
 import { useTRPC } from "#/integrations/trpc/react";
 import { authClient } from "#/lib/auth-client";
 import { Button } from "@/components/ui/button";
@@ -79,6 +80,7 @@ function AddEvaluationPage() {
 }
 
 function EvaluationCreationForm() {
+	const formRef = useFormTool("Add evaluation");
 	const [values, setValues] = useState(emptyForm);
 	const [error, setError] = useState<string | null>(null);
 	const trpc = useTRPC();
@@ -163,7 +165,7 @@ function EvaluationCreationForm() {
 					details.
 				</p>
 			</header>
-			<form onSubmit={submit} className="space-y-6">
+			<form ref={formRef} onSubmit={submit} className="space-y-6">
 				<Card>
 					<CardHeader>
 						<CardTitle>Participants and schedule</CardTitle>
@@ -175,6 +177,7 @@ function EvaluationCreationForm() {
 						<div className="grid gap-2">
 							<Label htmlFor="evaluatedUserId">Employee being evaluated</Label>
 							<Select
+								name="evaluatedUserId"
 								value={values.evaluatedUserId}
 								onValueChange={(value) => {
 									const person = candidates.find(
@@ -207,6 +210,7 @@ function EvaluationCreationForm() {
 						<div className="grid gap-2">
 							<Label htmlFor="evaluatorUserId">Evaluator</Label>
 							<Select
+								name="evaluatorUserId"
 								value={values.evaluatorUserId}
 								onValueChange={(value) => {
 									const person = candidates.find(
@@ -241,6 +245,7 @@ function EvaluationCreationForm() {
 						<div className="grid gap-2">
 							<Label htmlFor="form">Evaluation form</Label>
 							<Select
+								name="form"
 								value={values.form}
 								onValueChange={(value) =>
 									update("form", value as FormValues["form"])
@@ -311,6 +316,7 @@ function EvaluationCreationForm() {
 						<div className="grid gap-2">
 							<Label htmlFor="personType">Employee type</Label>
 							<Select
+								name="evaluatedPersonType"
 								value={values.evaluatedPersonType}
 								onValueChange={(value) =>
 									update(
@@ -399,6 +405,7 @@ function TextField({
 			<Label htmlFor={id}>{label}</Label>
 			<Input
 				id={id}
+				name={id}
 				type={type}
 				value={value}
 				onChange={(event) => onChange(event.target.value)}
