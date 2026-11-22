@@ -5,16 +5,14 @@ import type { ChatMessage } from "./chatbot-types";
 
 /** Picks the renderer that matches a message role. */
 export function ChatbotMessage({ message }: { message: ChatMessage }) {
-  switch (message.role) {
-    case "user":
-      return <ChatbotUserMessage message={message} />;
-    case "tool":
-      return <ChatbotToolMessage message={message} />;
-    case "system":
-      return null;
-    default:
-      return <ChatbotAssistantMessage message={message} />;
-  }
+	switch (message.role) {
+		case "user":
+			return <ChatbotUserMessage message={message} />;
+		case "tool":
+			return <ChatbotToolMessage message={message} />;
+		default:
+			return <ChatbotAssistantMessage message={message} />;
+	}
 }
 
 export default ChatbotMessage;
