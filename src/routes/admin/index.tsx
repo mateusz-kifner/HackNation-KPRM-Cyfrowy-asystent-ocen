@@ -10,7 +10,7 @@ export const Route = createFileRoute('/admin/')({
 
 function AdminPage() {
   return (
-    <main className="flex-1 p-6 space-y-6">
+    <main className="flex-1 space-y-6">
       <SectionCards />
       <ChartAreaInteractive />
       <DataTable data={dashboardData} />

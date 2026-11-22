@@ -144,7 +144,7 @@ function AdminUsersPage({ currentUserId }: { currentUserId: string }) {
 
 	return (
 		<>
-			<main className="min-w-0 flex-1 space-y-6 p-4 sm:p-6">
+			<main className="min-w-0 flex-1 space-y-6">
 					<header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
 						<div>
 							<h1 className="text-2xl font-semibold tracking-tight">
