@@ -57,7 +57,7 @@ export default function UserProfileMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link to="/me">
+            <Link to="/settings">
               <IconSettings />
               Settings
             </Link>
