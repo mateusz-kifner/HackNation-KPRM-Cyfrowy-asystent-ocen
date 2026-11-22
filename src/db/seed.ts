@@ -3,6 +3,7 @@ import {
   assessmentFiles,
   assessments,
   employees,
+  schedulerSettings,
   user,
   account,
   session,
@@ -79,9 +80,18 @@ async function seed() {
   await db.delete(account)
   await db.delete(session)
   await db.delete(verification)
+  await db.delete(schedulerSettings)
   await db.delete(assessments)
   await db.delete(user)
   await db.delete(employees)
+
+  // Seed the global scheduler configuration with its default daily cadence.
+  console.log('[seed] Inserting into scheduler_settings')
+  await db.insert(schedulerSettings).values({
+    id: 'global',
+    cronExpression: '0 2 * * *',
+    enabled: true,
+  })
 
   // Seed users and accounts
   for (const u of mockUsers) {
