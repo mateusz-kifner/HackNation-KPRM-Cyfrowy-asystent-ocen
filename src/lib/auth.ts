@@ -6,6 +6,17 @@ import { db } from '#/db'
 import * as schema from '#/db/schema'
 
 export const auth = betterAuth({
+  user: {
+    additionalFields: {
+      role: { type: 'string', required: true, defaultValue: 'Employee', input: false },
+      position: { type: 'string', required: false, input: false },
+      department: { type: 'string', required: false, input: false },
+      organizationalUnit: { type: 'string', required: false, input: false },
+      employmentStatus: { type: 'string', required: false, input: false },
+      employmentType: { type: 'string', required: false, input: false },
+      hireDate: { type: 'number', required: false, input: false },
+    },
+  },
   database: drizzleAdapter(db, {
     provider: 'sqlite',
     schema,
