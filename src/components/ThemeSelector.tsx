@@ -14,7 +14,7 @@ export default function ThemeSelector() {
 
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger className="[&>svg:last-child]:rotate-90">
+      <DropdownMenuSubTrigger className="[&>svg:last-child]:hidden">
         <ThemeIcon />
         Theme
       </DropdownMenuSubTrigger>
