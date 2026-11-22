@@ -94,7 +94,30 @@ async function seed() {
   const now = new Date()
   const periodStart = new Date(now.getFullYear(), 0, 1)
   const periodEnd = new Date(now.getFullYear(), 11, 31)
-  const mockEvaluations = [
+  const mockEvaluations: Array<{
+    id: string
+    evaluatedUserId: string
+    evaluatorUserId: string
+    form: 'A' | 'B' | 'C'
+    status:
+      | 'draft'
+      | 'criteria_setting'
+      | 'ready_for_assessment'
+      | 'assessment_in_progress'
+      | 'awaiting_employee_acknowledgement'
+      | 'completed'
+      | 'cancelled'
+    name: [string, string]
+    completed?: boolean
+    overallOutcome?: 'positive' | 'negative'
+    overallLevel?:
+      | 'far_below_expectations'
+      | 'below_expectations'
+      | 'meets_expectations'
+      | 'above_expectations'
+      | 'far_above_expectations'
+    averagePoints?: number
+  }> = [
     {
       id: 'mock-evaluation-started',
       evaluatedUserId: 'Anna_Lewandowska_Emploee',
@@ -111,6 +134,58 @@ async function seed() {
       status: 'awaiting_employee_acknowledgement' as const,
       name: ['Mateusz', 'Kifner'],
     },
+    {
+      id: 'mock-evaluation-anna-follow-up',
+      evaluatedUserId: 'Anna_Lewandowska_Emploee',
+      evaluatorUserId: 'Jan_Kowalski_Manager',
+      form: 'B' as const,
+      status: 'ready_for_assessment' as const,
+      name: ['Anna', 'Lewandowska'],
+    },
+    {
+      id: 'mock-evaluation-mateusz-follow-up',
+      evaluatedUserId: 'Mateusz_Kifner_Emploee',
+      evaluatorUserId: 'Jan_Kowalski_Manager',
+      form: 'C' as const,
+      status: 'assessment_in_progress' as const,
+      name: ['Mateusz', 'Kifner'],
+    },
+    {
+      id: 'mock-evaluation-anna-completed-2025',
+      evaluatedUserId: 'Anna_Lewandowska_Emploee',
+      evaluatorUserId: 'Jan_Kowalski_Manager',
+      form: 'C' as const,
+      status: 'completed' as const,
+      name: ['Anna', 'Lewandowska'],
+      completed: true,
+      overallOutcome: 'positive' as const,
+      overallLevel: 'above_expectations' as const,
+      averagePoints: 4.4,
+    },
+    {
+      id: 'mock-evaluation-mateusz-completed-2025',
+      evaluatedUserId: 'Mateusz_Kifner_Emploee',
+      evaluatorUserId: 'Jan_Kowalski_Manager',
+      form: 'B' as const,
+      status: 'completed' as const,
+      name: ['Mateusz', 'Kifner'],
+      completed: true,
+      overallOutcome: 'positive' as const,
+      overallLevel: 'meets_expectations' as const,
+      averagePoints: 3.6,
+    },
+    {
+      id: 'mock-evaluation-anna-completed-2024',
+      evaluatedUserId: 'Anna_Lewandowska_Emploee',
+      evaluatorUserId: 'Jan_Kowalski_Manager',
+      form: 'B' as const,
+      status: 'completed' as const,
+      name: ['Anna', 'Lewandowska'],
+      completed: true,
+      overallOutcome: 'positive' as const,
+      overallLevel: 'meets_expectations' as const,
+      averagePoints: 3.8,
+    },
   ]
 
   for (const evaluation of mockEvaluations) {
@@ -122,10 +197,24 @@ async function seed() {
       appointedByUserId: 'Admin_admin',
       form: evaluation.form,
       status: evaluation.status,
-      periodStart,
-      periodEnd,
-      assessmentDate: now,
-      dueAt: new Date(now.getFullYear(), 11, 31),
+      periodStart: evaluation.completed
+        ? new Date(now.getFullYear() - (evaluation.id.endsWith('2024') ? 2 : 1), 0, 1)
+        : periodStart,
+      periodEnd: evaluation.completed
+        ? new Date(now.getFullYear() - (evaluation.id.endsWith('2024') ? 1 : 0), 0, 0)
+        : periodEnd,
+      assessmentDate: evaluation.completed
+        ? new Date(now.getFullYear() - (evaluation.id.endsWith('2024') ? 1 : 0), 5, 15)
+        : now,
+      dueAt: evaluation.completed
+        ? new Date(now.getFullYear() - (evaluation.id.endsWith('2024') ? 1 : 0), 5, 30)
+        : new Date(now.getFullYear(), 11, 31),
+      ...(evaluation.completed
+        ? {
+            submittedAt: new Date(now.getFullYear() - (evaluation.id.endsWith('2024') ? 1 : 0), 5, 15),
+            completedAt: new Date(now.getFullYear() - (evaluation.id.endsWith('2024') ? 1 : 0), 5, 20),
+          }
+        : {}),
       ...(evaluation.status === 'awaiting_employee_acknowledgement'
         ? { submittedAt: now }
         : {}),
@@ -142,8 +231,21 @@ async function seed() {
       evaluatorLastName: 'Kowalski',
       evaluatorPosition: 'Manager',
       evaluatorOrganizationalUnit: 'Management',
-      assessmentPeriodStart: periodStart,
-      assessmentPeriodEnd: periodEnd,
+      assessmentPeriodStart: evaluation.completed
+        ? new Date(now.getFullYear() - (evaluation.id.endsWith('2024') ? 2 : 1), 0, 1)
+        : periodStart,
+      assessmentPeriodEnd: evaluation.completed
+        ? new Date(now.getFullYear() - (evaluation.id.endsWith('2024') ? 1 : 0), 0, 0)
+        : periodEnd,
+      ...(evaluation.completed
+        ? {
+            overallOutcome: evaluation.overallOutcome,
+            overallLevel: evaluation.overallLevel,
+            averagePoints: evaluation.averagePoints,
+            assessmentRationale: 'Consistently met the expectations for the role and contributed to team goals.',
+            developmentPlanRecommendations: 'Continue developing role-specific expertise and share practices with the team.',
+          }
+        : {}),
     })
   }
 
