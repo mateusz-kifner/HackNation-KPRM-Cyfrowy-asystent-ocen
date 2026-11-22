@@ -59,7 +59,7 @@ async function seed() {
       email: u.email,
       emailVerified: false,
       isAnonymous: false,
-      role: u.id === 'Admin_admin' ? 'admin' : 'normal',
+      role: u.id === 'Admin_admin' ? 'Admin' : 'Employee',
     })
     await db.insert(account).values({
       id: randomUUID(),

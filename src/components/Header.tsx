@@ -45,6 +45,13 @@ export default function Header() {
                   <Link to="/me">Me</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
+              {isAdmin && (
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link to="/admin">Admin</Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              )}
             </NavigationMenuList>
           </NavigationMenu>
         </div>
