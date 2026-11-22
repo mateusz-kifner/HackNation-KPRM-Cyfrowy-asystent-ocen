@@ -1,5 +1,8 @@
 import { IconClipboardList } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { IconPlus } from "@tabler/icons-react";
+import { authClient } from "#/lib/auth-client";
 import { EvaluationDocxDownload } from "#/components/evaluation-docx-download";
 import { useTRPC } from "#/integrations/trpc/react";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +21,7 @@ import {
 	EmptyTitle,
 } from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { EvaluationNavigation } from "@/components/evaluation-navigation";
 import {
 	Table,
@@ -41,6 +45,9 @@ type Evaluation = NonNullable<
 
 export function EvaluationCategoryPage({ category }: { category: Category }) {
 	const evaluationsQuery = useEvaluations();
+	const { data: session } = authClient.useSession();
+	const role = (session?.user as { role?: string } | undefined)?.role;
+	const canAddEvaluation = role === "Admin" || role === "Manager";
 	const evaluations = (evaluationsQuery.data ?? []).filter((evaluation) =>
 		belongsToCategory(evaluation, category),
 	);
@@ -49,10 +56,24 @@ export function EvaluationCategoryPage({ category }: { category: Category }) {
 	return (
 		<main className="mx-auto w-full max-w-7xl space-y-6 p-4 sm:p-6">
 			<header>
-				<h1 className="text-2xl font-semibold tracking-tight">Evaluations</h1>
-				<p className="mt-1 text-sm text-muted-foreground">
-					Track your assigned assessments by their current stage.
-				</p>
+				<div className="flex flex-wrap items-start justify-between gap-4">
+					<div>
+						<h1 className="text-2xl font-semibold tracking-tight">
+							Evaluations
+						</h1>
+						<p className="mt-1 text-sm text-muted-foreground">
+							Track your assigned assessments by their current stage.
+						</p>
+					</div>
+					{canAddEvaluation && (
+						<Button asChild>
+							<Link to="/evaluation/add">
+								<IconPlus aria-hidden="true" />
+								Add evaluation
+							</Link>
+						</Button>
+					)}
+				</div>
 			</header>
 			<div className="flex flex-col gap-6 md:flex-row md:items-start">
 				<EvaluationNavigation category={category} />

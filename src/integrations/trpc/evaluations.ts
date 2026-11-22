@@ -179,6 +179,20 @@ async function addHistory(
 }
 
 export const evaluationsRouter = {
+	candidates: managerProcedure.query(async () =>
+		db
+			.select({
+				id: user.id,
+				name: user.name,
+				email: user.email,
+				role: user.role,
+				position: user.position,
+				organizationalUnit: user.organizationalUnit,
+			})
+			.from(user)
+			.orderBy(user.name),
+	),
+
 	options: employeeProcedure.query(() => ({
 		forms: assessmentFormMandatoryCriteria,
 		additionalCriteria: additionalAssessmentCriteria,
@@ -374,6 +388,7 @@ export const evaluationsRouter = {
 					assessmentDate: dateInput,
 					assessmentDiscussionAt: dateInput,
 					dueAt: dateInput,
+					file: assessmentFileInput.optional(),
 				})
 				.refine((data) => data.evaluatedUserId !== data.evaluatorUserId, {
 					message:
@@ -447,6 +462,7 @@ export const evaluationsRouter = {
 					assessmentDiscussionDate: input.assessmentDiscussionAt,
 					assessmentPeriodStart: input.periodStart,
 					assessmentPeriodEnd: input.periodEnd,
+					...input.file,
 				});
 				await tx.insert(assessmentFileCriteria).values(
 					mandatoryCriteria.map((title, sortOrder) => ({

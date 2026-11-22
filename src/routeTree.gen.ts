@@ -21,6 +21,7 @@ import { Route as AdminAiSettingsRouteImport } from './routes/admin/ai-settings'
 import { Route as AdminEmployeesRouteImport } from './routes/admin/employees'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as ApiChatRouteRouteImport } from './routes/api/chat/route'
+import { Route as EvaluationAddRouteImport } from './routes/evaluation/add'
 import { Route as EvaluationCompletedRouteImport } from './routes/evaluation/completed'
 import { Route as EvaluationRunningRouteImport } from './routes/evaluation/running'
 import { Route as EvaluationUpcomingRouteImport } from './routes/evaluation/upcoming'
@@ -91,6 +92,11 @@ const ApiChatRouteRoute = ApiChatRouteRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EvaluationAddRoute = EvaluationAddRouteImport.update({
+  id: '/add',
+  path: '/add',
+  getParentRoute: () => EvaluationRoute,
+} as any)
 const EvaluationCompletedRoute = EvaluationCompletedRouteImport.update({
   id: '/completed',
   path: '/completed',
@@ -143,6 +149,7 @@ export interface FileRoutesByFullPath {
   '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/users': typeof AdminUsersRouteWithChildren
+  '/evaluation/add': typeof EvaluationAddRoute
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
   '/evaluation/upcoming': typeof EvaluationUpcomingRoute
@@ -164,6 +171,7 @@ export interface FileRoutesByTo {
   '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/users': typeof AdminUsersRouteWithChildren
+  '/evaluation/add': typeof EvaluationAddRoute
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
   '/evaluation/upcoming': typeof EvaluationUpcomingRoute
@@ -187,6 +195,7 @@ export interface FileRoutesById {
   '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/users': typeof AdminUsersRouteWithChildren
+  '/evaluation/add': typeof EvaluationAddRoute
   '/evaluation/completed': typeof EvaluationCompletedRoute
   '/evaluation/running': typeof EvaluationRunningRoute
   '/evaluation/upcoming': typeof EvaluationUpcomingRoute
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
     | '/admin/ai-settings'
     | '/admin/employees'
     | '/admin/users'
+    | '/evaluation/add'
     | '/evaluation/completed'
     | '/evaluation/running'
     | '/evaluation/upcoming'
@@ -232,6 +242,7 @@ export interface FileRouteTypes {
     | '/admin/ai-settings'
     | '/admin/employees'
     | '/admin/users'
+    | '/evaluation/add'
     | '/evaluation/completed'
     | '/evaluation/running'
     | '/evaluation/upcoming'
@@ -254,6 +265,7 @@ export interface FileRouteTypes {
     | '/admin/ai-settings'
     | '/admin/employees'
     | '/admin/users'
+    | '/evaluation/add'
     | '/evaluation/completed'
     | '/evaluation/running'
     | '/evaluation/upcoming'
@@ -367,6 +379,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/evaluation/add': {
+      id: '/evaluation/add'
+      path: '/add'
+      fullPath: '/evaluation/add'
+      preLoaderRoute: typeof EvaluationAddRouteImport
+      parentRoute: typeof EvaluationRoute
+    }
     '/evaluation/completed': {
       id: '/evaluation/completed'
       path: '/completed'
@@ -457,12 +476,14 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 )
 
 interface EvaluationRouteChildren {
+  EvaluationAddRoute: typeof EvaluationAddRoute
   EvaluationCompletedRoute: typeof EvaluationCompletedRoute
   EvaluationRunningRoute: typeof EvaluationRunningRoute
   EvaluationUpcomingRoute: typeof EvaluationUpcomingRoute
 }
 
 const EvaluationRouteChildren: EvaluationRouteChildren = {
+  EvaluationAddRoute: EvaluationAddRoute,
   EvaluationCompletedRoute: EvaluationCompletedRoute,
   EvaluationRunningRoute: EvaluationRunningRoute,
   EvaluationUpcomingRoute: EvaluationUpcomingRoute,
