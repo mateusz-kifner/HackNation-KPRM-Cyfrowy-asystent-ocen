@@ -68,12 +68,6 @@ function AddUserPage() {
 					{ label: "Add user" },
 				]}
 			/>
-			<header className="space-y-2">
-				<h1 className="text-3xl font-semibold tracking-tight">Add user</h1>
-				<p className="text-sm text-muted-foreground">
-					Create an account and set its access and employee details.
-				</p>
-			</header>
 			<Card className="overflow-hidden">
 				<div className="border-b bg-muted/20 px-6 py-4">
 					<p className="text-sm font-medium">Account details</p>

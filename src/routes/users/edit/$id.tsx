@@ -76,12 +76,6 @@ function EditUserPage() {
 					{ label: "Edit account" },
 				]}
 			/>
-			<header className="space-y-2">
-				<h1 className="text-3xl font-semibold tracking-tight">Edit account</h1>
-				<p className="text-sm text-muted-foreground">
-					Update account access and employee details.
-				</p>
-			</header>
 			<Card className="overflow-hidden">
 				<div className="border-b bg-muted/20 px-6 py-4">
 					<p className="text-sm font-medium">Account details</p>
