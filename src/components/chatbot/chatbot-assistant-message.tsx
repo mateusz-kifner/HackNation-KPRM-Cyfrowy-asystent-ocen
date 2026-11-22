@@ -1,4 +1,5 @@
 import { Message, MessageContent } from "@/components/ui/message";
+import { Bubble, BubbleContent } from "@/components/ui/bubble";
 import { ChatbotMarkdown } from "./chatbot-markdown";
 import type { ChatMessage } from "./chatbot-types";
 
@@ -7,7 +8,11 @@ export function ChatbotAssistantMessage({ message }: { message: ChatMessage }) {
 	return (
 		<Message>
 			<MessageContent>
-				<ChatbotMarkdown content={message.content} />
+				<Bubble variant="tinted">
+					<BubbleContent>
+						<ChatbotMarkdown content={message.content} />
+					</BubbleContent>
+				</Bubble>
 			</MessageContent>
 		</Message>
 	);

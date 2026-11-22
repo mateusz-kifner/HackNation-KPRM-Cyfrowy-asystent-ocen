@@ -7,7 +7,7 @@ export function ChatbotUserMessage({ message }: { message: ChatMessage }) {
 	return (
 		<Message align="end">
 			<MessageContent>
-				<Bubble align="end" variant="muted">
+				<Bubble align="end" variant="default">
 					<BubbleContent className="whitespace-pre-wrap">
 						{message.content}
 					</BubbleContent>
