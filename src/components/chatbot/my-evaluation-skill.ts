@@ -10,7 +10,7 @@ The chatbot tools available in this app are:
 - navigate_to_page: navigate only when the user explicitly asks to open or go to a page, and only to an allowed destination.
 - get_form_state: read the currently visible form's state.
 - select_form_field: focus/highlight a field by name or id.
-- edit_form_field: change a field only after selecting that same field and only when the user explicitly asks for that change.
+- edit_form_field: change a field by name or id without selecting or highlighting it first, and only when the user explicitly asks for that change.
 - search_users: available to admins only, for finding user accounts.
 - search_evaluations: search visible evaluation records by employee name, evaluator name, position, organizational unit, or evaluation ID. It returns limited record metadata (status, form, assessment period, dates, and participant/position details); it does not return ratings, rationale, criteria, or the full evaluation document.
 

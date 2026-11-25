@@ -29,11 +29,11 @@ export const editFormFieldTool: ToolDefinition = {
 	type: "function",
 	function: {
 		name: "edit_form_field",
-		description: "Set the value of a form field that was previously selected with select_form_field. Fields that have not been selected cannot be edited.",
+		description: "Set the value of a form field by its name or id. The field does not need to be selected or highlighted first.",
 		parameters: {
 			type: "object",
 			properties: {
-				name: { type: "string", description: "The name or id of a field already selected with select_form_field." },
+				name: { type: "string", description: "The name or id of the field to edit." },
 				value: { type: "string", description: "The new field value. For checkboxes, use true or false." },
 			},
 			required: ["name", "value"],
